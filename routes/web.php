@@ -8,7 +8,7 @@ Route::get('/login', function () {
 
 // Registration Route
 Route::get('/register', function () {
-    return view('register');  // Ensure 'register.blade.php' exists in the resources/views directory
+    return view('signup');  // Ensure 'register.blade.php' exists in the resources/views directory
 })->name('register');
 
 // Password Reset Route
