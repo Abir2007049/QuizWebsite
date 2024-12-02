@@ -18,8 +18,13 @@ Route::post('/registration.post', [AuthManager::class, 'registrationPost'])->nam
 Route::post('/login', [AuthManager::class, 'loginPost'])->name('login.post');
 
 
-Route::post('/store-quiz', [QuestionControlller::class, 'StoreQuestion'])->name('storeQuiz');
+Route::post('/store-question', [QuestionControlller::class, 'storeQuestion'])->name('storeQuestion');
+Route::post('/store-quiz', [QuestionControlller::class, 'storeQuiz'])->name('storeQuiz');
 //Route::get('/login', [RoleController::class, 'TorS'])->name('login');
 Route::get('/login', function () {
     return view('Teacher');
 })->name('login');
+Route::get('/registration.post', function () {
+    return redirect()->route('registration');
+});
+

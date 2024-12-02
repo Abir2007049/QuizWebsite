@@ -1,44 +1,57 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Support\Facades\Auth;
+
 
 use Illuminate\Http\Request;
-use App\Models\Question; // Add this import at the top
-
+use App\Models\Question;
+use App\Models\Quiz; // Add this import for Quiz model
 
 class QuestionControlller extends Controller
 {
-    //
-    public function StoreQuestion(Request $request)
+    /**
+     * Store a new question associated with a quiz.
+     */
+    public function storeQuestion(Request $request)
     {
-        // Validate the input
         $request->validate([
-            'quiz_title' => 'required|string|max:255',
-            'questions.*.text' => 'required|string|max:255',
-            'questions.*.options.*' => 'required|string|max:255',
-            'questions.*.correct_option' => 'required|in:1,2,3,4',
+            'question_text' => 'required|string|max:255',
+            'options.*' => 'required|string|max:255',
+            'correct_option' => 'required|in:1,2,3,4',
+            'quiz_id' => 'required|exists:quizzes,id', // Validate that the quiz exists
         ]);
-    
-        // // Create a new Quiz
-        // $quiz = new Quiz();
-        // $quiz->title = $request->quiz_title;
-        // $quiz->save();
-    
-        // Store questions and options
-        foreach ($request->questions as $questionData) {
-            $question = new Question();
-           // $question->quiz_id = $quiz->id; // Assuming each question belongs to a quiz
-           // $question->text = $questionData['text'];
-            $question->option1 = $questionData['options'][1];
-            $question->option2 = $questionData['options'][2];
-            $question->option3 = $questionData['options'][3];
-            $question->option4 = $questionData['options'][4];
-            $question->right_option = $questionData['correct_option'];
-            $question->save();
-        }
-    
-        return view('Teacher');//redirect()->route('quizList')->with('success', 'Quiz created successfully!');
+
+        // Save the question and associate it with the quiz
+        $question = new Question();
+        $question->text = $request->question_text;
+        $question->option1 = $request->options[1];
+        $question->option2 = $request->options[2];
+        $question->option3 = $request->options[3];
+        $question->option4 = $request->options[4];
+        $question->right_option = $request->correct_option;
+        $question->quiz_id = $request->quiz_id; // Associate the question with the quiz
+        $question->save();
+
+        return redirect()->back()->with('success', 'Question added successfully!');
     }
-    
-    
+
+    /**
+     * Store a new quiz.
+     */
+    // Inside your storeQuiz controller method
+public function storeQuiz(Request $request)
+{
+    // Save the quiz
+    $quiz = new Quiz();
+    $quiz->title = $request->quiz_title;
+    $quiz->userid = Auth::id(); // Assuming the user is logged in
+    $quiz->save();
+
+    // Store the quiz_id in the session
+    session(['quiz_id' => $quiz->id]);
+
+    return redirect()->back()->with('success', 'Quiz created successfully!');
+}
+
 }
