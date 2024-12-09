@@ -44,7 +44,7 @@ class AuthManager extends Controller
         $data['name'] = $request->name;
         $data['email'] = $request->email;
         $data['password'] = Hash::make($request->password);
-       $data['room_name'] = $request->room_name;
+       // $data['cell'] = $request->cell;
         $user = User::create($data);
         if (!$user) {
             return redirect(route('TorS'))->with("error", "Try Again!");
@@ -52,5 +52,4 @@ class AuthManager extends Controller
     
         return view('Teacher');
     }
-    
 }

@@ -28,7 +28,3 @@ Route::get('/registration.post', function () {
     return redirect()->route('registration');
 });
 
-//Route::get('/student-form', [AuthManager::class, 'studentForm'])->name('student.form');
-
-Route::post('/submit-student', [YourController::class, 'submitStudent'])->name('student.submit');
-

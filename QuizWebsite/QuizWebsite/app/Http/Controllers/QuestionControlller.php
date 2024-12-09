@@ -40,24 +40,18 @@ class QuestionControlller extends Controller
      * Store a new quiz.
      */
     // Inside your storeQuiz controller method
-    public function storeQuiz(Request $request)
-    {
-        // Check if the user is authenticated
-        if (Auth::check()) {
-            // Save the quiz
-            $quiz = new Quiz();
-            $quiz->title = $request->quiz_title;
-            $quiz->userid = Auth::id(); // Use the authenticated user's ID
-            $quiz->save();
-    
-            // Store the quiz_id in the session
-            session(['quiz_id' => $quiz->id]);
-    
-            return redirect()->back()->with('success', 'Quiz created successfully!');
-        } else {
-            return redirect()->route('login')->with('error', 'You need to be logged in to create a quiz.');
-        }
-    }
-    
+public function storeQuiz(Request $request)
+{
+    // Save the quiz
+    $quiz = new Quiz();
+    $quiz->title = $request->quiz_title;
+    $quiz->userid = Auth::id(); // Assuming the user is logged in
+    $quiz->save();
+
+    // Store the quiz_id in the session
+    session(['quiz_id' => $quiz->id]);
+
+    return redirect()->back()->with('success', 'Quiz created successfully!');
+}
 
 }
