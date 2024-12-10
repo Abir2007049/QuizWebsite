@@ -9,11 +9,29 @@
             font-family: Arial, sans-serif;
             background-color: #f4f4f9;
             margin: 0;
-            padding: 20px;
+            padding: 0;
+        }
+        nav {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+            font-weight: bold;
+        }
+        nav a:hover {
+            text-decoration: underline;
         }
         h1 {
             text-align: center;
             color: #333;
+            margin: 20px 0;
         }
         form {
             max-width: 600px;
@@ -64,6 +82,17 @@
     </style>
 </head>
 <body>
+    <!-- Navigation Bar -->
+    <nav>
+        <div>
+            <a href="#">Home</a>
+        </div>
+        <div>
+            <a href="{{ route('quiz.list') }}">View Quizzes</a>
+            <a href="#">Logout</a>
+        </div>
+    </nav>
+
     <h1>Create a New Quiz</h1>
 
     <!-- Form 1: Create Quiz -->
@@ -130,11 +159,11 @@
         <!-- Add Question Button -->
         <button type="submit">Add Question</button>
     </form>
-@else
+    @else
     <div class="message">
         <strong>Please create a quiz first to add questions.</strong>
     </div>
-@endif
+    @endif
 
 </body>
 </html>

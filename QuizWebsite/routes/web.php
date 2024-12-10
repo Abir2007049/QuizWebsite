@@ -30,5 +30,8 @@ Route::get('/registration.post', function () {
 
 //Route::get('/student-form', [AuthManager::class, 'studentForm'])->name('student.form');
 
-Route::post('/submit-student', [YourController::class, 'submitStudent'])->name('student.submit');
+Route::post('/submit-student', [QuestionControlller::class, 'submitStudent'])->name('student.submit');
+Route::get('/quiz-list', [App\Http\Controllers\QuizListController::class, 'showQuizList'])->name('quiz.list');
 
+
+Route::get('/quiz/{id}', [App\Http\Controllers\QuizListController::class, 'showQuizDetails'])->name('quiz.details');

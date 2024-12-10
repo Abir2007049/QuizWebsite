@@ -16,7 +16,10 @@ class Question extends Model
 
     // Specify the columns that are mass assignable
     protected $fillable = ['text', 'option1', 'option2', 'option3', 'option4', 'right_option', 'quiz_id'];
-
+    // protected $casts = [
+    //     'options' => 'array',
+    // ];
+    
 
     // Specify the columns that should not be mass assignable (optional)
     // protected $guarded = ['id'];
