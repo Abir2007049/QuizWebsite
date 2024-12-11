@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Http\Request;
 use App\Models\Question;
-use App\Models\Quiz; // Add this import for Quiz model
+use App\Models\Quiz; 
 
 class QuestionControlller extends Controller
 {
@@ -51,9 +51,9 @@ class QuestionControlller extends Controller
             $quiz->save();
     
             // Store the quiz_id in the session
-            session(['quiz_id' => $quiz->id]);
+          //  session(['quiz_id' => $quiz->id]);
     
-            return redirect()->back()->with('success', 'Quiz created successfully!');
+            return view('Teacher'); 
         } else {
             return redirect()->route('login')->with('error', 'You need to be logged in to create a quiz.');
         }

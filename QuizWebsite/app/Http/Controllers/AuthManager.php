@@ -9,13 +9,11 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\DB;
+
 class AuthManager extends Controller
 {
-    
-    // public function teacher()
-    // {
-    //     return view('Teacher');
-    // }
+   
+  
 
     public function registration()
     {
@@ -30,11 +28,7 @@ class AuthManager extends Controller
         ]);
 
         $credentials = $request->only('email', 'password');
-        //  {
-        //     $products = Product::all();
-        //     $femaleProducts = Femproduct::all();
-        //    
-        // }
+     
         if (Auth::attempt($credentials))
         return view('Teacher');
     }
@@ -44,13 +38,18 @@ class AuthManager extends Controller
         $data['name'] = $request->name;
         $data['email'] = $request->email;
         $data['password'] = Hash::make($request->password);
-       $data['room_name'] = $request->room_name;
+        $data['room_name'] = $request->room_name;
         $user = User::create($data);
         if (!$user) {
             return redirect(route('TorS'))->with("error", "Try Again!");
         }
-    
+         else{
+
+
+        Auth::login($user);
         return view('Teacher');
+
+  }
     }
     
 }
