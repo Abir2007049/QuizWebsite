@@ -51,7 +51,7 @@ class QuestionControlller extends Controller
             $quiz->save();
     
             // Store the quiz_id in the session
-          //  session(['quiz_id' => $quiz->id]);
+            session(['quiz_id' => $quiz->id]);
     
             return view('Teacher'); 
         } else {
