@@ -5,12 +5,17 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\AuthManager;
 
 use App\Http\Controllers\QuestionControlller;
+use App\Http\Controllers\Schedule_Controller;
+use Illuminate\Console\Scheduling\Schedule;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
 Route::get('/TorS', [RoleController::class, 'TorS'])->name('TorS');
+
+Route::post('/questions/add', [QuestionControlller::class, 'add'])->name('questions.add');
+
 
 Route::get('/registration',  [AuthManager::class, 'registration'])->name('registration');
 Route::post('/registration.post', [AuthManager::class, 'registrationPost'])->name('registration.post');
@@ -34,4 +39,5 @@ Route::post('/submit-student', [QuestionControlller::class, 'submitStudent'])->n
 Route::get('/quiz-list', [App\Http\Controllers\QuizListController::class, 'showQuizList'])->name('quiz.list');
 
 
-Route::get('/quiz/{id}', [App\Http\Controllers\QuizListController::class, 'showQuizDetails'])->name('quiz.details');
+Route::get('/quiz-list/quiz/{id}', [App\Http\Controllers\QuizListController::class, 'showQuizDetails'])->name('quiz.details');
+Route::post('quiz/{id}/schedule', [Schedule_Controller::class, 'schedule'])->name('quiz.schedule');

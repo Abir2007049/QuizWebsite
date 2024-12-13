@@ -123,41 +123,34 @@
 
     <form action="{{ route('storeQuestion') }}" method="POST">
         @csrf
-
-        <!-- Hidden input for quiz_id -->
+        <!-- Pass the Quiz ID -->
         <input type="hidden" name="quiz_id" value="{{ session('quiz_id') }}">
-
+    
         <!-- Question Text -->
-        <label for="question_text">Question:</label>
-        <input type="text" id="question_text" name="question_text" required>
-        <br><br>
-
+        <div class="form-group">
+            <label for="question_text">Question Text</label>
+            <input type="text" id="question_text" name="question_text" class="form-control" required>
+        </div>
+    
         <!-- Options -->
-        <label for="option_1">Option 1:</label>
-        <input type="text" id="option_1" name="options[1]" required>
-        <br>
-        <label for="option_2">Option 2:</label>
-        <input type="text" id="option_2" name="options[2]" required>
-        <br>
-        <label for="option_3">Option 3:</label>
-        <input type="text" id="option_3" name="options[3]" required>
-        <br>
-        <label for="option_4">Option 4:</label>
-        <input type="text" id="option_4" name="options[4]" required>
-        <br><br>
-
+        <div class="form-group">
+            <label>Options</label>
+            <div class="form-group">
+                <input type="text" name="options[1]" class="form-control mb-2" placeholder="Option 1" required>
+                <input type="text" name="options[2]" class="form-control mb-2" placeholder="Option 2" required>
+                <input type="text" name="options[3]" class="form-control mb-2" placeholder="Option 3" required>
+                <input type="text" name="options[4]" class="form-control mb-2" placeholder="Option 4" required>
+            </div>
+        </div>
+    
         <!-- Correct Option -->
-        <label for="correct_option">Correct Option:</label>
-        <select id="correct_option" name="correct_option" required>
-            <option value="1">Option 1</option>
-            <option value="2">Option 2</option>
-            <option value="3">Option 3</option>
-            <option value="4">Option 4</option>
-        </select>
-        <br><br>
-
-        <!-- Add Question Button -->
-        <button type="submit">Add Question</button>
+        <div class="form-group">
+            <label for="correct_option">Correct Option (e.g., 1 for the first option)</label>
+            <input type="number" id="correct_option" name="correct_option" class="form-control" min="1" max="4" required>
+        </div>
+    
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary mt-2">Add Question</button>
     </form>
     @else
     <div class="message">
