@@ -12,7 +12,7 @@ class QuestionControlller extends Controller
     /**
      * Store a new question associated with a quiz.
      */
-    public function storeQuestion(Request $request)
+    public function storeQuestion(Request $request)  
     {
         // Validate the incoming request data
         $request->validate([
