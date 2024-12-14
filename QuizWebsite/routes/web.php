@@ -38,3 +38,4 @@ Route::post('/logout', function () {
 Route::post('/enter-room', [App\Http\Controllers\QuizListController::class, 'showQuizListToStudents'])->name('enter.room');
 Route::get('/quiz/{id}/take', [App\Http\Controllers\QuizListController::class, 'takeQuiz'])->name('quiz.take');
 
+//sds
