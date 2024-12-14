@@ -23,6 +23,9 @@ class QuestionControlller extends Controller
             'correct_option' => 'required|integer|in:1,2,3,4', // Correct option must be one of 1, 2, 3, or 4
         ]);
 
+
+     
+
         // Find the quiz by its ID
         $quiz = Quiz::findOrFail($request->quiz_id);
 
@@ -41,6 +44,7 @@ class QuestionControlller extends Controller
         return redirect()->route('quizzes.show', $quiz->id)->with('success', 'Question added successfully!');
     }
 
+
     /**
      * Store a new quiz.
      */
@@ -56,8 +60,11 @@ class QuestionControlller extends Controller
             $quiz->duration =60;
             $quiz->save();
 
+
+
             // Redirect to the Teacher view
             return redirect()->route('teacher.view')->with('success', 'New quiz has been created successfully!');
+
 
         } else {
             return redirect()->route('login')->with('error', 'You need to be logged in to create a quiz.');
