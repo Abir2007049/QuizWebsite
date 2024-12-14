@@ -125,57 +125,14 @@
     </form>
 
     <hr>
-
-    <!-- Check if quiz_id is set in session -->
-    @if (session('quiz_id'))
-    <!-- Form to add questions (only visible if quiz_id is set in session) -->
-    <div class="section-header">
-        <h2>Add Questions to Your Quiz</h2>
+    @if (session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
     </div>
+@endif
 
-    <form action="{{ route('storeQuestion') }}" method="POST">
-        @csrf
 
-        <!-- Hidden input for quiz_id -->
-        <input type="hidden" name="quiz_id" value="{{ session('quiz_id') }}">
-
-        <!-- Question Text -->
-        <label for="question_text">Question:</label>
-        <input type="text" id="question_text" name="question_text" required>
-        <br><br>
-
-        <!-- Options -->
-        <label for="option_1">Option 1:</label>
-        <input type="text" id="option_1" name="options[1]" required>
-        <br>
-        <label for="option_2">Option 2:</label>
-        <input type="text" id="option_2" name="options[2]" required>
-        <br>
-        <label for="option_3">Option 3:</label>
-        <input type="text" id="option_3" name="options[3]" required>
-        <br>
-        <label for="option_4">Option 4:</label>
-        <input type="text" id="option_4" name="options[4]" required>
-        <br><br>
-
-        <!-- Correct Option -->
-        <label for="correct_option">Correct Option:</label>
-        <select id="correct_option" name="correct_option" required>
-            <option value="1">Option 1</option>
-            <option value="2">Option 2</option>
-            <option value="3">Option 3</option>
-            <option value="4">Option 4</option>
-        </select>
-        <br><br>
-
-        <!-- Add Question Button -->
-        <button type="submit">Add Question</button>
-    </form>
-    @else
-    <div class="message">
-        <strong>Please create a quiz first to add questions.</strong>
-    </div>
-    @endif
-
+  
+    
 </body>
 </html>
