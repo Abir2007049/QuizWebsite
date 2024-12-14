@@ -39,6 +39,13 @@ class AuthManager extends Controller
         $data['email'] = $request->email;
         $data['password'] = Hash::make($request->password);
         $data['room_name'] = $request->room_name;
+
+        $roomExists = User::where('room_name', $request->room_name)->exists();
+        if ($roomExists) {
+            // Room name is already in use, redirect with an error message
+            return redirect()->back()->with('error', 'Room name already in use. Please choose another room.');
+        }
+        else{
         $user = User::create($data);
         if (!$user) {
             return redirect(route('TorS'))->with("error", "Try Again!");
@@ -49,7 +56,11 @@ class AuthManager extends Controller
         Auth::login($user);
         return view('Teacher');
 
+         }
+
   }
     }
+
+
     
 }

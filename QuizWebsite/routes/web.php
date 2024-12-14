@@ -29,6 +29,11 @@ Route::post('/store-quiz', [QuestionControlller::class, 'storeQuiz'])->name('sto
 Route::get('/login', function () {
     return view('Teacher');
 })->name('login');
+
+Route::get('/teacher', function () {
+    return view('Teacher');
+})->name('teacher.view');
+
 Route::get('/registration.post', function () {
     return redirect()->route('registration');
 });

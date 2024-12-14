@@ -57,7 +57,8 @@ class QuestionControlller extends Controller
             $quiz->save();
 
             // Redirect to the Teacher view
-            return view('Teacher');
+            return redirect()->route('teacher.view')->with('success', 'New quiz has been created successfully!');
+
         } else {
             return redirect()->route('login')->with('error', 'You need to be logged in to create a quiz.');
         }

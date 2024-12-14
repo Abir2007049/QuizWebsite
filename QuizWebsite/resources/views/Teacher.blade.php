@@ -113,50 +113,14 @@
     </form>
 
     <hr>
-
-    <!-- Check if quiz_id is set in session -->
-    @if (session('quiz_id'))
-    <!-- Form to add questions (only visible if quiz_id is set in session) -->
-    <div class="section-header">
-        <h2>Add Questions to Your Quiz</h2>
+    @if (session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
     </div>
+@endif
 
-    <form action="{{ route('storeQuestion') }}" method="POST">
-        @csrf
-        <!-- Pass the Quiz ID -->
-        <input type="hidden" name="quiz_id" value="{{ session('quiz_id') }}">
-    
-        <!-- Question Text -->
-        <div class="form-group">
-            <label for="question_text">Question Text</label>
-            <input type="text" id="question_text" name="question_text" class="form-control" required>
-        </div>
-    
-        <!-- Options -->
-        <div class="form-group">
-            <label>Options</label>
-            <div class="form-group">
-                <input type="text" name="options[1]" class="form-control mb-2" placeholder="Option 1" required>
-                <input type="text" name="options[2]" class="form-control mb-2" placeholder="Option 2" required>
-                <input type="text" name="options[3]" class="form-control mb-2" placeholder="Option 3" required>
-                <input type="text" name="options[4]" class="form-control mb-2" placeholder="Option 4" required>
-            </div>
-        </div>
-    
-        <!-- Correct Option -->
-        <div class="form-group">
-            <label for="correct_option">Correct Option (e.g., 1 for the first option)</label>
-            <input type="number" id="correct_option" name="correct_option" class="form-control" min="1" max="4" required>
-        </div>
-    
-        <!-- Submit Button -->
-        <button type="submit" class="btn btn-primary mt-2">Add Question</button>
-    </form>
-    @else
-    <div class="message">
-        <strong>Please create a quiz first to add questions.</strong>
-    </div>
-    @endif
 
+  
+    
 </body>
 </html>
