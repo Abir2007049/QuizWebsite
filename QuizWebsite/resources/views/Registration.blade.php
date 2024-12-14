@@ -23,4 +23,10 @@
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 </div>
+
+@if (session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+@endif
 @endsection

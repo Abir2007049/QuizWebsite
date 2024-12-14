@@ -1,12 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Support\Facades\Auth;
-
-
 use Illuminate\Http\Request;
 use App\Models\Question;
-use App\Models\Quiz; 
+use App\Models\Quiz;
 
 class QuestionControlller extends Controller
 {
@@ -15,33 +14,40 @@ class QuestionControlller extends Controller
      */
     public function storeQuestion(Request $request)
     {
+        // Validate the incoming request data
         $request->validate([
-            'question_text' => 'required|string|max:255',
-            'options.*' => 'required|string|max:255',
-            'correct_option' => 'required|in:1,2,3,4',
-            'quiz_id' => 'required|exists:quizzes,id', // Validate that the quiz exists
+            'quiz_id' => 'required|exists:quizzes,id', // Ensure the quiz exists
+            'question_text' => 'required|string|max:255', // Validate the question text
+            'options' => 'required|array|min:4|max:4', // Options must be an array of 4 items
+            'options.*' => 'required|string|max:255', // Each option must be a string
+            'correct_option' => 'required|integer|in:1,2,3,4', // Correct option must be one of 1, 2, 3, or 4
         ]);
 
-        // Save the question and associate it with the quiz
-        $question = new Question();
-        $question->text = $request->question_text;
-        $question->option1 = $request->options[1];
-        $question->option2 = $request->options[2];
-        $question->option3 = $request->options[3];
-        $question->option4 = $request->options[4];
-        $question->right_option = $request->correct_option;
-        $question->quiz_id = $request->quiz_id; // Associate the question with the quiz
-        $question->save();
 
-      //  return redirect()->back()->with('success', 'Question added successfully!');
-    
-    return view('Teacher');
-}
+     
+
+        // Find the quiz by its ID
+        $quiz = Quiz::findOrFail($request->quiz_id);
+
+        // Create the new question and associate it with the quiz
+        $quiz->questions()->create([
+            'text' => $request->question_text,
+            'option1' => $request->options['1'],
+'option2' => $request->options['2'],
+'option3' => $request->options['3'],
+'option4' => $request->options['4'],
+'right_option' => $request->correct_option,
+
+        ]);
+
+        // Redirect back to the quiz show page with a success message
+        return redirect()->route('quizzes.show', $quiz->id)->with('success', 'Question added successfully!');
+    }
+
 
     /**
      * Store a new quiz.
      */
-    // Inside your storeQuiz controller method
     public function storeQuiz(Request $request)
     {
         // Check if the user is authenticated
@@ -50,16 +56,52 @@ class QuestionControlller extends Controller
             $quiz = new Quiz();
             $quiz->title = $request->quiz_title;
             $quiz->userid = Auth::id(); // Use the authenticated user's ID
+            $quiz->start_datetime = now();
+            $quiz->duration =60;
             $quiz->save();
-    
-            // Store the quiz_id in the session
-            session(['quiz_id' => $quiz->id]);
-    
-            return view('Teacher'); 
+
+
+
+            // Redirect to the Teacher view
+            return redirect()->route('teacher.view')->with('success', 'New quiz has been created successfully!');
+
+
         } else {
             return redirect()->route('login')->with('error', 'You need to be logged in to create a quiz.');
         }
     }
-    
+
+    /**
+     * Add a new question to the quiz.
+     */
+    public function add(Request $request)
+    {
+        // Validate the incoming request data
+        $request->validate([
+            'quiz_id' => 'required|exists:quizzes,id', // Ensure the quiz exists
+            'question_text' => 'required|string|max:255', // Validate the question text
+            'options' => 'required|array|min:4|max:4', // Options must be an array of 4 items
+            'options.*' => 'required|string|max:255', // Each option must be a string
+            'correct_option' => 'required|integer|in:1,2,3,4', // Correct option must be one of 1, 2, 3, or 4
+        ]);
+
+        // Find the quiz by its ID
+        $quiz = Quiz::findOrFail($request->quiz_id);
+
+        // Create the new question and associate it with the quiz
+        $quiz->questions()->create([
+            'text' => $request->question_text,
+            'option1' => $request->options[1],
+            'option2' => $request->options[2],
+            'option3' => $request->options[3],
+            'option4' => $request->options[4],
+            'right_option' => $request->correct_option,
+        ]);
+
+        // Redirect back to the quiz show page with a success message
+        return redirect()->route('quiz.details', $quiz->id)->with('success', 'Question added successfully!');
+
+
+    }
 
 }
