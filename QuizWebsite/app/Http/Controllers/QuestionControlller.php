@@ -33,8 +33,10 @@ class QuestionControlller extends Controller
         $question->quiz_id = $request->quiz_id; // Associate the question with the quiz
         $question->save();
 
-        return redirect()->back()->with('success', 'Question added successfully!');
-    }
+      //  return redirect()->back()->with('success', 'Question added successfully!');
+    
+    return view('Teacher');
+}
 
     /**
      * Store a new quiz.

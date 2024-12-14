@@ -56,7 +56,7 @@
     <div class="container">
         <h2>Student Form</h2>
         <!-- -->
-        <form action="{{ route('student.submit') }}"  method="POST">
+        <form action="{{ route('enter.room') }}"  method="POST">
             @csrf
             <div class="form-group">
                 <label for="student_id">Student ID</label>
