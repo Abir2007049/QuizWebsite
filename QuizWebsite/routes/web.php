@@ -53,7 +53,7 @@ Route::get('/quiz/{id}/take', [App\Http\Controllers\QuizListController::class, '
 
 
 
-
+//Dhruba//
 
 Route::get('/quiz-list/quiz/{id}', [App\Http\Controllers\QuizListController::class, 'showQuizDetails'])->name('quiz.details');
 Route::post('quiz/{id}/schedule', [Schedule_Controller::class, 'schedule'])->name('quiz.schedule');
