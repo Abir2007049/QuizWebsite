@@ -12,6 +12,8 @@ Route::get('/', function () {
 });
 Route::post('/questions/add', [QuestionControlller::class, 'add'])->name('questions.add');
 
+Route::get('/TorS', [RoleController::class, 'TorS'])->name('TorS');
+
 
 Route::get('/registration',  [AuthManager::class, 'registration'])->name('registration');
 
