@@ -10,6 +10,7 @@ use Illuminate\Console\Scheduling\Schedule;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/TorS', [RoleController::class, 'TorS'])->name('TorS');
 Route::post('/questions/add', [QuestionControlller::class, 'add'])->name('questions.add');
 
 
