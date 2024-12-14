@@ -19,13 +19,21 @@
             justify-content: space-between;
             align-items: center;
         }
-        nav a {
+        nav .nav-links {
+            display: flex;
+            align-items: center;
+        }
+        nav a, nav .logout-btn {
             color: white;
             text-decoration: none;
             margin: 0 10px;
             font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
         }
-        nav a:hover {
+        nav a:hover, nav .logout-btn:hover {
             text-decoration: underline;
         }
         h1 {
@@ -87,13 +95,17 @@
         <div>
             <a href="#">Home</a>
         </div>
-        <div>
+        <div class="nav-links">
             <a href="{{ route('quiz.list') }}">View Quizzes</a>
-            <a href="#">Logout</a>
+            <form action="{{ route('logout') }}" method="POST" style="display: inline;">
+                @csrf
+                <button type="submit" class="logout-btn">Logout</button>
+            </form>
         </div>
     </nav>
 
     <h1>Create a New Quiz</h1>
+    <!-- jskdj -->
 
     <!-- Form 1: Create Quiz -->
     <form action="{{ route('storeQuiz') }}" method="POST">
