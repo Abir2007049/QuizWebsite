@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Quiz;
 use App\Models\User;
+use Carbon\Carbon;
+
 
 
 class QuizListController extends Controller
@@ -72,6 +74,12 @@ public function showQuizListToStudents(Request $request)
 
     // Fetch the quizzes created by the teacher
     $quizzes = Quiz::where('userid', $teacher->id)->get();
+    foreach ($quizzes as $quiz) {
+        $quiz->start_datetime = Carbon::parse($quiz->start_datetime);
+    }
+    
+    // Loop through the quizzes and ensure start_time is parsed correctly
+    
 
     // Redirect to a view with the quizzes and student ID
     return view('QuizListForStudents', [
