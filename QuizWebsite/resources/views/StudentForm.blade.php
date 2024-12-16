@@ -56,18 +56,20 @@
     <div class="container">
         <h2>Student Form</h2>
         <!-- -->
-        <form action="{{ route('enter.room') }}"  method="POST">
-            @csrf
-            <div class="form-group">
-                <label for="student_id">Student ID</label>
-                <input type="text" id="student_id" name="student_id" required>
-            </div>
-            <div class="form-group">
-                <label for="room_name">Room Name</label>
-                <input type="text" id="room_name" name="room_name" required>
-            </div>
-            <button type="submit">Submit</button>
-        </form>
+        <form action="{{ route('enter.room') }}" method="POST">
+    @csrf
+    <div class="form-group">
+        <label for="student_id">Student ID</label>
+        <input type="text" id="student_id" name="student_id" required>
+    </div>
+    <div class="form-group">
+        <label for="room_name">Room Name</label>
+        <input type="text" id="room_name" name="room_name" required>
+    </div>
+    <button type="submit">Submit</button>
+</form>
+
+
     </div>
 </body>
 <!-- sdkfkf -->
