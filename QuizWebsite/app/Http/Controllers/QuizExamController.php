@@ -31,14 +31,11 @@ class QuizExamController extends Controller
     
 
     // Handle quiz submission
-    public function submitQuizAnswered(Request $request, $id)
+    public function submitQuizAnswered(Request $request, $quiz, $student)
     {
-        $validatedData = $request->validate([
-            'student_id' => 'required|integer', // Ensure it's an integer and not null
-            'answers' => 'required|array',
-        ]);
-        $studentId = $request->input('student_id');  // Get the student ID
-        $quizId = $id;
+       
+        $quizId = $quiz;      // This is the quiz ID from the URL
+        $studentId = $student;
     
         if (empty($studentId)) {
             return redirect()->back()->with('error', 'Student ID cannot be null');
@@ -63,8 +60,8 @@ class QuizExamController extends Controller
         $result->score = $score;
         $result->save();
     
-        return redirect()->route('student.results', ['student_id' => $studentId])
-                         ->with('success', 'Your result has been saved!');
+       // return redirect()->route('student.results', ['student_id' => $studentId])
+                       //  ->with('success', 'Your result has been saved!');
     }
     
     
