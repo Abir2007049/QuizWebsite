@@ -39,37 +39,57 @@ public function showQuizDetails($id)
     // Pass the quiz and its questions to the view
     return view('ShowQuizToTeacher', compact('quiz'));
 }
+public function enterRoom(Request $request)
+{
+    // Validate the request
+    $validated = $request->validate([
+        'student_id' => 'required|string',
+        'room_name' => 'required|string',
+    ]);
+
+    // Redirect to the quiz list page for the student
+    return redirect()->route('quiz.listStud', [
+        'student_id' => $validated['student_id'],
+        'room_name' => $validated['room_name']
+    ]);
+}
+
 
 public function showQuizListToStudents(Request $request)
-    {
-        // Validate the room name
-        $request->validate([
-            'room_name' => 'required|string',
-        ]);
-
-        // Find the teacher with the given room name
-        $teacher = User::where('room_name', $request->room_name)->first();
-
-        if (!$teacher) {
-            return redirect()->back()->withErrors(['room_name' => 'Room not found. Please try again.']);
-        }
-
-        // Fetch the quizzes created by the teacher
-        $quizzes = Quiz::where('userid', $teacher->id)->get();
-
-        // Redirect to a view with the quizzes
-        return view('QuizListForStudents', [
-            'quizzes' => $quizzes,
-            'teacher' => $teacher,
-        ]);
-    }
-    public function takeQuiz($id)
 {
-    $quiz = Quiz::findOrFail($id);
-    $questions = $quiz->questions; // Assuming a relationship exists
+    // Validate the room name and student ID
+    $validated = $request->validate([
+        'student_id' => 'required|string',
+        'room_name' => 'required|string',
+    ]);
 
-    return view('welcome');//('quizzes.take', compact('quiz', 'questions'));
+    // Find the teacher with the given room name
+    $teacher = User::where('room_name', $request->room_name)->first();
+
+    if (!$teacher) {
+        return redirect()->back()->withErrors(['room_name' => 'Room not found. Please try again.']);
+    }
+
+    // Fetch the quizzes created by the teacher
+    $quizzes = Quiz::where('userid', $teacher->id)->get();
+
+    // Redirect to a view with the quizzes and student ID
+    return view('QuizListForStudents', [
+        'quizzes' => $quizzes,
+        'teacher' => $teacher,
+        'student_id' => $request->input('student_id'),  // Pass student ID
+    ]);
 }
+
+
+
+//     public function takeQuiz($id)
+// {
+//     $quiz = Quiz::findOrFail($id);
+//     $questions = $quiz->questions; // Assuming a relationship exists
+
+//     return view('welcome');//('quizzes.take', compact('quiz', 'questions'));
+// }
 
 
     

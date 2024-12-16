@@ -23,13 +23,12 @@
                     <tr>
                         <td>{{ $quiz->title }}</td>
                         <td>
-                            <a href="{{ route('quiz.take', $quiz->id) }}">Take Quiz</a>
+                            <a href="{{ route('quiz.take', ['id' => $quiz->id, 'student_id' => $student_id]) }}">Take Quiz</a>
                         </td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
-        <!-- kjkjk -->
     @endif
 </body>
 </html>
