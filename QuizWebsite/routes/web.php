@@ -43,18 +43,20 @@ Route::get('/store-quiz', function () {
 Route::post('/submit-student', [QuestionControlller::class, 'submitStudent'])->name('student.submit');
 Route::get('/quiz-list', [App\Http\Controllers\QuizListController::class, 'showQuizList'])->name('quiz.list');
 Route::get('/quiz/{id}/details', [App\Http\Controllers\QuizListController::class, 'showQuizDetails'])->name('quiz.details');
+Route::get('/quiz/{id}/leaderboard', [App\Http\Controllers\BoardController::class, 'showboard'])->name('quiz.leaderboard');
 
 
 Route::post('/logout', function () {
     Auth::logout();
     request()->session()->invalidate();
     request()->session()->regenerateToken();
-    return redirect('/TorS?role=teacher'); // Redirect to the login page or any desired route
+    return redirect('/TorS?role=teacher'); 
 })->name('logout');
 Route::post('/enter-room', [App\Http\Controllers\QuizListController::class, 'enterRoom'])->name('enter.room');
 Route::get('/quiz-listStud', [App\Http\Controllers\QuizListController::class, 'showQuizListToStudents'])->name('quiz.listStud');
 Route::get('/quiz/{id}/take', [QuizExamController::class, 'takeQuiz'])->name('quiz.take');
-Route::post('/quiz/{id}/submit', [QuizExamController::class, 'submitQuizAnswered'])->name('quiz.submit');
+Route::post('/quiz/{quiz}/submit/{student}', [QuizExamController::class, 'submitQuizAnswered'])->name('quiz.submit');
+
 
 Route::post('/store-result', [App\Http\Controllers\ResultController::class, 'storeResult'])->name('result.store');
 Route::get('/student/results/{student_id}', [ResultController::class, 'showResult'])->name('student.results');

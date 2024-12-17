@@ -35,21 +35,22 @@
         <strong>Time Left: </strong><span id="timer"></span>
     </div>
 
-    <form id="quiz-form" action="{{ route('quiz.submit', $quiz->id) }}" method="POST">
-    @csrf
-    @foreach ($quiz->questions as $question)
-        <div>
-            <p>{{ $question->text }}</p>
-            @for ($i = 1; $i <= 4; $i++)
-                <label>
-                    <input type="radio" name="answers[{{ $question->id }}]" value="{{ $i }}" required>
-                    {{ $question->{'option' . $i} }}
-                </label><br>
-            @endfor
-        </div>
-    @endforeach
-    <button type="submit">Submit</button>
-</form>
-
+    <form id="quiz-form" action="{{ route('quiz.submit', ['quiz' => $quiz->id, 'student' => $student_id]) }}" method="POST">
+        @csrf
+    
+        @foreach ($quiz->questions as $question)
+            <div>
+                <p>{{ $question->text }}</p>
+                @for ($i = 1; $i <= 4; $i++)
+                    <label>
+                        <input type="radio" name="answers[{{ $question->id }}]" value="{{ $i }}" required>
+                        {{ $question->{'option' . $i} }}
+                    </label><br>
+                @endfor
+            </div>
+        @endforeach
+        <button type="submit">Submit</button>
+    </form>
+    
  </body>  <!-- jchdshdhdu -->
 </html>
