@@ -4,10 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Take Quiz</title>
-    <script>
+    @livewireStyles
+    <style>
+        #timer {
+            font-size: 2em;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+    </style>
+
+<script>
     document.addEventListener('DOMContentLoaded', () => {
         const timerElement = document.getElementById('timer');
-        let timeLeft = {{ $quiz->duration * 60 }}; // Convert duration to seconds
+       
+        let timeLeft = {{ $duration }};
+       // dd($duration) // Convert duration to seconds
 
         function startTimer() {
             const interval = setInterval(() => {
@@ -27,13 +38,13 @@
         startTimer();
     });
 </script>
-
 </head>
 <body>
+
     <h1>{{ $quiz->title }}</h1>
-    <div>
-        <strong>Time Left: </strong><span id="timer"></span>
-    </div>
+
+    <!-- Stopwatch Display -->
+    <div id="timer">Time Left: <span id="time-left">00:00</span></div>
 
     <form id="quiz-form" action="{{ route('quiz.submit', ['quiz' => $quiz->id, 'student' => $student_id]) }}" method="POST">
         @csrf
@@ -52,5 +63,7 @@
         <button type="submit">Submit</button>
     </form>
     
- </body>  <!-- jchdshdhdu -->
+
+  
+</body>
 </html>
