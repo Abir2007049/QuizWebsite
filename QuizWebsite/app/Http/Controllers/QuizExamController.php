@@ -59,6 +59,7 @@ class QuizExamController extends Controller
         $result->quiz_id = $quizId;
         $result->score = $score;
         $result->save();
+        return view('QuizGiven');
     
        // return redirect()->route('student.results', ['student_id' => $studentId])
                        //  ->with('success', 'Your result has been saved!');

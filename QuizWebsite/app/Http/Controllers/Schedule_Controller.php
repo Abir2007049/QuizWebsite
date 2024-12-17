@@ -30,8 +30,7 @@ public function schedule(Request $request, $quiz_id)
 
 
     // Redirect back with success message
-   // return redirect()->route('quiz.details', $quiz->id)
-                  //   ->with('success', 'Quiz scheduled successfully!');
+   return redirect()->route('quiz.details', $quiz->id)  ->with('success', 'Quiz scheduled successfully!');
 }
 
 }
