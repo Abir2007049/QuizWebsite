@@ -25,10 +25,17 @@
                     <td>
                         @php
                         // Convert $quiz->start_datetime to a Carbon instance
-                        $startDatetime = \Carbon\Carbon::parse($quiz->start_datetime)->setTimezone('Asia/Dhaka'); // Use actual datetime
+                        $startDatetime = \Carbon\Carbon::parse($quiz->start_datetime)->setTimezone('Asia/Dhaka');
+
+                       // echo $startDatetime->timezoneName; // Use actual datetime
 
     // Get the current time in Dhaka
                          $dhakaTime = \Carbon\Carbon::now('Asia/Dhaka');
+
+                         
+    // Calculate the end time by adding the duration to the start time
+    $endDatetime = $startDatetime->copy()->addMinutes($quiz->duration);
+
                     
                         // Convert Dhaka time to UTC
                       //  $utcTime = $dhakaTime->setTimezone('UTC');
@@ -47,6 +54,8 @@
                         @if ($dhakaTime->lt($startDatetime))
                       
                             <p>The quiz will be available on {{ $startDatetime->format('F j, Y, g:i A') }}.</p>
+                            @elseif ($dhakaTime->gt($endDatetime))
+                             <p>The quiz has finished.</p>
                         @else
                             <a href="{{ route('quiz.take', ['id' => $quiz->id, 'student_id' => $student_id]) }}">Take Quiz</a>
                         @endif
