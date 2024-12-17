@@ -32,6 +32,6 @@ class ResultController extends Controller
         $results = Result::where('student_id', $student_id)->get();
 
         // Pass the results to the view
-        return view('result.show', compact('results'));
+       // return view('result.show', compact('results'));
     }
 }

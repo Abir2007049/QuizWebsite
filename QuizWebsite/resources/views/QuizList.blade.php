@@ -22,6 +22,8 @@
                     <td>{{ $quiz->created_at->format('d M, Y H:i') }}</td>
                     <td>
                         <a href="{{ route('quiz.details', $quiz->id) }}" class="btn btn-primary btn-sm">View</a>
+                        <a href="{{ route('quiz.leaderboard', $quiz->id) }}" class="btn btn-primary btn-sm">leaderboard</a>
+
                     </td>
                 </tr>
             @empty

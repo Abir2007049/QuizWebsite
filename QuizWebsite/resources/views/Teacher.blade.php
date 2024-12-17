@@ -96,7 +96,7 @@
             <a href="#">Home</a>
         </div>
         <div class="nav-links">
-        <a href="{{ route('quiz.list') }}">View Quizzes</a>
+         <a href="{{ route('quiz.list') }}">View Quizzes</a>
 
 
             <form action="{{ route('logout') }}" method="POST" style="display: inline;">
