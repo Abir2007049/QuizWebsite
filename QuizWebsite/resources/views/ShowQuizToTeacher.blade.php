@@ -121,7 +121,7 @@
         flatpickr("#start_datetime", {
             enableTime: true,  // Enables time selection
             dateFormat: "Y-m-d H:i",  // Formats the date and time
-            minDate: "today"  // Prevents selecting past dates
+           // minDate: "today"  // Prevents selecting past dates
         });
     });
 </script>
