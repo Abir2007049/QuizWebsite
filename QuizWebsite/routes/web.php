@@ -43,6 +43,7 @@ Route::get('/store-quiz', function () {
 Route::post('/submit-student', [QuestionControlller::class, 'submitStudent'])->name('student.submit');
 Route::get('/quiz-list', [App\Http\Controllers\QuizListController::class, 'showQuizList'])->name('quiz.list');
 Route::get('/quiz/{id}/details', [App\Http\Controllers\QuizListController::class, 'showQuizDetails'])->name('quiz.details');
+Route::get('/quiz/{id}/leaderboard', [App\Http\Controllers\BoardController::class, 'showboard'])->name('quiz.leaderboard');
 
 
 Route::post('/logout', function () {
