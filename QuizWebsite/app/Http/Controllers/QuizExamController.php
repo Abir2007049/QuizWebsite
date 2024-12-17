@@ -5,6 +5,8 @@ use Illuminate\Http\Request;
 use App\Models\Quiz;
 use App\Models\Question;
 use App\Models\Result;
+use Carbon\Carbon;
+
 
 use Illuminate\Support\Facades\Auth;
 
@@ -16,7 +18,23 @@ class QuizExamController extends Controller
         $studentId = $request->query('student_id');
     
         // Fetch the quiz details
+      //  $quiz = Quiz::findOrFail($quiz_id);
         $quiz = Quiz::findOrFail($quiz_id);
+        $startDateTime = Carbon::parse($quiz->start_datetime)->setTimezone('UTC'); // Set the time zone
+        $duration = $quiz->duration;
+        $finishDateTime = $startDateTime->copy()->addMinutes($duration);
+        
+        // Get the current UTC time
+        $current = Carbon::now('UTC');
+        
+        // Calculate the remaining time in seconds
+        if ($current->greaterThan($finishDateTime)) {
+            // Time has already passed
+            $timeLeft = 0;
+        } else {
+            $timeLeft = $current->diffInSeconds($finishDateTime, false);
+        }
+        
     
         // Render the quiz view with the student ID
         if (!$quiz) {
@@ -26,6 +44,7 @@ class QuizExamController extends Controller
         return view('QuizExam', [
             'quiz' => $quiz,
             'student_id' => $studentId,
+            'duration' => $timeLeft,
         ]);
     }
     
