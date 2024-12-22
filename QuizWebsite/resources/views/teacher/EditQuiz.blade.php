@@ -59,38 +59,46 @@
 
     <!-- Form to Add a New Question -->
     <h3>Add New Question</h3>
-    <form action="{{ route('questions.add') }}" method="POST">
-        @csrf
-        <!-- Pass the Quiz ID -->
-        <input type="hidden" name="quiz_id" value="{{ $quiz->id }}">
+<form action="{{ route('questions.add') }}" method="POST">
+    @csrf
+    <!-- Pass the Quiz ID -->
+    <input type="hidden" name="quiz_id" value="{{ $quiz->id }}">
 
-        <!-- Question Text -->
+    <!-- Question Text -->
+    <div class="form-group">
+        <label for="question_text" class="form-label">Question Text</label>
+        <input type="text" id="question_text" name="question_text" class="form-control" required>
+    </div>
+
+    <!-- Options -->
+    <div class="form-group">
+        <label class="form-label">Options</label>
         <div class="form-group">
-            <label for="question_text" class="form-label">Question Text</label>
-            <input type="text" id="question_text" name="question_text" class="form-control" required>
+            <input type="text" name="options[1]" class="form-control mb-2" placeholder="Option 1" required>
+            <input type="text" name="options[2]" class="form-control mb-2" placeholder="Option 2" required>
+            <input type="text" name="options[3]" class="form-control mb-2" placeholder="Option 3" required>
+            <input type="text" name="options[4]" class="form-control mb-2" placeholder="Option 4" required>
         </div>
+    </div>
 
-        <!-- Options -->
-        <div class="form-group">
-            <label class="form-label">Options</label>
-            <div class="form-group">
-                <input type="text" name="options[1]" class="form-control mb-2" placeholder="Option 1" required>
-                <input type="text" name="options[2]" class="form-control mb-2" placeholder="Option 2" required>
-                <input type="text" name="options[3]" class="form-control mb-2" placeholder="Option 3" required>
-                <input type="text" name="options[4]" class="form-control mb-2" placeholder="Option 4" required>
-            </div>
-        </div>
+    <!-- Correct Option -->
+    <div class="form-group">
+        <label for="correct_option" class="form-label">Correct Option</label>
+        <input type="number" id="correct_option" name="correct_option" class="form-control" min="1" max="4" required>
+        <small class="form-text text-muted">Enter a number from 1 to 4.</small>
+    </div>
 
-        <!-- Correct Option -->
-        <div class="form-group">
-            <label for="correct_option" class="form-label">Correct Option</label>
-            <input type="number" id="correct_option" name="correct_option" class="form-control" min="1" max="4" required>
-            <small class="form-text text-muted">Enter a number from 1 to 4.</small>
-        </div>
+    <!-- Duration -->
+    <div class="form-group">
+        <label for="duration" class="form-label">Duration (minutes)</label>
+        <input type="number" id="duration" name="duration" class="form-control" min="1" placeholder="Duration in minutes (optional)">
+        <small class="form-text text-muted">Enter the time limit for the question in minutes. (Optional)</small>
+    </div>
 
-        <!-- Submit Button -->
-        <button type="submit" class="btn btn-primary mt-2">Add Question</button>
-    </form>
+    <!-- Submit Button -->
+    <button type="submit" class="btn btn-primary mt-2">Add Question</button>
+</form>
+
 
     <!-- Schedule Quiz Form -->
     <h3>Schedule Quiz</h3>

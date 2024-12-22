@@ -50,7 +50,8 @@ class QuestionControlller extends Controller
              'question_text' => 'required|string|max:255', // Validate the question text
              'options' => 'required|array|min:4|max:4', // Options must be an array of 4 items
              'options.*' => 'required|string|max:255', // Each option must be a string
-             'correct_option' => 'required|integer|in:1,2,3,4', // Correct option must be one of 1, 2, 3, or 4
+             'correct_option' => 'required|integer|in:1,2,3,4', 
+             'duration' => 'nullable|integer|min:1',
          ]);
  
          // Find the quiz by its ID
@@ -64,6 +65,7 @@ class QuestionControlller extends Controller
              'option3' => $request->options[3],
              'option4' => $request->options[4],
              'right_option' => $request->correct_option,
+             'duration' => $request->duration,
          ]);
  
          // Redirect back to the quiz show page with a success message
