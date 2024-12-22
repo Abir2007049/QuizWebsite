@@ -17,7 +17,7 @@ class AuthManager extends Controller
 
     public function registration()
     {
-        return view('Registration');
+        return view('teacher\registration');
     }
 
     public function loginPost(Request $request)
@@ -30,7 +30,7 @@ class AuthManager extends Controller
         $credentials = $request->only('email', 'password');
      
         if (Auth::attempt($credentials))
-        return view('Teacher');
+        return view('teacher\addquiz');
     }
 
     public function registrationPost(Request $request)
@@ -42,7 +42,7 @@ class AuthManager extends Controller
 
         $roomExists = User::where('room_name', $request->room_name)->exists();
         if ($roomExists) {
-            // Room name is already in use, redirect with an error message
+          
             return redirect()->back()->with('error', 'Room name already in use. Please choose another room.');
         }
         else{
@@ -54,7 +54,7 @@ class AuthManager extends Controller
 
 
         Auth::login($user);
-        return view('Teacher');
+        return view('teacher\addquiz');
 
          }
 

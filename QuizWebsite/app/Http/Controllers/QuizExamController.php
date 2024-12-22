@@ -41,7 +41,7 @@ class QuizExamController extends Controller
             // Handle quiz not found (return a 404 page, redirect to a different page, etc.)
             abort(404);
         }
-        return view('QuizExam', [
+        return view('student\questions', [
             'quiz' => $quiz,
             'student_id' => $studentId,
             'duration' => $timeLeft,
@@ -78,7 +78,7 @@ class QuizExamController extends Controller
         $result->quiz_id = $quizId;
         $result->score = $score;
         $result->save();
-        return view('QuizGiven');
+        return view('student\finishmessage');
     
        // return redirect()->route('student.results', ['student_id' => $studentId])
                        //  ->with('success', 'Your result has been saved!');
