@@ -3,67 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Take Quiz</title>
-    @livewireStyles
-    <style>
-        #timer {
-            font-size: 2em;
-            font-weight: bold;
-            margin: 20px 0;
-        }
-    </style>
-
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const timerElement = document.getElementById('timer');
-       
-        let timeLeft = {{ $duration }};
-       // dd($duration) // Convert duration to seconds
-
-        function startTimer() {
-            const interval = setInterval(() => {
-                const minutes = Math.floor(timeLeft / 60);
-                const seconds = timeLeft % 60;
-
-                timerElement.innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-                timeLeft--;
-
-                if (timeLeft < 0) {
-                    clearInterval(interval);
-                    document.getElementById('quiz-form').submit(); // Auto-submit on timeout
-                }
-            }, 1000);
-        }
-
-        startTimer();
-    });
-</script>
+    <link rel="stylesheet" href="{{ asset('styles.css') }}" />
+          
+   
 </head>
 <body>
+   <header>
+           
 
-    <h1>{{ $quiz->title }}</h1>
-
-    <!-- Stopwatch Display -->
-    <div id="timer">Time Left: <span id="time-left">00:00</span></div>
-
-    <form id="quiz-form" action="{{ route('quiz.submit', ['quiz' => $quiz->id, 'student' => $student_id]) }}" method="POST">
-        @csrf
-    
-        @foreach ($quiz->questions as $question)
-            <div>
-                <p>{{ $question->text }}</p>
-                @for ($i = 1; $i <= 4; $i++)
-                    <label>
-                        <input type="radio" name="answers[{{ $question->id }}]" value="{{ $i }}" required>
-                        {{ $question->{'option' . $i} }}
-                    </label><br>
-                @endfor
+            <div class="timer">
+                <p>
+                    Time:
+                    <span id="timer">
+                        0
+                    </span>
+                </p>
             </div>
-        @endforeach
-        <button type="submit">Submit</button>
-    </form>
-    
+        </header>
 
-  
+        <main class="quiz">
+            <div id="quiz-start">
+                <div class="landing" 
+                     id="start-screen">
+                   
+                    <h1>
+                       @php
+                         echo $quiz->title;
+                       @endphp
+                    </h1>
+                    <p>
+                        Try to answer the following
+                         questions within the time limit. 
+                    </p>
+                    <button id="start">
+                        Start Quiz
+                    </button>
+                </div>
+            
+
+            <div class="hide" id="questions">
+                <h2 id="question-words"></h2>
+                <div class="options" id="options">
+                </div>
+            </div>
+
+            <div class="hide" id="quiz-end">
+                <h2>All Done!</h2>
+                <p>Your final score is:
+                    <span id="score-final">
+                    </span>
+                </p>
+                <p>
+                    Please enter your name:
+                    <input type="text" 
+                           id="name" 
+                           max="3" />
+                    <button id="submit-score">
+                        Submit
+                    </button>
+                </p>
+            </div>
+
+            <div id="feedback" 
+                 class="feedback hide">
+            </div>
+        </main>
+    </div>
+   
+
+    <script>
+      const questions = @json($quiz->questions); 
+      console.log(questions);
+    </script>
+    
+    
+    <script src="{{ asset('script.js') }}"></script>
+
+
+
+       
+
 </body>
 </html>
