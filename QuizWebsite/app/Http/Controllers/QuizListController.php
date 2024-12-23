@@ -22,7 +22,7 @@ public function showQuizList()
         $quizzes = Quiz::where('userid', Auth::id())->get();
 
         // Pass the quizzes to the view
-        return view('QuizList', compact('quizzes'));
+        return view('teacher\allquizes', compact('quizzes'));
     }
 
     // If not logged in, redirect to login page or show a message
@@ -39,7 +39,7 @@ public function showQuizDetails($id)
     }
 
     // Pass the quiz and its questions to the view
-    return view('ShowQuizToTeacher', compact('quiz'));
+    return view('teacher/EditQuiz', compact('quiz'));
 }
 public function enterRoom(Request $request)
 {
@@ -82,7 +82,7 @@ public function showQuizListToStudents(Request $request)
     
 
     // Redirect to a view with the quizzes and student ID
-    return view('QuizListForStudents', [
+    return view('student\allquizes', [
         'quizzes' => $quizzes,
         'teacher' => $teacher,
         'student_id' => $request->input('student_id'),  // Pass student ID

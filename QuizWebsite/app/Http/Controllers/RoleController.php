@@ -13,9 +13,9 @@ class RoleController extends Controller
 
         // Redirect based on the role
         if ($role === 'teacher') {
-            return view('TeacherAuth'); // teacher.blade.php
+            return view('teacher\teacherauth'); // teacher.blade.php
         } elseif ($role === 'student') {
-            return view('StudentForm'); // students.blade.php
+            return view('student\enterroom'); // students.blade.php
         } else {
             return redirect()->back()->with('error', 'Invalid selection.');
         }
