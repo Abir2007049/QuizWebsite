@@ -32,6 +32,7 @@ public function showQuizDetails($id)
 {
     // Fetch the quiz with its questions
     $quiz = Quiz::with('questions')->findOrFail($id);
+    $quiz->start_datetime = Carbon::parse($quiz->start_datetime)->setTimezone(config('app.timezone'));
 
     // Check if the quiz belongs to the logged-in user
     if ($quiz->userid !== Auth::id()) {
