@@ -14,40 +14,43 @@ class QuizExamController extends Controller
 {
     // Show the quiz to the student
     public function takeQuiz(Request $request, $quiz_id)
-    {
-        $studentId = $request->query('student_id');
-    
-        // Fetch the quiz details
-      //  $quiz = Quiz::findOrFail($quiz_id);
-        $quiz = Quiz::findOrFail($quiz_id);
-        $startDateTime = Carbon::parse($quiz->start_datetime)->setTimezone('UTC'); // Set the time zone
-        $duration = $quiz->duration;
-        $finishDateTime = $startDateTime->copy()->addMinutes($duration);
-        
-        // Get the current UTC time
-        $current = Carbon::now('UTC');
-        
-        // Calculate the remaining time in seconds
-        if ($current->greaterThan($finishDateTime)) {
-            // Time has already passed
-            $timeLeft = 0;
-        } else {
-            $timeLeft = $current->diffInSeconds($finishDateTime, false);
-        }
-        
-    
-        // Render the quiz view with the student ID
-        if (!$quiz) {
-            // Handle quiz not found (return a 404 page, redirect to a different page, etc.)
-            abort(404);
-        }
-        return view('student\questions', [
-            'quiz' => $quiz,
-            'student_id' => $studentId,
-            'duration' => $timeLeft,
-        ]);
+{
+    $studentId = $request->query('student_id');
+
+    $quiz = Quiz::findOrFail($quiz_id);
+
+    // Parse and adjust times to Asia/Dhaka
+    $startDatetime = \Carbon\Carbon::parse($quiz->start_datetime)->setTimezone('Asia/Dhaka');
+    $duration = $quiz->duration;
+    $finishDateTime = $startDatetime->copy()->addMinutes($duration);
+    $current = Carbon::now('Asia/Dhaka');
+
+    // Debugging (temporarily add this)
+    // dd([
+    //     'Start Time (Dhaka)' => $startDatetime,
+    //     'Finish Time (Dhaka)' => $finishDateTime,
+    //     'Current Time (Dhaka)' => $current,
+    //     'Duration (Minutes)' => $duration,
+    //     'Is Current Before Start?' => $current->lt($startDatetime),
+    //     'Is Current After End?' => $current->gt($finishDateTime),
+    // ]);
+
+    // Ensure quiz is active
+    if ($current->lt($startDatetime)) {
+        return back()->with('error', 'The quiz has not started yet.');
     }
-    
+
+    if ($current->gt($finishDateTime)) {
+        return back()->with('error', 'The quiz has already ended.');
+    }
+
+    return view('student.questions', [
+        'quiz' => $quiz,
+        'student_id' => $studentId,
+        'duration' => $current->diffInSeconds($finishDateTime, false),
+    ]);
+}
+
 
     // Handle quiz submission
     public function submitQuizAnswered(Request $request, $quiz, $student)
