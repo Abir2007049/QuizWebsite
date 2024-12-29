@@ -1,8 +1,4 @@
-// script.js
 
-
-
-// Get Dom Elements
 
 let questionsEl =
     document.querySelector(
@@ -25,19 +21,23 @@ let feedbackEl = document.querySelector(
 let reStartBtn =
     document.querySelector("#restart");
 
-// Quiz's initial state
+
 let currentQuestionIndex = 0;
-let time = questions.length * 15;
+let time ;
+let score=0;
 let timerId;
 
-// Start quiz and hide frontpage
+
 
 function quizStart() {
+
+    shuffle(questions);
+
     timerId = setInterval(
         clockTick,
         1000
     );
-    timerEl.textContent = time;
+    //timerEl.textContent = time;
     let landingScreenEl =
         document.getElementById(
             "start-screen"
@@ -52,88 +52,67 @@ function quizStart() {
     getQuestion();
 }
 
-// Loop through array of questions and
-// Answers and create list with buttons
+
 function getQuestion() {
-    let currentQuestion = questions[currentQuestionIndex]; // Get the current question object
+    let currentQuestion = questions[currentQuestionIndex];
 
-    // Get the element where the question text will be displayed
     let promptEl = document.getElementById("question-words");
-
-    // Set the question text
     promptEl.textContent = currentQuestion.text;
 
-    // Get the choices element where you want to display the options
     let choicesEl = document.getElementById("options");
+    choicesEl.innerHTML = ""; 
 
-    // Clear previous options
-    choicesEl.innerHTML = "";
+    
 
-    // Create the buttons for the 4 separate options
     for (let i = 1; i <= 4; i++) {
-        let optionText = currentQuestion["option" + i]; // Get the option text (option1, option2, etc.)
-        
-        let choiceBtn = document.createElement("button");
-        choiceBtn.setAttribute("value", optionText); // Set the value of the button to the option text
-        choiceBtn.textContent = i + ". " + optionText; // Set the button text (1. hello, 2. hi, etc.)
+        let optionText = currentQuestion["option" + i];
 
-        // Set the onclick function to handle the button click
-        choiceBtn.onclick = function() {
-            questionClick(optionText, i); // Pass the option text and its number
+        let choiceBtn = document.createElement("button");
+        choiceBtn.setAttribute("value", optionText);
+        choiceBtn.textContent = i + ". " + optionText;
+
+      
+        choiceBtn.onclick = function () {
+            questionClick(optionText);
         };
 
-        // Append the button to the choices element
         choicesEl.appendChild(choiceBtn);
-    }
+    }  
+
+    startQuestionTimer(currentQuestion.duration);
+    
 }
 
 
-// Check for right answers and deduct
-// Time for wrong answer, go to next question
 
-function questionClick() {
+function questionClick(selectedValue) {
     if (
-        this.value !==
-        questions[currentQuestionIndex]
-            .answer
+        selectedValue !== questions[currentQuestionIndex]["option" + questions[currentQuestionIndex].right_option]
     ) {
-        time -= 10;
-        if (time < 0) {
-            time = 0;
-        }
-        timerEl.textContent = time;
-        feedbackEl.textContent = `Wrong! The correct answer was 
-        ${questions[currentQuestionIndex].answer}.`;
+        feedbackEl.textContent = `Wrong!`;
         feedbackEl.style.color = "red";
     } else {
-        feedbackEl.textContent =
-            "Correct!";
-        feedbackEl.style.color =
-            "green";
+        feedbackEl.textContent = "Correct!";
+        feedbackEl.style.color = "green";
+        score++;
     }
-    feedbackEl.setAttribute(
-        "class",
-        "feedback"
-    );
+
+    feedbackEl.setAttribute("class", "feedback");
     setTimeout(function () {
-        feedbackEl.setAttribute(
-            "class",
-            "feedback hide"
-        );
+        feedbackEl.setAttribute("class", "feedback hide");
     }, 2000);
+
+    clearInterval(timerId);
+
     currentQuestionIndex++;
-    if (
-        currentQuestionIndex ===
-        questions.length
-    ) {
+    if (currentQuestionIndex === questions.length) {
         quizEnd();
     } else {
         getQuestion();
     }
 }
 
-// End quiz by hiding questions,
-// Stop timer and show final score
+
 
 function quizEnd() {
     clearInterval(timerId);
@@ -148,14 +127,14 @@ function quizEnd() {
         document.getElementById(
             "score-final"
         );
-    finalScoreEl.textContent = time;
+    finalScoreEl.textContent = score;
     questionsEl.setAttribute(
         "class",
         "hide"
     );
 }
 
-// End quiz if timer reaches 0
+
 
 function clockTick() {
     time--;
@@ -165,38 +144,57 @@ function clockTick() {
     }
 }
 
-// Save score in local storage
-// Along with users' name
 
-function saveHighscore() {
-    let name = nameEl.value.trim();
-    if (name !== "") {
-        let highscores =
-            JSON.parse(
-                window.localStorage.getItem(
-                    "highscores"
-                )
-            ) || [];
-        let newScore = {
-            score: time,
-            name: name,
-        };
-        highscores.push(newScore);
-        window.localStorage.setItem(
-            "highscores",
-            JSON.stringify(highscores)
-        );
-        alert(
-            "Your Score has been Submitted"
-        );
+
+// Fisher-Yates Shuffle Algorithm
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
     }
 }
 
-// Save users' score after pressing enter
+function startQuestionTimer(duration) {
+    if (timerId) {
+        clearInterval(timerId);
+    }
+
+    let timeLeft = duration; // Set the timer for the current question
+    timerEl.textContent = timeLeft;
+
+    timerId = setInterval(() => {
+        timeLeft--;
+        timerEl.textContent = timeLeft;
+
+        if (timeLeft <= 0) {
+            clearInterval(timerId);
+
+            feedbackEl.textContent = "Time's up!";
+            feedbackEl.style.color = "red";
+
+            setTimeout(function () {
+                feedbackEl.setAttribute("class", "feedback hide");
+            }, 2000);
+
+            currentQuestionIndex++;
+            if (currentQuestionIndex === questions.length) {
+                quizEnd();
+            } else {
+                getQuestion();
+            }
+        }
+    }, 1000);
+}
+
+
+
+
+
+
 
 function checkForEnter(event) {
     if (event.key === "Enter") {
-        saveHighscore();
+       
         alert(
             "Your Score has been Submitted"
         );
@@ -204,10 +202,5 @@ function checkForEnter(event) {
 }
 nameEl.onkeyup = checkForEnter;
 
-// Save users' score after clicking submit
-
-submitBtn.onclick = saveHighscore;
-
-// Start quiz after clicking start quiz
 
 startBtn.onclick = quizStart;

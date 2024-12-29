@@ -119,8 +119,31 @@
         
         <!-- Submit Button -->
         <button type="submit" class="btn btn-primary mt-2">Schedule Quiz</button>
+        
+        <!-- Start Now Button -->
+        <button type="button" class="btn btn-success mt-2" id="startNowButton">Start Now</button>
     </form>
+    
+    
+    
 </div>
+
+<script>
+    // Handle Start Now button click
+    document.getElementById('startNowButton').addEventListener('click', function () {
+        let duration = $quiz->duration;
+
+        if(duration==-1) please enter a valid duration
+
+        else
+        {
+            ok
+        }
+
+        
+       
+    });
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
