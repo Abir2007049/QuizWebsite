@@ -65,7 +65,8 @@ return [
     |
     */
 
-    'timezone' => env('APP_TIMEZONE', 'UTC'),
+    'timezone' => 'Asia/Dhaka', // Replace with your local timezone
+
 
     /*
     |--------------------------------------------------------------------------

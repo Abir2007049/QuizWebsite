@@ -50,15 +50,15 @@
                     
                         {{-- Debugging the comparison result --}}
                     
-                
                         @if ($dhakaTime->lt($startDatetime))
-                      
-                            <p>The quiz will be available on {{ $startDatetime->format('F j, Y, g:i A') }}.</p>
-                            @elseif ($dhakaTime->gt($endDatetime))
-                             <p>The quiz has finished.</p>
-                        @else
-                            <a href="{{ route('quiz.take', ['id' => $quiz->id, 'student_id' => $student_id]) }}">Take Quiz</a>
-                        @endif
+    <p>The quiz will be available on {{ $startDatetime->format('F j, Y, g:i A') }}.</p>
+@elseif ($dhakaTime->gt($endDatetime))
+    <p>The quiz has finished.</p>
+@else
+    <a href="{{ route('quiz.take', ['id' => $quiz->id, 'student_id' => $student_id]) }}">Take Quiz</a>
+@endif
+
+
                     </td>
                 </tr>
                 
