@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Question;
 use App\Models\Quiz;
+use Carbon\Carbon;
 
 class QuestionControlller extends Controller
 {
@@ -23,8 +24,9 @@ class QuestionControlller extends Controller
             $quiz = new Quiz();
             $quiz->title = $request->quiz_title;
             $quiz->userid = Auth::id(); // Use the authenticated user's ID
-            $quiz->start_datetime = now();
-            $quiz->duration =60;
+            $quiz->start_datetime = Carbon::now();
+
+            $quiz->duration =-1;
             $quiz->save();
 
 
