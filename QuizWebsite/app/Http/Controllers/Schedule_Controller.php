@@ -11,8 +11,9 @@ class Schedule_Controller extends Controller {
 {
     // Validate the incoming data
     $request->validate([
-        'start_datetime' => 'required|date',
-        'duration' => 'required|integer|min:1',
+       'start_datetime' => 'nullable|date',
+       'duration' => 'nullable|integer|min:1',
+
     ]);
 
     // Find the quiz
