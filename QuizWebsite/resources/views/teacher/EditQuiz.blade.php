@@ -119,11 +119,15 @@
         
         <!-- Submit Button -->
         <button type="submit" class="btn btn-primary mt-2">Schedule Quiz</button>
+</form>
         
-        <!-- Start Now Button -->
-        <button type="button" class="btn btn-success mt-2" id="startNowButton">Start Now</button>
-    </form>
-    
+       
+        <form action="{{ route('quiz.startnow', $quiz->id) }}" method="POST">
+    @csrf
+    <!-- Start Now Button -->
+    <button type="submit" class="btn btn-success mt-2" id="startNowButton">Start Now</button>
+       </form>
+
     
     
 </div>

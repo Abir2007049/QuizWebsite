@@ -36,6 +36,7 @@ class QuizExamController extends Controller
     // ]);
 
     // Ensure quiz is active
+    
     if ($current->lt($startDatetime)) {
         return back()->with('error', 'The quiz has not started yet.');
     }
@@ -50,6 +51,24 @@ class QuizExamController extends Controller
         'duration' => $current->diffInSeconds($finishDateTime, false),
     ]);
 }
+public function startNow(Request $request, $id)
+{
+    // Get the current time in the desired timezone
+    $current = Carbon::now('Asia/Dhaka');
+
+    // Find the quiz by ID
+    $quiz = Quiz::findOrFail($id); // Use $id as the parameter name is $id
+
+    // Update the start_datetime with the current time
+    $quiz->start_datetime = $current;
+
+    // Save the updated quiz
+    $quiz->save();
+
+    // Redirect back with a success message
+   
+}
+
 
 
     // Handle quiz submission
