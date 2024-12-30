@@ -50,6 +50,10 @@ public function enterRoom(Request $request)
         'room_name' => 'required|string',
     ]);
 
+    // Store the student_id and room_name in the session
+    session(['student_id' => $validated['student_id']]);
+    session(['room_name' => $validated['room_name']]);
+
     // Redirect to the quiz list page for the student with URL parameters
     return redirect()->route('quiz.listStud', [
         'student_id' => $validated['student_id'],
@@ -60,11 +64,12 @@ public function enterRoom(Request $request)
 
 
 
+
 public function showQuizListToStudents(Request $request)
 {
-    // Retrieve the student ID and room name from session (or request if needed)
-    $studentId = session('student_id', $request->input('student_id'));
-    $roomName = session('room_name', $request->input('room_name'));
+    // Retrieve the student ID and room name from session
+    $studentId = session('student_id');
+    $roomName = session('room_name');
 
     // Validate if the student ID and room name are available
     if (!$studentId || !$roomName) {
@@ -90,7 +95,7 @@ public function showQuizListToStudents(Request $request)
     return view('student.allquizes', [
         'quizzes' => $quizzes,
         'teacher' => $teacher,
-        'student_id' => $studentId,  // Pass student ID from session or request
+        'student_id' => $studentId,  // Pass student ID from session
     ]);
 }
 
