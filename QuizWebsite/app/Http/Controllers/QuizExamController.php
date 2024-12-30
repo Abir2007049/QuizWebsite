@@ -73,38 +73,43 @@ public function startNow(Request $request, $id)
 
     // Handle quiz submission
     public function submitQuizAnswered(Request $request, $quiz, $student)
-    {
-       
-        $quizId = $quiz;      // This is the quiz ID from the URL
-        $studentId = $student;
-    
-        if (empty($studentId)) {
-            return redirect()->back()->with('error', 'Student ID cannot be null');
-        }
-    
-        // Process answers
-        $answers = $request->input('answers');
-        $score = 0;
-    
-        // Retrieve the correct options for the quiz
-        $questions = Question::where('quiz_id', $quizId)->get();
-        foreach ($questions as $question) {
-            if (isset($answers[$question->id]) && $answers[$question->id] == $question->right_option) {
-                $score++;
-            }
-        }
-    
-        // Insert the result into the database
-        $result = new Result();
-        $result->student_id = $studentId;
-        $result->quiz_id = $quizId;
-        $result->score = $score;
-        $result->save();
-        return view('student\finishmessage');
-    
-       // return redirect()->route('student.results', ['student_id' => $studentId])
-                       //  ->with('success', 'Your result has been saved!');
+{
+    $request->validate([
+        'answers' => 'required|array',
+        'student_id' => 'required|integer',
+    ]);
+
+    $quizId = $quiz;
+    $studentId = $student;
+
+    if (empty($studentId)) {
+        return redirect()->back()->with('error', 'Student ID cannot be null');
     }
+
+    $answers = $request->input('answers');
+    $score = 0;
+
+    $questions = Question::where('quiz_id', $quizId)->get();
+    foreach ($questions as $question) {
+        if (isset($answers[$question->id]) && $answers[$question->id] == $question->right_option) {
+            $score++;
+        }
+    }
+
+    $result = new Result();
+    $result->student_id = $studentId;
+    $result->quiz_id = $quizId;
+    $result->score = $score;
+
+    if ($result->save()) {
+        \Log::info('Result saved successfully: ', $result->toArray());
+        return view('student.finishmessage');
+    } else {
+        \Log::error('Failed to save result');
+        return redirect()->back()->with('error', 'Failed to save result');
+    }
+}
+
     
     
 
