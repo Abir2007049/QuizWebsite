@@ -57,6 +57,7 @@ Route::post('/enter-room', [App\Http\Controllers\QuizListController::class, 'ent
 Route::get('/quiz-listStud', [App\Http\Controllers\QuizListController::class, 'showQuizListToStudents'])->name('quiz.listStud');
 
 
+
 //////////////////////
 Route::get('/quiz/{id}/leaderboard', [App\Http\Controllers\BoardController::class, 'showboard'])->name('quiz.leaderboard');
 /////////////////////

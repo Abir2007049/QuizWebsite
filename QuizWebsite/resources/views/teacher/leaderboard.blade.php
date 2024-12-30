@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leaderboard </title>
+    <title>Leaderboard</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -36,7 +36,7 @@
             color: #28a745;
             font-weight: bold;
         }
-        .username {
+        .student-id {
             font-weight: 600;
         }
         .container {
@@ -47,23 +47,21 @@
 <body>
 
 <div class="container">
-   
-
     <!-- Leaderboard Table -->
     <div class="leaderboard-table">
         <table class="table table-striped table-bordered">
             <thead>
                 <tr>
                     <th class="rank">Rank</th>
-                    <th class="username">Username</th>
+                    <th class="student-id">Student ID</th> <!-- Displaying Student ID -->
                     <th class="score">Score</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach($leaderboard as $index => $entry)
+                @foreach($results as $index => $entry)
                     <tr>
                         <td class="rank">{{ $index + 1 }}</td>
-                        <td class="StudentId">{{ $entry->student_id }}</td>
+                        <td class="student-id">{{ $entry->student_id }}</td> <!-- Displaying Student ID -->
                         <td class="score">{{ $entry->score }}</td>
                     </tr>
                 @endforeach
@@ -73,7 +71,6 @@
     
     <!-- Pagination (Optional, if you have many entries) -->
     <div class="d-flex justify-content-center">
-        <!-- Example pagination buttons -->
         <nav aria-label="Page navigation example">
             <ul class="pagination">
                 <li class="page-item">
@@ -85,7 +82,6 @@
             </ul>
         </nav>
     </div>
-
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
