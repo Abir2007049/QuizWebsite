@@ -54,7 +54,8 @@ Route::get('/teacher', function () {
 Route::get('/quiz-list', [App\Http\Controllers\QuizListController::class, 'showQuizList'])->name('quiz.list');
 Route::get('/quiz/{id}/details', [App\Http\Controllers\QuizListController::class, 'showQuizDetails'])->name('quiz.details');
 Route::post('/enter-room', [App\Http\Controllers\QuizListController::class, 'enterRoom'])->name('enter.room');
-Route::get('/quiz-listStud/{student_id}/{room_name}', [App\Http\Controllers\QuizListController::class, 'showQuizListToStudents'])->name('quiz.listStud');
+Route::get('/quiz-listStud', [App\Http\Controllers\QuizListController::class, 'showQuizListToStudents'])->name('quiz.listStud');
+
 
 
 //////////////////////
