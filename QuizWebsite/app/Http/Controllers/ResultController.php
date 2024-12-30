@@ -7,31 +7,34 @@ use Illuminate\Http\Request;
 
 class ResultController extends Controller
 {
-    /**
-     * Store the result submitted by the student.
-     */
-    public function storeResult($studentId, $quizId, $score)
+    public function storeResult(Request $request)
     {
-        // Save the result to the database
-        $result = Result::create([
-            'student_id' => $studentId,
-            'quiz_id' => $quizId,
-            'score' => $score,
+        // Validate the incoming data
+        $validated = $request->validate([
+            'student_id' => 'required|integer',
+            'quiz_id' => 'required|integer',
+            'score' => 'required|integer',
         ]);
-
-        // Optionally return some response or redirect
-        return true;
+    
+        // Save the result
+        $result = Result::create([
+            'student_id' => $validated['student_id'],
+            'quiz_id' => $validated['quiz_id'],
+            'score' => $validated['score'],
+        ]);
+    
+        if ($result) {
+            return back()->with('success', 'Result submitted successfully!');
+        } else {
+            return back()->with('error', 'Failed to submit the result. Please try again.');
+        }
     }
+    
 
-    /**
-     * Show the result for the student.
-     */
     public function showResult($student_id)
     {
-        // Fetch the results for the given student_id
+        // Fetch the results for the student
         $results = Result::where('student_id', $student_id)->get();
-
-        // Pass the results to the view
-       // return view('result.show', compact('results'));
+        return view('results.show', compact('results'));
     }
 }

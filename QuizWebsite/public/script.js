@@ -1,94 +1,58 @@
-
-
-let questionsEl =
-    document.querySelector(
-        "#questions"
-    );
-let timerEl =
-    document.querySelector("#timer");
-let choicesEl =
-    document.querySelector("#options");
-let submitBtn = document.querySelector(
-    "#submit-score"
-);
-let startBtn =
-    document.querySelector("#start");
-let nameEl =
-    document.querySelector("#name");
-let feedbackEl = document.querySelector(
-    "#feedback"
-);
-let reStartBtn =
-    document.querySelector("#restart");
-
+let questionsEl = document.querySelector("#questions");
+let timerEl = document.querySelector("#timer");
+let choicesEl = document.querySelector("#options");
+let submitBtn = document.querySelector("#submit-score");
+let startBtn = document.querySelector("#start");
+let nameEl = document.querySelector("#name");
+let feedbackEl = document.querySelector("#feedback");
+let reStartBtn = document.querySelector("#restart");
 
 let currentQuestionIndex = 0;
-let time ;
-let score=0;
+let time;
+let score = 0;
 let timerId;
 
-
+startBtn.onclick = quizStart;
 
 function quizStart() {
+    console.log("Quiz started"); // Debugging line
+    shuffle(questions); // Randomize questions if needed
 
-    shuffle(questions);
+    // Hide the start screen
+    let landingScreenEl = document.getElementById("start-screen");
+    landingScreenEl.setAttribute("class", "hide");
 
-    timerId = setInterval(
-        clockTick,
-        1000
-    );
-    //timerEl.textContent = time;
-    let landingScreenEl =
-        document.getElementById(
-            "start-screen"
-        );
-    landingScreenEl.setAttribute(
-        "class",
-        "hide"
-    );
-    questionsEl.removeAttribute(
-        "class"
-    );
+    // Show the question screen
+    questionsEl.removeAttribute("class");
+
+    // Start the first question
     getQuestion();
 }
 
-
 function getQuestion() {
+    console.log("Fetching question"); // Debugging message
     let currentQuestion = questions[currentQuestionIndex];
+    let questionEl = document.getElementById("question-words");
+    questionEl.textContent = currentQuestion.text;
 
-    let promptEl = document.getElementById("question-words");
-    promptEl.textContent = currentQuestion.text;
+    let optionsEl = document.getElementById("options");
+    optionsEl.innerHTML = ""; // Clear previous options
 
-    let choicesEl = document.getElementById("options");
-    choicesEl.innerHTML = ""; 
-
-    
-
+    // Create option buttons
     for (let i = 1; i <= 4; i++) {
         let optionText = currentQuestion["option" + i];
+        let optionBtn = document.createElement("button");
+        optionBtn.textContent = `${i}. ${optionText}`;
+        optionBtn.onclick = () => questionClick(optionText);
+        optionsEl.appendChild(optionBtn);
+    }
 
-        let choiceBtn = document.createElement("button");
-        choiceBtn.setAttribute("value", optionText);
-        choiceBtn.textContent = i + ". " + optionText;
-
-      
-        choiceBtn.onclick = function () {
-            questionClick(optionText);
-        };
-
-        choicesEl.appendChild(choiceBtn);
-    }  
-
-    startQuestionTimer(currentQuestion.duration);
-    
+    // Start the timer for the current question (assuming 30 seconds for each question)
+    startQuestionTimer(currentQuestion.duration); // Set the timer for the current question
 }
 
-
-
 function questionClick(selectedValue) {
-    if (
-        selectedValue !== questions[currentQuestionIndex]["option" + questions[currentQuestionIndex].right_option]
-    ) {
+    if (selectedValue !== questions[currentQuestionIndex]["option" + questions[currentQuestionIndex].right_option]) {
         feedbackEl.textContent = `Wrong!`;
         feedbackEl.style.color = "red";
     } else {
@@ -112,29 +76,19 @@ function questionClick(selectedValue) {
     }
 }
 
-
-
 function quizEnd() {
     clearInterval(timerId);
-    let endScreenEl =
-        document.getElementById(
-            "quiz-end"
-        );
-    endScreenEl.removeAttribute(
-        "class"
-    );
-    let finalScoreEl =
-        document.getElementById(
-            "score-final"
-        );
+    let endScreenEl = document.getElementById("quiz-end");
+    endScreenEl.removeAttribute("class");
+    let finalScoreEl = document.getElementById("score-final");
     finalScoreEl.textContent = score;
-    questionsEl.setAttribute(
-        "class",
-        "hide"
-    );
+
+    // Populate the hidden input with the final score
+    let finalScoreInput = document.getElementById("final-score");
+    finalScoreInput.value = score;
+
+    questionsEl.setAttribute("class", "hide");
 }
-
-
 
 function clockTick() {
     time--;
@@ -143,8 +97,6 @@ function clockTick() {
         quizEnd();
     }
 }
-
-
 
 // Fisher-Yates Shuffle Algorithm
 function shuffle(array) {
@@ -186,21 +138,14 @@ function startQuestionTimer(duration) {
     }, 1000);
 }
 
-
-
-
-
-
-
 function checkForEnter(event) {
     if (event.key === "Enter") {
-       
-        alert(
-            "Your Score has been Submitted"
-        );
+        alert("Your Score has been Submitted");
     }
 }
 nameEl.onkeyup = checkForEnter;
 
-
-startBtn.onclick = quizStart;
+document.addEventListener("DOMContentLoaded", function() {
+    startBtn = document.querySelector("#start");
+    startBtn.onclick = quizStart;
+});

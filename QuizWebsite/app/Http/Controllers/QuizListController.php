@@ -50,24 +50,29 @@ public function enterRoom(Request $request)
         'room_name' => 'required|string',
     ]);
 
-    // Redirect to the quiz list page for the student
+    // Redirect to the quiz list page for the student with URL parameters
     return redirect()->route('quiz.listStud', [
         'student_id' => $validated['student_id'],
-        'room_name' => $validated['room_name']
+        'room_name' => $validated['room_name'],
     ]);
 }
 
 
+
+
 public function showQuizListToStudents(Request $request)
 {
-    // Validate the room name and student ID
-    $validated = $request->validate([
-        'student_id' => 'required|string',
-        'room_name' => 'required|string',
-    ]);
+    // Retrieve the student ID and room name from session (or request if needed)
+    $studentId = session('student_id', $request->input('student_id'));
+    $roomName = session('room_name', $request->input('room_name'));
 
-    // Find the teacher with the given room name
-    $teacher = User::where('room_name', $request->room_name)->first();
+    // Validate if the student ID and room name are available
+    if (!$studentId || !$roomName) {
+        return redirect()->back()->withErrors(['message' => 'Student ID or Room Name not found.']);
+    }
+
+    // Find the teacher associated with the given room name
+    $teacher = User::where('room_name', $roomName)->first();
 
     if (!$teacher) {
         return redirect()->back()->withErrors(['room_name' => 'Room not found. Please try again.']);
@@ -75,18 +80,17 @@ public function showQuizListToStudents(Request $request)
 
     // Fetch the quizzes created by the teacher
     $quizzes = Quiz::where('userid', $teacher->id)->get();
+
+    // Format quiz start datetime correctly
     foreach ($quizzes as $quiz) {
         $quiz->start_datetime = Carbon::parse($quiz->start_datetime);
     }
-    
-    // Loop through the quizzes and ensure start_time is parsed correctly
-    
 
-    // Redirect to a view with the quizzes and student ID
-    return view('student\allquizes', [
+    // Redirect to the view with the quizzes and student ID
+    return view('student.allquizes', [
         'quizzes' => $quizzes,
         'teacher' => $teacher,
-        'student_id' => $request->input('student_id'),  // Pass student ID
+        'student_id' => $studentId,  // Pass student ID from session or request
     ]);
 }
 
