@@ -4,84 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ asset('styles.css') }}" />
-          
-   
 </head>
 <body>
-   <header>
-           
+    <header>
+        <div class="timer">
+            <p>Time: <span id="timer">0</span></p>
+        </div>
+    </header>
 
-            <div class="timer">
-                <p>
-                    Time:
-                    <span id="timer">
-                        0
-                    </span>
-                </p>
+    <main class="quiz">
+        <div id="quiz-start">
+            <div class="landing" id="start-screen">
+                <h1>{{ $quiz->title }}</h1>
+                <p>Try to answer the following questions within the time limit.</p>
+                <button id="start">Start Quiz</button>
             </div>
-        </header>
+        </div>
 
-        <main class="quiz">
-            <div id="quiz-start">
-                <div class="landing" 
-                     id="start-screen">
-                   
-                    <h1>
-                       @php
-                         echo $quiz->title;
-                       @endphp
-                    </h1>
-                    <p>
-                        Try to answer the following
-                         questions within the time limit. 
-                    </p>
-                    <button id="start">
-                        Start Quiz
-                    </button>
-                </div>
-            
+        <div class="hide" id="questions">
+            <h2 id="question-words"></h2>
+            <div class="options" id="options"></div>
+        </div>
 
-            <div class="hide" id="questions">
-                <h2 id="question-words"></h2>
-                <div class="options" id="options">
-                </div>
-            </div>
+        <div class="hide" id="quiz-end">
+            <h2>All Done!</h2>
+            <p>Your final score is: <span id="score-final"></span></p>
+            <form action="{{ route('result.store') }}" method="POST">
+                @csrf
+                <input type="hidden" name="quiz_id" value="{{ $quiz->id }}">
+                <input type="hidden" name="student_id" value="{{ Auth::id() }}"> <!-- Authenticated user ID -->
+                <input type="hidden" id="final-score" name="score" value="">
+                <button type="submit" id="submit-score">Submit</button>
+            </form>
+        </div>
 
-            <div class="hide" id="quiz-end">
-                <h2>All Done!</h2>
-                <p>Your final score is:
-                    <span id="score-final">
-                    </span>
-                </p>
-                <p>
-                    Please enter your name:
-                    <input type="text" 
-                           id="name" 
-                           max="3" />
-                    <button id="submit-score">
-                        Submit
-                    </button>
-                </p>
-            </div>
-
-            <div id="feedback" 
-                 class="feedback hide">
-            </div>
-        </main>
-    </div>
-   
+        <div id="feedback" class="feedback hide"></div>
+    </main>
 
     <script>
       const questions = @json($quiz->questions); 
       console.log(questions);
     </script>
-    
-    
     <script src="{{ asset('script.js') }}"></script>
-
-
-
-       
-
 </body>
 </html>

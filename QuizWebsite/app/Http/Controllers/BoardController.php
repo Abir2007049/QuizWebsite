@@ -7,14 +7,15 @@ use App\Models\Result;
 
 class BoardController extends Controller
 {
-    public function showboard(Request $request, $quizId)
-    {
-        $leaderboard = Result::where('quiz_id', $quizId)
-            ->orderBy('score', 'desc') 
-            ->limit(50)
-            ->get();
+    public function showboard($id)
+{
+    // Fetch the results for the specific quiz (by quiz_id)
+    $results = Result::where('quiz_id', $id)
+                     ->orderBy('score', 'desc')
+                     ->get();
 
-     
-        return view('teacher\leaderboard', compact('leaderboard'));
-    }
+    // Pass the results to the view
+    return view('teacher.leaderboard', compact('results'));
+}
+
 }
