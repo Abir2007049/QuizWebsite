@@ -43,7 +43,7 @@ public function showQuizDetails($id)
     return view('teacher/EditQuiz', compact('quiz'));
 }
 public function enterRoom(Request $request)
-{
+{//pp
     // Validate the request
     $validated = $request->validate([
         'student_id' => 'required|string',
