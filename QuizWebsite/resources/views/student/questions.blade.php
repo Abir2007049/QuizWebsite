@@ -32,7 +32,7 @@
             <form action="{{ route('result.store') }}" method="POST">
                 @csrf
                 <input type="hidden" name="quiz_id" value="{{ $quiz->id }}">
-                <input type="hidden" name="student_id" value="{{ Auth::id() }}"> <!-- Authenticated user ID -->
+                <input type="hidden" name="student_id" value="{{ session('student_id') }}"> <!-- Authenticated user ID -->
                 <input type="hidden" id="final-score" name="score" value="">
                 <button type="submit" id="submit-score">Submit</button>
             </form>

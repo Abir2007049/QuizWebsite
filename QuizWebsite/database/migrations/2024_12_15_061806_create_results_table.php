@@ -17,9 +17,12 @@ return new class extends Migration
             $table->unsignedBigInteger('quiz_id');
             $table->integer('score')->default(0);
             $table->timestamps();
+            
         
             // Only set foreign key for quiz_id
             $table->foreign('quiz_id')->references('id')->on('quizzes')->onDelete('cascade');
+           // $table->unique(['student_id', 'quiz_id']);
+
         });
         
     }
