@@ -15,6 +15,7 @@ class ResultController extends Controller
             'quiz_id' => 'required|integer',
             'score' => 'required|integer',
         ]);
+        \Log::info('Validated Data:', $validated);
     
         // Save the result
         $result = Result::create([
@@ -24,7 +25,7 @@ class ResultController extends Controller
         ]);
     
         if ($result) {
-            return back()->with('success', 'Result submitted successfully!');
+            return view('student.finishmessage');
         } else {
             return back()->with('error', 'Failed to submit the result. Please try again.');
         }
