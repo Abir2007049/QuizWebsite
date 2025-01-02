@@ -3,16 +3,18 @@
 @section('title', 'Quiz Details')
 
 @section('content')
-<div class="container mt-4">
+<div class="container mt-4 p-4 bg-light shadow rounded" style="color: #333; background-color: #f8fff8; border: 1px solid #d4edda;">
     <!-- Quiz Title and Created At -->
-    <h1>{{ $quiz->title }}</h1>
-    <p><strong>Created At:</strong> {{ $quiz->created_at->format('d M, Y H:i') }}</p>
-    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0" style="color: #155724;">{{ $quiz->title }}</h1>
+        <p class="mb-0"><strong>Created At:</strong> {{ $quiz->created_at->format('d M, Y H:i') }}</p>
+    </div>
+
     <!-- Questions Table -->
-    <h3>Questions</h3>
-    <div class="table-responsive">
-        <table class="table table-bordered">
-            <thead>
+    <h3 style="color: #155724;">Questions</h3>
+    <div class="table-responsive mb-4">
+        <table class="table table-bordered table-striped">
+            <thead style="background-color: #d4edda;">
                 <tr>
                     <th>#</th>
                     <th>Question</th>
@@ -26,32 +28,23 @@
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $question->text }}</td>
                         <td>
-                            <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                            <ul class="list-unstyled mb-0">
                                 @foreach([$question->option1, $question->option2, $question->option3, $question->option4] as $index => $option)
-                                    <span 
-                                        @if ($index + 1 == $question->right_option) 
-                                            style="font-weight: bold; color: green;" 
-                                        @endif>
-                                        {{ $option }}
-                                    </span>
+                                    <li style="@if ($index + 1 == $question->right_option) font-weight: bold; color: green; @endif">{{ $option }}</li>
                                 @endforeach
-                            </div>
+                            </ul>
                         </td>
                         <td class="text-center">
-                            <!-- Delete Button -->
-                            <form action="{{ route('questions.delete', $question->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Are you sure you want to delete this question?');">
+                            <form action="{{ route('questions.delete', $question->id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Are you sure you want to delete this question?');">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm px-4 py-2 shadow-sm hover:scale-105 transition-transform duration-300 ease-in-out">Delete</button>
+                                <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
                             </form>
-                        
-                            <!-- Update Button -->
-                            <form action="{{ route('questions.edit', ['id' => $question->id]) }}" method="GET" style="display:inline-block;">
+                            <form action="{{ route('questions.edit', ['id' => $question->id]) }}" method="GET" class="d-inline-block">
                                 @csrf
-                                <button type="submit" class="btn btn-primary btn-sm px-4 py-2 shadow-sm hover:scale-105 transition-transform duration-300 ease-in-out">Update</button>
+                                <button type="submit" class="btn btn-outline-success btn-sm">Update</button>
                             </form>
                         </td>
-                        
                     </tr>
                 @empty
                     <tr>
@@ -62,110 +55,65 @@
         </table>
     </div>
 
-    <!-- Form Validation Errors -->
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
-    <!-- Form to Add a New Question -->
-    <h3>Add New Question</h3>
-    <form action="{{ route('questions.add') }}" method="POST">
+    <!-- Add New Question Form -->
+    <h3 style="color: #155724;">Add New Question</h3>
+    <form action="{{ route('questions.add') }}" method="POST" class="mb-4">
         @csrf
-        <!-- Pass the Quiz ID -->
         <input type="hidden" name="quiz_id" value="{{ $quiz->id }}">
 
-        <!-- Question Text -->
-        <div class="form-group">
-            <label for="question_text" class="form-label">Question Text</label>
-            <input type="text" id="question_text" name="question_text" class="form-control" required>
-        </div>
-
-        <!-- Options -->
-        <div class="form-group">
-            <label class="form-label">Options</label>
-            <div class="form-group">
-                <input type="text" name="options[1]" class="form-control mb-2" placeholder="Option 1" required>
-                <input type="text" name="options[2]" class="form-control mb-2" placeholder="Option 2" required>
-                <input type="text" name="options[3]" class="form-control mb-2" placeholder="Option 3" required>
-                <input type="text" name="options[4]" class="form-control mb-2" placeholder="Option 4" required>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label for="question_text" class="form-label">Question</label>
+                <input type="text" id="question_text" name="question_text" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Options</label>
+                @for ($i = 1; $i <= 4; $i++)
+                    <input type="text" name="options[{{ $i }}]" class="form-control mb-2" placeholder="Option {{ $i }}" required>
+                @endfor
+            </div>
+            <div class="col-md-4">
+                <label for="correct_option" class="form-label">Correct Option</label>
+                <select id="correct_option" name="correct_option" class="form-control" required>
+                    <option value="" disabled selected>Select</option>
+                    @for ($i = 1; $i <= 4; $i++)
+                        <option value="{{ $i }}">Option {{ $i }}</option>
+                    @endfor
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="duration" class="form-label">Duration (seconds)</label>
+                <input type="number" id="duration" name="duration" class="form-control" min="1" placeholder="Duration">
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-success w-100">Add Question</button>
             </div>
         </div>
-
-        <!-- Correct Option -->
-        <div class="form-group">
-            <label for="correct_option" class="form-label">Correct Option</label>
-            <select id="correct_option" name="correct_option" class="form-control" required>
-                <option value="" disabled selected>Select an option</option>
-                <option value="1">Option 1</option>
-                <option value="2">Option 2</option>
-                <option value="3">Option 3</option>
-                <option value="4">Option 4</option>
-            </select>
-            <small class="form-text text-muted">Select a number between 1 to 4 as the correct option.</small>
-        </div>
-        
-
-        <!-- Duration -->
-        <div class="form-group">
-            <label for="duration" class="form-label">Duration (seconds)</label>
-            <input type="number" id="duration" name="duration" class="form-control" min="1" placeholder="Duration ">
-            <small class="form-text text-muted">Enter the time limit for the question </small>
-        </div>
-
-        <!-- Submit Button -->
-        <button type="submit" class="btn btn-primary mt-2">Add Question</button>
     </form>
 
     <!-- Schedule Quiz Form -->
-    <h3>Schedule Quiz</h3>
-    <form action="{{ route('quiz.schedule', $quiz->id) }}" method="POST">
+    <h3 style="color: #155724;">Schedule Quiz</h3>
+    <form action="{{ route('quiz.schedule', $quiz->id) }}" method="POST" class="d-flex align-items-end gap-3 mb-3">
         @csrf
-        
-        <!-- Starting Date and Time (Flatpickr Calendar) -->
-        <div class="form-group">
-            <label for="start_datetime" class="form-label">Starting Date and Time</label>
+        <div>
+            <label for="start_datetime" class="form-label">Start Date & Time</label>
             <input type="text" id="start_datetime" name="start_datetime" class="form-control" required>
         </div>
-
-        <!-- Submit Button -->
-        <button type="submit" class="btn btn-primary mt-2">Schedule Quiz</button>
+        <button type="submit" class="btn btn-primary">Schedule</button>
     </form>
 
-    <form action="{{ route('quiz.startnow', $quiz->id) }}" method="POST">
+    <form action="{{ route('quiz.startnow', $quiz->id) }}" method="POST" class="text-end">
         @csrf
-        <!-- Start Now Button -->
-        <button type="submit" class="btn btn-success mt-2" id="startNowButton">Start Now</button>
+        <button type="submit" class="btn btn-success">Start Now</button>
     </form>
 </div>
 
 <script>
-    // Handle Start Now button click
-    document.getElementById('startNowButton').addEventListener('click', function () {
-        let duration = $quiz->duration;
-
-        if(duration == -1) {
-            alert("Please enter a valid duration");
-        } else {
-            alert("Starting the quiz now!");
-        }
-    });
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script>
-    // Ensure that Flatpickr initializes after the DOM is fully loaded
     document.addEventListener("DOMContentLoaded", function() {
         flatpickr("#start_datetime", {
-            enableTime: true,  // Enables time selection
-            dateFormat: "Y-m-d H:i",  // Formats the date and time
+            enableTime: true,
+            dateFormat: "Y-m-d H:i",
         });
     });
 </script>
-
 @endsection

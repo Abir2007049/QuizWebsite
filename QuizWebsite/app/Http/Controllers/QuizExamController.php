@@ -69,6 +69,7 @@ public function startNow(Request $request, $id)
 
     // Save the updated quiz
     $quiz->save();
+    return redirect()->back();
 
     // Redirect back with a success message
    
