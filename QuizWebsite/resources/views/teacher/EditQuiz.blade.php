@@ -112,10 +112,7 @@
         </div>
         
         <!-- Duration -->
-        <div class="form-group">
-            <label for="duration" class="form-label">Duration (in minutes)</label>
-            <input type="number" id="duration" name="duration" class="form-control" min="1" required>
-        </div>
+      
         
         <!-- Submit Button -->
         <button type="submit" class="btn btn-primary mt-2">Schedule Quiz</button>

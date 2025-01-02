@@ -57,10 +57,15 @@ public function startNow(Request $request, $id)
     $current = Carbon::now('Asia/Dhaka');
 
     // Find the quiz by ID
-    $quiz = Quiz::findOrFail($id); // Use $id as the parameter name is $id
-
+    $quiz = Quiz::findOrFail($id); 
+    $totalDuration = $quiz->questions->sum('duration') / 60;
+    
+    
     // Update the start_datetime with the current time
     $quiz->start_datetime = $current;
+    $quiz->duration=$totalDuration;
+
+
 
     // Save the updated quiz
     $quiz->save();
