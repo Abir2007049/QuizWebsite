@@ -39,12 +39,36 @@ class QuestionControlller extends Controller
             return redirect()->route('login')->with('error', 'You need to be logged in to create a quiz.');
         }
     }
-    public function destroy($id)
-{
-    $quiz = Quiz::findOrFail($id);  // Find quiz by ID or fail
-    $quiz->delete();  // Delete the quiz
 
-    return redirect()->route('quiz.list')->with('success', 'Quiz deleted successfully!');
+
+
+    public function edittoupdate($id)
+{
+    $question = Question::findOrFail($id);
+    return view('teacher/question_update', compact('question'));
+}
+
+
+public function update(Request $request, $id)
+{
+    $question = Question::findOrFail($id);
+
+    $request->validate([
+        'text' => 'required|string|max:255',
+        'option1' => 'required|string|max:255',
+        'option2' => 'required|string|max:255',
+        'option3' => 'required|string|max:255',
+        'option4' => 'required|string|max:255',
+        'right_option' => 'required|integer|in:1,2,3,4',
+        'duration' => 'required|numeric|min:1',
+    ]);
+
+    $question->update($request->only(['text', 'option1', 'option2', 'option3', 'option4', 'right_option', 'duration']));
+
+    $quizid = $question->quiz_id;
+    $quiz = Quiz::with('questions')->findOrFail($quizid);
+    return view('teacher/EditQuiz', compact('quiz'));
+    
 }
 
 

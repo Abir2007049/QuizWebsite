@@ -109,6 +109,14 @@ public function showQuizListToStudents(Request $request)
 //     return view('welcome');//('quizzes.take', compact('quiz', 'questions'));
 // }
 
+public function destroy($id)
+{
+    $quiz = Quiz::findOrFail($id);  // Find quiz by ID or fail
+    $quiz->delete();  // Delete the quiz
+
+    return redirect()->route('quiz.list')->with('success', 'Quiz deleted successfully!');
+}
+
 
     
 }

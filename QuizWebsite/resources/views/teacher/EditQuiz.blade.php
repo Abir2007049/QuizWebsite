@@ -38,13 +38,20 @@
                             </div>
                         </td>
                         <td class="text-center">
-                            <!-- Delete Question Button -->
+                            <!-- Delete Button -->
                             <form action="{{ route('questions.delete', $question->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Are you sure you want to delete this question?');">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                <button type="submit" class="btn btn-danger btn-sm px-4 py-2 shadow-sm hover:scale-105 transition-transform duration-300 ease-in-out">Delete</button>
+                            </form>
+                        
+                            <!-- Update Button -->
+                            <form action="{{ route('questions.edit', ['id' => $question->id]) }}" method="GET" style="display:inline-block;">
+                                @csrf
+                                <button type="submit" class="btn btn-primary btn-sm px-4 py-2 shadow-sm hover:scale-105 transition-transform duration-300 ease-in-out">Update</button>
                             </form>
                         </td>
+                        
                     </tr>
                 @empty
                     <tr>
@@ -93,15 +100,22 @@
         <!-- Correct Option -->
         <div class="form-group">
             <label for="correct_option" class="form-label">Correct Option</label>
-            <input type="number" id="correct_option" name="correct_option" class="form-control" min="1" max="4" required>
-            <small class="form-text text-muted">Enter a number from 1 to 4.</small>
+            <select id="correct_option" name="correct_option" class="form-control" required>
+                <option value="" disabled selected>Select an option</option>
+                <option value="1">Option 1</option>
+                <option value="2">Option 2</option>
+                <option value="3">Option 3</option>
+                <option value="4">Option 4</option>
+            </select>
+            <small class="form-text text-muted">Select a number between 1 to 4 as the correct option.</small>
         </div>
+        
 
         <!-- Duration -->
         <div class="form-group">
-            <label for="duration" class="form-label">Duration (minutes)</label>
-            <input type="number" id="duration" name="duration" class="form-control" min="1" placeholder="Duration in minutes (optional)">
-            <small class="form-text text-muted">Enter the time limit for the question in minutes. (Optional)</small>
+            <label for="duration" class="form-label">Duration (seconds)</label>
+            <input type="number" id="duration" name="duration" class="form-control" min="1" placeholder="Duration ">
+            <small class="form-text text-muted">Enter the time limit for the question </small>
         </div>
 
         <!-- Submit Button -->
