@@ -7,14 +7,14 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
+            background-color: #f8f9fa;
             margin: 0;
             padding: 0;
         }
         nav {
-            background-color: #007bff;
+            background-color: #28a745;
             color: white;
-            padding: 10px 20px;
+            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -23,17 +23,14 @@
             display: flex;
             align-items: center;
         }
-        nav a, nav .logout-btn {
+        nav a, nav .logout-link {
             color: white;
             text-decoration: none;
             margin: 0 10px;
             font-weight: bold;
             cursor: pointer;
-            background: none;
-            border: none;
-            padding: 0;
         }
-        nav a:hover, nav .logout-btn:hover {
+        nav a:hover, nav .logout-link:hover {
             text-decoration: underline;
         }
         h1 {
@@ -43,49 +40,60 @@
         }
         form {
             max-width: 600px;
-            margin: 0 auto;
+            margin: 20px auto;
             background-color: #fff;
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
         label {
             font-weight: bold;
             display: block;
             margin-bottom: 5px;
+            color: #333;
         }
-        input, select, button {
+        input, button {
             width: 100%;
             padding: 10px;
-            margin: 8px 0;
+            margin: 10px 0;
             border: 1px solid #ddd;
-            border-radius: 4px;
+            border-radius: 5px;
             box-sizing: border-box;
         }
         button {
-            background-color: #007bff;
+            background-color: #28a745;
             color: #fff;
             border: none;
             cursor: pointer;
+            font-size: 16px;
         }
         button:hover {
-            background-color: #0056b3;
+            background-color: #218838;
         }
-        .message {
-            background-color: #ffecb3;
-            color: #d9534f;
-            padding: 10px;
+        .alert {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 15px;
             border-radius: 5px;
-            margin-top: 20px;
+            text-align: center;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
         }
         hr {
             margin: 30px 0;
+            border: 0;
+            border-top: 1px solid #ddd;
         }
         .section-header {
-            background-color: #f8f9fa;
+            background-color: #e9ecef;
             padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            color: #333;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -96,45 +104,37 @@
             <a href="#">Home</a>
         </div>
         <div class="nav-links">
-         <a href="{{ route('quiz.list') }}">View Quizzes</a>
-
-
-            <form action="{{ route('logout') }}" method="POST" style="display: inline;">
-                @csrf
-                <button type="submit" class="logout-btn">Logout</button>
-            </form>
+            <a href="{{ route('quiz.list') }}">View Quizzes</a>
+            <!-- Logout link as an anchor tag -->
+            <a href="{{ route('logout') }}" class="logout-link">Logout</a>
         </div>
     </nav>
 
+    <!-- Page Title -->
     <h1>Create a New Quiz</h1>
-    <!-- jskdj -->
 
-    <!-- Form 1: Create Quiz -->
+    <!-- Form: Create Quiz -->
     <form action="{{ route('storeQuiz') }}" method="POST">
         @csrf
 
         <div class="section-header">
-            <h2>Create Quiz</h2>
+            Create Quiz
         </div>
 
         <!-- Quiz Title -->
         <label for="quiz_title">Quiz Title:</label>
-        <input type="text" id="quiz_title" name="quiz_title" required>
-        <br>
+        <input type="text" id="quiz_title" name="quiz_title" placeholder="Enter quiz title" required>
 
-        <!-- Submit Quiz -->
+        <!-- Submit Button -->
         <button type="submit">Submit Quiz</button>
     </form>
 
-    <hr>
+    <!-- Success Message -->
     @if (session('success'))
     <div class="alert alert-success">
         {{ session('success') }}
     </div>
-@endif
+    @endif
 
-
-  
-    
 </body>
 </html>
