@@ -10,8 +10,21 @@
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f9fafb;
+            background: url('{{ asset('images/quiz.jpg') }}') no-repeat center center fixed;
+            background-size: cover;
             color: #333;
+        }
+
+        /* Overlay to make text readable */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.7); /* Adjust opacity as needed */
+            z-index: -1;
         }
 
         /* Header Styles */
@@ -28,6 +41,7 @@
         header h2 {
             font-size: 24px;
             margin: 0;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
         }
 
         .navbar {
@@ -40,11 +54,12 @@
             text-decoration: none;
             font-size: 16px;
             font-weight: bold;
-            transition: color 0.3s;
+            transition: color 0.3s, transform 0.2s;
         }
 
         .navbar a:hover {
             color: #d4f1d4;
+            transform: translateY(-2px);
         }
 
         /* Main Styles */
@@ -57,11 +72,18 @@
             font-size: 48px;
             color: #4caf50;
             margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
         }
 
-        p {
+        marquee {
             font-size: 18px;
+            color: #333;
             margin-bottom: 30px;
+            display: block;
+            background-color: #e8f5e9;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         form {
@@ -85,6 +107,7 @@
         button:hover {
             background-color: #3a9c40;
             transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
         }
 
         /* Footer Styles */
@@ -97,6 +120,11 @@
             bottom: 0;
             width: 100%;
             font-size: 14px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        footer:hover {
+            background-color: #3a9c40;
         }
 
         /* Responsive Design */
@@ -127,7 +155,9 @@
     </header>
     <main>
         <h1>Welcome to EduHub</h1>
-        <p>Empowering education through technology. Choose your role to get started:</p>
+        <marquee behavior="scroll" direction="left">
+            Empowering education through technology. Choose your role to get started:
+        </marquee>
         <form action="{{ route('TorS') }}" method="GET">
             <button type="submit" name="role" value="student">I'm a Student</button>
             <button type="submit" name="role" value="teacher">I'm a Teacher</button>

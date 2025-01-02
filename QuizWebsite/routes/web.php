@@ -56,7 +56,7 @@ Route::get('/quiz-list', [App\Http\Controllers\QuizListController::class, 'showQ
 Route::get('/quiz/{id}/details', [App\Http\Controllers\QuizListController::class, 'showQuizDetails'])->name('quiz.details');
 Route::post('/enter-room', [App\Http\Controllers\QuizListController::class, 'enterRoom'])->name('enter.room');
 Route::get('/quiz-listStud', [App\Http\Controllers\QuizListController::class, 'showQuizListToStudents'])->name('quiz.listStud');
-Route::delete('/quiz/{id}', [QuizListControlller::class, 'destroy'])->name('quiz.destroy');
+Route::delete('/quiz/{id}', [App\Http\Controllers\QuizListController::class, 'destroy'])->name('quiz.destroy');
 
 
 
