@@ -12,7 +12,7 @@ class Schedule_Controller extends Controller {
     // Validate the incoming data
     $request->validate([
        'start_datetime' => 'nullable|date',
-       'duration' => 'nullable|integer|min:1',
+      // 'duration' => 'nullable|integer|min:1',
 
     ]);
 
@@ -24,7 +24,8 @@ class Schedule_Controller extends Controller {
 
     // Save start time and duration
     $quiz->start_datetime = $startDatetime;
-    $quiz->duration = $request->duration;
+    $totalDuration = $quiz->questions->sum('duration') / 60;
+    $quiz->duration=$totalDuration;
 
     // Save the quiz
     $quiz->save();
