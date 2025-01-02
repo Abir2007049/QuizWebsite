@@ -35,18 +35,12 @@ Route::get('/logout', function () {
 
 
 Route::post('/questions/add', [QuestionControlller::class, 'add'])->name('questions.add');
+Route::delete('/questions/{id}', [QuestionControlller::class, 'destroyQuestion'])->name('questions.delete');
 Route::post('/store-quiz', [QuestionControlller::class, 'storeQuiz'])->name('storeQuiz');
 Route::post('/submit-student', [QuestionControlller::class, 'submitStudent'])->name('student.submit');
 Route::get('/store-quiz', function () {
     return redirect()->back()->withErrors(['error' => 'Invalid request method. Use the form to submit.']);
 });
-
-// Delete a quiz
-Route::delete('/quiz/{id}', [QuestionControlller::class, 'destroy'])->name('quiz.destroy');
-// Delete a question
-Route::delete('/questions/{id}', [QuestionControlller::class, 'destroyQuestion'])->name('questions.delete');
-
-
 
 ///////////////////////
 
@@ -62,6 +56,7 @@ Route::get('/quiz-list', [App\Http\Controllers\QuizListController::class, 'showQ
 Route::get('/quiz/{id}/details', [App\Http\Controllers\QuizListController::class, 'showQuizDetails'])->name('quiz.details');
 Route::post('/enter-room', [App\Http\Controllers\QuizListController::class, 'enterRoom'])->name('enter.room');
 Route::get('/quiz-listStud', [App\Http\Controllers\QuizListController::class, 'showQuizListToStudents'])->name('quiz.listStud');
+Route::delete('/quiz/{id}', [QuizListControlller::class, 'destroy'])->name('quiz.destroy');
 
 
 
@@ -83,3 +78,7 @@ Route::get('/student/results/{student_id}', [ResultController::class, 'showResul
 Route::post('quiz/{id}/schedule', [Schedule_Controller::class, 'schedule'])->name('quiz.schedule');
 
 ///////////////////
+
+
+Route::get('/questions/edit/{id}', [QuestionControlller::class, 'edittoupdate'])->name('questions.edit');
+Route::put('/questions/update/{id}', [QuestionControlller::class, 'update'])->name('questions.update');
