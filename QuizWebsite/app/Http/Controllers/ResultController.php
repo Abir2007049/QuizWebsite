@@ -23,6 +23,7 @@ class ResultController extends Controller
             'quiz_id' => $validated['quiz_id'],
             'score' => $validated['score'],
         ]);
+        //test commit
     
         if ($result) {
             return view('student.finishmessage');
