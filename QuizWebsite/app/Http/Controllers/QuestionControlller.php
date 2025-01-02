@@ -53,7 +53,7 @@ class QuestionControlller extends Controller
              'options' => 'required|array|min:4|max:4', // Options must be an array of 4 items
              'options.*' => 'required|string|max:255', // Each option must be a string
              'correct_option' => 'required|integer|in:1,2,3,4', 
-             'duration' => 'nullable|integer|min:1',
+             'duration' => 'required|integer|min:1',
          ]);
  
          // Find the quiz by its ID
