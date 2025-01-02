@@ -25,7 +25,7 @@ Route::get('/registration.post', function () {
     return redirect()->route('registration');
 });
 
-Route::post('/logout', function () {
+Route::get('/logout', function () {
     Auth::logout();
     request()->session()->invalidate();
     request()->session()->regenerateToken();
@@ -40,6 +40,13 @@ Route::post('/submit-student', [QuestionControlller::class, 'submitStudent'])->n
 Route::get('/store-quiz', function () {
     return redirect()->back()->withErrors(['error' => 'Invalid request method. Use the form to submit.']);
 });
+
+// Delete a quiz
+Route::delete('/quiz/{id}', [QuestionControlller::class, 'destroy'])->name('quiz.destroy');
+// Delete a question
+Route::delete('/questions/{id}', [QuestionControlller::class, 'destroyQuestion'])->name('questions.delete');
+
+
 
 ///////////////////////
 

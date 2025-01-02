@@ -39,6 +39,14 @@ class QuestionControlller extends Controller
             return redirect()->route('login')->with('error', 'You need to be logged in to create a quiz.');
         }
     }
+    public function destroy($id)
+{
+    $quiz = Quiz::findOrFail($id);  // Find quiz by ID or fail
+    $quiz->delete();  // Delete the quiz
+
+    return redirect()->route('quiz.list')->with('success', 'Quiz deleted successfully!');
+}
+
 
     /**
      * Add a new question to the quiz.
@@ -75,5 +83,13 @@ class QuestionControlller extends Controller
  
  
      }
+     public function destroyQuestion($id)
+{
+    $question = Question::findOrFail($id);
+    $question->delete();
+
+    return redirect()->route('quiz.details', $question->quiz_id)->with('success', 'Question deleted successfully!');
+}
+
    
 }

@@ -17,6 +17,7 @@
                     <th>#</th>
                     <th>Question</th>
                     <th>Options</th>
+                    <th class="text-center">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -36,10 +37,18 @@
                                 @endforeach
                             </div>
                         </td>
+                        <td class="text-center">
+                            <!-- Delete Question Button -->
+                            <form action="{{ route('questions.delete', $question->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Are you sure you want to delete this question?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
+                        </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="3" class="text-center">No questions found</td>
+                        <td colspan="4" class="text-center">No questions found</td>
                     </tr>
                 @endforelse
             </tbody>
@@ -59,46 +68,45 @@
 
     <!-- Form to Add a New Question -->
     <h3>Add New Question</h3>
-<form action="{{ route('questions.add') }}" method="POST">
-    @csrf
-    <!-- Pass the Quiz ID -->
-    <input type="hidden" name="quiz_id" value="{{ $quiz->id }}">
+    <form action="{{ route('questions.add') }}" method="POST">
+        @csrf
+        <!-- Pass the Quiz ID -->
+        <input type="hidden" name="quiz_id" value="{{ $quiz->id }}">
 
-    <!-- Question Text -->
-    <div class="form-group">
-        <label for="question_text" class="form-label">Question Text</label>
-        <input type="text" id="question_text" name="question_text" class="form-control" required>
-    </div>
-
-    <!-- Options -->
-    <div class="form-group">
-        <label class="form-label">Options</label>
+        <!-- Question Text -->
         <div class="form-group">
-            <input type="text" name="options[1]" class="form-control mb-2" placeholder="Option 1" required>
-            <input type="text" name="options[2]" class="form-control mb-2" placeholder="Option 2" required>
-            <input type="text" name="options[3]" class="form-control mb-2" placeholder="Option 3" required>
-            <input type="text" name="options[4]" class="form-control mb-2" placeholder="Option 4" required>
+            <label for="question_text" class="form-label">Question Text</label>
+            <input type="text" id="question_text" name="question_text" class="form-control" required>
         </div>
-    </div>
 
-    <!-- Correct Option -->
-    <div class="form-group">
-        <label for="correct_option" class="form-label">Correct Option</label>
-        <input type="number" id="correct_option" name="correct_option" class="form-control" min="1" max="4" required>
-        <small class="form-text text-muted">Enter a number from 1 to 4.</small>
-    </div>
+        <!-- Options -->
+        <div class="form-group">
+            <label class="form-label">Options</label>
+            <div class="form-group">
+                <input type="text" name="options[1]" class="form-control mb-2" placeholder="Option 1" required>
+                <input type="text" name="options[2]" class="form-control mb-2" placeholder="Option 2" required>
+                <input type="text" name="options[3]" class="form-control mb-2" placeholder="Option 3" required>
+                <input type="text" name="options[4]" class="form-control mb-2" placeholder="Option 4" required>
+            </div>
+        </div>
 
-    <!-- Duration -->
-    <div class="form-group">
-        <label for="duration" class="form-label">Duration (minutes)</label>
-        <input type="number" id="duration" name="duration" class="form-control" min="1" placeholder="Duration in minutes (optional)">
-        <small class="form-text text-muted">Enter the time limit for the question in minutes. (Optional)</small>
-    </div>
+        <!-- Correct Option -->
+        <div class="form-group">
+            <label for="correct_option" class="form-label">Correct Option</label>
+            <input type="number" id="correct_option" name="correct_option" class="form-control" min="1" max="4" required>
+            <small class="form-text text-muted">Enter a number from 1 to 4.</small>
+        </div>
 
-    <!-- Submit Button -->
-    <button type="submit" class="btn btn-primary mt-2">Add Question</button>
-</form>
+        <!-- Duration -->
+        <div class="form-group">
+            <label for="duration" class="form-label">Duration (minutes)</label>
+            <input type="number" id="duration" name="duration" class="form-control" min="1" placeholder="Duration in minutes (optional)">
+            <small class="form-text text-muted">Enter the time limit for the question in minutes. (Optional)</small>
+        </div>
 
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary mt-2">Add Question</button>
+    </form>
 
     <!-- Schedule Quiz Form -->
     <h3>Schedule Quiz</h3>
@@ -110,23 +118,16 @@
             <label for="start_datetime" class="form-label">Starting Date and Time</label>
             <input type="text" id="start_datetime" name="start_datetime" class="form-control" required>
         </div>
-        
-        <!-- Duration -->
-      
-        
+
         <!-- Submit Button -->
         <button type="submit" class="btn btn-primary mt-2">Schedule Quiz</button>
-</form>
-        
-       
-        <form action="{{ route('quiz.startnow', $quiz->id) }}" method="POST">
-    @csrf
-    <!-- Start Now Button -->
-    <button type="submit" class="btn btn-success mt-2" id="startNowButton">Start Now</button>
-       </form>
+    </form>
 
-    
-    
+    <form action="{{ route('quiz.startnow', $quiz->id) }}" method="POST">
+        @csrf
+        <!-- Start Now Button -->
+        <button type="submit" class="btn btn-success mt-2" id="startNowButton">Start Now</button>
+    </form>
 </div>
 
 <script>
@@ -134,15 +135,11 @@
     document.getElementById('startNowButton').addEventListener('click', function () {
         let duration = $quiz->duration;
 
-        if(duration==-1) please enter a valid duration
-
-        else
-        {
-            ok
+        if(duration == -1) {
+            alert("Please enter a valid duration");
+        } else {
+            alert("Starting the quiz now!");
         }
-
-        
-       
     });
 </script>
 
@@ -153,8 +150,8 @@
         flatpickr("#start_datetime", {
             enableTime: true,  // Enables time selection
             dateFormat: "Y-m-d H:i",  // Formats the date and time
-           // minDate: "today"  // Prevents selecting past dates
         });
     });
 </script>
+
 @endsection
