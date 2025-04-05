@@ -68,6 +68,8 @@ Route::get('/quiz/{id}/leaderboard', [App\Http\Controllers\BoardController::clas
 Route::get('/quiz/{id}/take', [QuizExamController::class, 'takeQuiz'])->name('quiz.take');
 Route::post('/quiz/{quiz}/submit/{student}', [QuizExamController::class, 'submitQuizAnswered'])->name('quiz.submit');
 Route::post('/quiz/startnow/{id}', [QuizExamController::class, 'startNow'])->name('quiz.startnow');
+Route::post('/quiz/violation', [QuizExamController::class, 'sendViolationEmail']);
+
 
 /////////////////////////
 Route::post('/store-result', [App\Http\Controllers\ResultController::class, 'storeResult'])->name('result.store');
