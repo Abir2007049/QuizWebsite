@@ -32,7 +32,7 @@
             <form action="{{ route('result.store') }}" method="POST">
                 @csrf
                 <input type="hidden" name="quiz_id" value="{{ $quiz->id }}">
-                <input type="hidden" name="student_id" value="{{ session('student_id') }}"> <!-- Authenticated user ID -->
+                <input type="hidden" name="student_id" value="{{ session('student_id') }}">
                 <input type="hidden" id="final-score" name="score" value="">
                 <button type="submit" id="submit-score">Submit</button>
             </form>
@@ -42,9 +42,18 @@
     </main>
 
     <script>
-      const questions = @json($quiz->questions); 
-      console.log(questions);
+        const questions = @json($quiz->questions); 
+        console.log(questions);
     </script>
     <script src="{{ asset('script.js') }}"></script>
+
+    <script>
+        // Prevent browser back button during quiz
+        history.pushState(null, null, location.href);
+        window.addEventListener('popstate', function () {
+            history.pushState(null, null, location.href);
+            alert("You cannot go back during the quiz.");
+        });
+    </script>
 </body>
 </html>
