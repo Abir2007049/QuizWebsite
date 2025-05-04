@@ -8,6 +8,7 @@ use App\Http\Controllers\Schedule_Controller;
 use Illuminate\Console\Scheduling\Schedule;
 use App\Http\Controllers\ResultController;
 use App\Http\Controllers\QuizExamController;
+
 /////////////////////////
 Route::get('/', function () {
     return view('welcome');
