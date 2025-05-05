@@ -4,39 +4,39 @@ namespace App\Http\Controllers;
 
 use App\Models\Result;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
+
 
 class ResultController extends Controller
 {
     public function storeResult(Request $request)
     {
-        // Validate the incoming data
+        // ✅ Get student_id from the session
+        $studentId = Session::get('student_id');
+
+        // Validate the incoming data (quiz_id and score only)
         $validated = $request->validate([
-            'student_id' => 'required|integer',
             'quiz_id' => 'required|integer',
             'score' => 'required|integer',
         ]);
-        \Log::info('Validated Data:', $validated);
-    
+
+        // Double-check if session value exists
+        if (!$studentId) {
+            return back()->with('error', 'Student session expired or not found.');
+        }
+
         // Save the result
         $result = Result::create([
-            'student_id' => $validated['student_id'],
+            'student_id' => $studentId,
             'quiz_id' => $validated['quiz_id'],
             'score' => $validated['score'],
         ]);
-        //test commit
-    
+
         if ($result) {
             return view('student.finishmessage');
         } else {
             return back()->with('error', 'Failed to submit the result. Please try again.');
         }
     }
-    
-
-    public function showResult($student_id)
-    {
-        // Fetch the results for the student
-        $results = Result::where('student_id', $student_id)->get();
-        return view('results.show', compact('results'));
-    }
 }
+

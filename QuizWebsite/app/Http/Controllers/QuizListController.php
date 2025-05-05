@@ -43,23 +43,23 @@ public function showQuizDetails($id)
     return view('teacher/EditQuiz', compact('quiz'));
 }
 public function enterRoom(Request $request)
-{//pp
-    // Validate the request
+{
+    // ✅ Validate the request
     $validated = $request->validate([
         'student_id' => 'required|string',
         'room_name' => 'required|string',
     ]);
 
-    // Store the student_id and room_name in the session
-    session(['student_id' => $validated['student_id']]);
-    session(['room_name' => $validated['room_name']]);
-
-    // Redirect to the quiz list page for the student with URL parameters
-    return redirect()->route('quiz.listStud', [
+    // ✅ Store in session
+    session([
         'student_id' => $validated['student_id'],
         'room_name' => $validated['room_name'],
     ]);
+
+    // ✅ Redirect without URL parameters
+    return redirect()->route('quiz.listStud');
 }
+
 
 
 
