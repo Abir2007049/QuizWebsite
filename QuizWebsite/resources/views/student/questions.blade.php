@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ $quiz->title }} - Quiz</title>
     <link rel="stylesheet" href="{{ asset('styles.css') }}" />
 </head>
 <body>
@@ -13,6 +14,7 @@
     </header>
 
     <main class="quiz">
+        <!-- Start Screen -->
         <div id="quiz-start">
             <div class="landing" id="start-screen">
                 <h1>{{ $quiz->title }}</h1>
@@ -21,11 +23,13 @@
             </div>
         </div>
 
+        <!-- Questions Container -->
         <div class="hide" id="questions">
             <h2 id="question-words"></h2>
             <div class="options" id="options"></div>
         </div>
 
+        <!-- End Screen -->
         <div class="hide" id="quiz-end">
             <h2>All Done!</h2>
             <p>Your final score is: <span id="score-final"></span></p>
@@ -33,18 +37,23 @@
                 @csrf
                 <input type="hidden" name="quiz_id" value="{{ $quiz->id }}">
                 <input type="hidden" name="student_id" value="{{ session('student_id') }}">
+                <input type="hidden" name="student_id" value="{{ session('student_id') }}">
                 <input type="hidden" id="final-score" name="score" value="">
                 <button type="submit" id="submit-score">Submit</button>
             </form>
         </div>
 
+        <!-- Feedback Section -->
         <div id="feedback" class="feedback hide"></div>
     </main>
 
+    <!-- Laravel-passed Questions -->
     <script>
         const questions = @json($quiz->questions); 
         console.log(questions);
     </script>
+
+    <!-- External Quiz Logic -->
     <script src="{{ asset('script.js') }}"></script>
 
     <script>
