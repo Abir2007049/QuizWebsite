@@ -97,5 +97,13 @@
             quizStarted = false;
         });
     </script>
+    <script>
+        // Prevent browser back button during quiz
+        history.pushState(null, null, location.href);
+        window.addEventListener('popstate', function () {
+            history.pushState(null, null, location.href);
+            alert("You cannot go back during the quiz.");
+        });
+    </script>
 </body>
 </html>
