@@ -1,97 +1,83 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\QuizViolationMail;
 use App\Models\Quiz;
 use App\Models\Question;
 use App\Models\Result;
+use App\Models\Room;
+use App\Models\User;
 use Carbon\Carbon;
-
-
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class QuizExamController extends Controller
 {
     // Show the quiz to the student
     public function takeQuiz(Request $request, $quiz_id)
-{
-    $studentId = $request->query('student_id');
-
-    $quiz = Quiz::findOrFail($quiz_id);
-
-    // Parse and adjust times to Asia/Dhaka
-    $startDatetime = \Carbon\Carbon::parse($quiz->start_datetime)->setTimezone('Asia/Dhaka');
-    $duration = $quiz->duration;
-    $finishDateTime = $startDatetime->copy()->addMinutes($duration);
-    $current = Carbon::now('Asia/Dhaka');
-
-    // Debugging (temporarily add this)
-    // dd([
-    //     'Start Time (Dhaka)' => $startDatetime,
-    //     'Finish Time (Dhaka)' => $finishDateTime,
-    //     'Current Time (Dhaka)' => $current,
-    //     'Duration (Minutes)' => $duration,
-    //     'Is Current Before Start?' => $current->lt($startDatetime),
-    //     'Is Current After End?' => $current->gt($finishDateTime),
-    // ]);
-
-    // Ensure quiz is active
+    {
+        // ✅ Get student_id securely from session
+        $studentId = session('student_id');
+        log::info('Student ID from session: ' . $studentId);
     
-    if ($current->lt($startDatetime)) {
-        return back()->with('error', 'The quiz has not started yet.');
+        // If not found, redirect
+        if (!$studentId) {
+            return redirect()->route('quiz.listStud')->with('error', 'Please enter the quiz room first.');
+        }
+    
+        $quiz = Quiz::findOrFail($quiz_id);
+        $startDatetime = Carbon::parse($quiz->start_datetime)->setTimezone('Asia/Dhaka');
+        $duration = $quiz->duration;
+        $finishDateTime = $startDatetime->copy()->addMinutes($duration);
+        $current = Carbon::now('Asia/Dhaka');
+    
+        if ($current->lt($startDatetime)) {
+            return back()->with('error', 'The quiz has not started yet.');
+        }
+    
+        if ($current->gt($finishDateTime)) {
+            return back()->with('error', 'The quiz has already ended.');
+        }
+    
+        return view('student.questions', [
+            'quiz' => $quiz,
+            'duration' => $current->diffInSeconds($finishDateTime, false),
+            'student_id' => $studentId, // optional: if your Blade view uses it
+        ]);
+    }
+    
+
+
+    public function startNow(Request $request, $id)
+    {
+        $current = Carbon::now('Asia/Dhaka');
+        $quiz = Quiz::findOrFail($id);
+        $totalDuration = $quiz->questions->sum('duration') / 60;
+        
+        $quiz->start_datetime = $current;
+        $quiz->duration = $totalDuration;
+        $quiz->save();
+        
+        return redirect()->back();
     }
 
-    if ($current->gt($finishDateTime)) {
-        return back()->with('error', 'The quiz has already ended.');
+    public function submitQuizAnswered(Request $request, $quiz)
+{
+    $studentId = Session::get('student_id'); // ✅ Get from session
+
+    if (empty($studentId)) {
+        return redirect()->back()->with('error', 'Student session expired or not found.');
     }
 
-    return view('student.questions', [
-        'quiz' => $quiz,
-        'student_id' => $studentId,
-        'duration' => $current->diffInSeconds($finishDateTime, false),
-    ]);
-}
-public function startNow(Request $request, $id)
-{
-    // Get the current time in the desired timezone
-    $current = Carbon::now('Asia/Dhaka');
-
-    // Find the quiz by ID
-    $quiz = Quiz::findOrFail($id); 
-    $totalDuration = $quiz->questions->sum('duration') / 60;
-    
-    
-    // Update the start_datetime with the current time
-    $quiz->start_datetime = $current;
-    $quiz->duration=$totalDuration;
-
-
-
-    // Save the updated quiz
-    $quiz->save();
-    return redirect()->back();
-
-    // Redirect back with a success message
-   
-}
-
-
-
-    // Handle quiz submission
-    public function submitQuizAnswered(Request $request, $quiz, $student)
-{
     $request->validate([
         'answers' => 'required|array',
-        'student_id' => 'required|integer',
     ]);
 
     $quizId = $quiz;
-    $studentId = $student;
-
-    if (empty($studentId)) {
-        return redirect()->back()->with('error', 'Student ID cannot be null');
-    }
-
     $answers = $request->input('answers');
     $score = 0;
 
@@ -116,8 +102,4 @@ public function startNow(Request $request, $id)
     }
 }
 
-    
-    
-
-    
 }

@@ -8,6 +8,13 @@ use App\Http\Controllers\Schedule_Controller;
 use Illuminate\Console\Scheduling\Schedule;
 use App\Http\Controllers\ResultController;
 use App\Http\Controllers\QuizExamController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use App\Models\Quiz;
+use Illuminate\Support\Facades\Auth;
+
+
 
 /////////////////////////
 Route::get('/', function () {
@@ -69,6 +76,8 @@ Route::get('/quiz/{id}/leaderboard', [App\Http\Controllers\BoardController::clas
 Route::get('/quiz/{id}/take', [QuizExamController::class, 'takeQuiz'])->name('quiz.take');
 Route::post('/quiz/{quiz}/submit/{student}', [QuizExamController::class, 'submitQuizAnswered'])->name('quiz.submit');
 Route::post('/quiz/startnow/{id}', [QuizExamController::class, 'startNow'])->name('quiz.startnow');
+Route::post('/quiz/violation', [QuizExamController::class, 'sendViolationEmail']);
+
 
 /////////////////////////
 Route::post('/store-result', [App\Http\Controllers\ResultController::class, 'storeResult'])->name('result.store');
@@ -83,3 +92,39 @@ Route::post('quiz/{id}/schedule', [Schedule_Controller::class, 'schedule'])->nam
 
 Route::get('/questions/edit/{id}', [QuestionControlller::class, 'edittoupdate'])->name('questions.edit');
 Route::put('/questions/update/{id}', [QuestionControlller::class, 'update'])->name('questions.update');
+
+Route::post('/report-tab-switch', function (Request $request) {
+    Log::info('Tab switch detected', $request->all());
+    return response()->json(['status' => 'logged']);
+});
+
+
+///////////
+
+
+Route::post('/report-tab-switch', function (Request $request) {
+    // Get the currently authenticated user (assumed to be a student)
+    $student = Auth::user(); // or Auth::id() for just the ID
+
+    if ($request->state === 'hidden') {
+        $quiz = Quiz::with('teacher')->find($request->quiz_id);
+
+        if ($quiz && $quiz->teacher) {
+            $teacherEmail = $quiz->teacher->email;
+            $studentId = session('student_id');
+
+            Mail::raw("Student with ID {$studentId} switched tabs on quiz '{$quiz->title}'", function ($message) use ($teacherEmail) {
+                $message->to($teacherEmail)
+                        ->subject('Tab Switch Alert');
+            });
+
+            return response()->json(['status' => 'Email sent.']);
+        } else {
+            Log::warning('Quiz or teacher not found.');
+        }
+    }
+
+    return response()->json(['status' => 'Logged but no email sent.']);
+});
+
+//////////////

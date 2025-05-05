@@ -149,3 +149,32 @@ document.addEventListener("DOMContentLoaded", function() {
     startBtn = document.querySelector("#start");
     startBtn.onclick = quizStart;
 });
+
+
+document.addEventListener("visibilitychange", function () {
+    if (document.hidden) {
+        // Student switched the tab
+        sendViolationReport();
+    }
+});
+
+function sendViolationReport() {
+    let studentId = document.getElementById("student_id").value; // Assuming there's an input field for student ID
+
+    fetch("/report-violation", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
+        },
+        body: JSON.stringify({ student_id: studentId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data.message); // Success or error message
+    })
+    .catch(error => console.error("Error:", error));
+}
+
+
+

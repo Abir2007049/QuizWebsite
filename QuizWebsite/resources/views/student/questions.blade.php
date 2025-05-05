@@ -32,7 +32,7 @@
             <form action="{{ route('result.store') }}" method="POST">
                 @csrf
                 <input type="hidden" name="quiz_id" value="{{ $quiz->id }}">
-                <input type="hidden" name="student_id" value="{{ session('student_id') }}"> <!-- Authenticated user ID -->
+                <input type="hidden" name="student_id" value="{{ session('student_id') }}">
                 <input type="hidden" id="final-score" name="score" value="">
                 <button type="submit" id="submit-score">Submit</button>
             </form>
@@ -42,9 +42,51 @@
     </main>
 
     <script>
-      const questions = @json($quiz->questions); 
-      console.log(questions);
+        const questions = @json($quiz->questions); 
+        console.log(questions);
     </script>
     <script src="{{ asset('script.js') }}"></script>
+
+    <script>
+        // State to track if quiz is active
+        let quizStarted = false;
+
+        // Activate quiz tracking when quiz starts
+        document.getElementById('start').addEventListener('click', function () {
+            quizStarted = true;
+        });
+
+        // Listen for tab visibility change only when quiz is running
+        document.addEventListener("visibilitychange", function () {
+            if (!quizStarted) return;
+
+            if (document.hidden) {
+                sendTabEvent("hidden");
+            } else {
+                sendTabEvent("visible");
+            }
+        });
+
+        function sendTabEvent(state) {
+            fetch('/report-tab-switch', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    student_id: {{ session('student_id') }},
+                    quiz_id: {{ $quiz->id }},
+                    state: state,
+                    time: new Date().toISOString()
+                })
+            });
+        }
+
+        // Deactivate tab tracking when user submits the score
+        document.getElementById('submit-score').addEventListener('click', function () {
+            quizStarted = false;
+        });
+    </script>
 </body>
 </html>
