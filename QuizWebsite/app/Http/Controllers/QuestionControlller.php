@@ -10,9 +10,6 @@ use Carbon\Carbon;
 
 class QuestionControlller extends Controller
 {
-   
-   
-
     /**
      * Store a new quiz.
      */
