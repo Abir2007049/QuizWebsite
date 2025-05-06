@@ -94,17 +94,8 @@ Route::get('/questions/edit/{id}', [QuestionControlller::class, 'edittoupdate'])
 Route::put('/questions/update/{id}', [QuestionControlller::class, 'update'])->name('questions.update');
 
 Route::post('/report-tab-switch', function (Request $request) {
-    Log::info('Tab switch detected', $request->all());
-    return response()->json(['status' => 'logged']);
-});
-
-
-///////////
-
-
-Route::post('/report-tab-switch', function (Request $request) {
     // Get the currently authenticated user (assumed to be a student)
-    $student = Auth::user(); // or Auth::id() for just the ID
+  //  $student = Auth::user(); // or Auth::id() for just the ID
 
     if ($request->state === 'hidden') {
         $quiz = Quiz::with('teacher')->find($request->quiz_id);
@@ -113,9 +104,11 @@ Route::post('/report-tab-switch', function (Request $request) {
             $teacherEmail = $quiz->teacher->email;
             $studentId = session('student_id');
 
+            // Send email using Brevo SMTP
             Mail::raw("Student with ID {$studentId} switched tabs on quiz '{$quiz->title}'", function ($message) use ($teacherEmail) {
                 $message->to($teacherEmail)
-                        ->subject('Tab Switch Alert');
+                        ->subject('Tab Switch Alert')
+                        ->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME')); // Ensure from address is set
             });
 
             return response()->json(['status' => 'Email sent.']);
@@ -126,5 +119,11 @@ Route::post('/report-tab-switch', function (Request $request) {
 
     return response()->json(['status' => 'Logged but no email sent.']);
 });
+
+
+///////////
+
+
+
 
 //////////////
