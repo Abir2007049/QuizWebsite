@@ -54,7 +54,8 @@ class QuizExamController extends Controller
 
     public function startNow(Request $request, $id)
     {
-        $current = Carbon::now('Asia/Dhaka');
+       $current = Carbon::now('Asia/Dhaka')->addSeconds(10);
+
         $quiz = Quiz::findOrFail($id);
         $totalDuration = $quiz->questions->sum('duration') / 60;
         
