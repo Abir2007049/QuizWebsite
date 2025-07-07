@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $quiz->title }} - Quiz</title>
-    <link rel="stylesheet" href="{{ secure_asset('styles.css') }}" />
+    <link rel="stylesheet" href="{{ asset('styles.css') }}" />
+    
 </head>
 <body>
     <header>
@@ -54,7 +55,7 @@
     </script>
 
     <!-- External Quiz Logic -->
-    <script src="{{ secure_asset('script.js') }}"></script>
+  
     <script>
         // State to track if quiz is active
         let quizStarted = false;
@@ -104,5 +105,7 @@
             alert("You cannot go back during the quiz.");
         });
     </script>
+
+     <script src="{{ asset('script.js') }}"></script>
 </body>
 </html>
