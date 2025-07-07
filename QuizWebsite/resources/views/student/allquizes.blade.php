@@ -13,7 +13,7 @@
         }
         h1 {
             text-align: center;
-            color: #28a745; /* Green color */
+            color: #28a745;
         }
         table {
             width: 100%;
@@ -45,15 +45,18 @@
             font-weight: bold;
         }
         .status.upcoming {
-            color: #ffc107; /* Yellow for upcoming */
+            color: #ffc107;
         }
         .status.finished {
-            color: #dc3545; /* Red for finished */
+            color: #dc3545;
         }
         .status.running {
-            color: #28a745; /* Green for running */
+            color: #28a745;
         }
     </style>
+
+    <!-- Echo + Reverb -->
+    
 </head>
 <body>
 
@@ -66,36 +69,59 @@
             <thead>
                 <tr>
                     <th>Quiz Title</th>
-                    <th>Actions</th>
+                    <th>Status</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($quizzes as $quiz)
+                @php
+                    $startDatetime = \Carbon\Carbon::parse($quiz->start_datetime)->setTimezone('Asia/Dhaka');
+                    $dhakaTime = \Carbon\Carbon::now('Asia/Dhaka');
+                    $endDatetime = $startDatetime->copy()->addMinutes($quiz->duration);
+                    $quizId = $quiz->id;
+                @endphp
                 <tr>
                     <td>{{ $quiz->title }}</td>
                     <td>
-                        @php
-                        // Convert $quiz->start_datetime to a Carbon instance
-                        $startDatetime = \Carbon\Carbon::parse($quiz->start_datetime)->setTimezone('Asia/Dhaka');
-                        $dhakaTime = \Carbon\Carbon::now('Asia/Dhaka');
+                        <span id="quiz-status-{{ $quizId }}">
+                            @if ($dhakaTime->lt($startDatetime))
+                                <p class="status upcoming">The quiz will be available on {{ $startDatetime->format('F j, Y, g:i A') }}.</p>
+                            @elseif ($dhakaTime->gt($endDatetime))
+                                <p class="status finished">Finished</p>
+                            @else
+                                <a href="{{ route('quiz.take', ['id' => $quizId, 'student_id' => $student_id]) }}" class="status running">Running</a>
+                            @endif
+                        </span>
 
-                        // Calculate the end time by adding the duration to the start time
-                        $endDatetime = $startDatetime->copy()->addMinutes($quiz->duration);
-                        @endphp
+                        <script>
+                            const statusElem{{ $quizId }} = document.getElementById("quiz-status-{{ $quizId }}");
+                            const startTime{{ $quizId }} = new Date("{{ $startDatetime->format('Y-m-d\TH:i:s') }}");
+                            const endTime{{ $quizId }} = new Date("{{ $endDatetime->format('Y-m-d\TH:i:s') }}");
 
-                        @if ($dhakaTime->lt($startDatetime))
-                            <p class="status upcoming">The quiz will be available on {{ $startDatetime->format('F j, Y, g:i A') }}.</p>
-                        @elseif ($dhakaTime->gt($endDatetime))
-                             <p class="status finished">Finished</p>
-                        @else
-                            <a href="{{ route('quiz.take', ['id' => $quiz->id, 'student_id' => $student_id]) }}" class="status running">Running</a>
-                        @endif
+                            const runningLink{{ $quizId }} = `<a href='{{ route('quiz.take', ['id' => $quizId, 'student_id' => $student_id]) }}' class='status running'>Running</a>`;
+                            const upcomingText{{ $quizId }} = `<p class='status upcoming'>The quiz will be available on {{ $startDatetime->format('F j, Y, g:i A') }}.</p>`;
+                            const finishedText{{ $quizId }} = `<p class='status finished'>Finished</p>`;
+
+                            function updateStatus{{ $quizId }}() {
+                                const now = new Date();
+                                if (now < startTime{{ $quizId }}) {
+                                    statusElem{{ $quizId }}.innerHTML = upcomingText{{ $quizId }};
+                                } else if (now > endTime{{ $quizId }}) {
+                                    statusElem{{ $quizId }}.innerHTML = finishedText{{ $quizId }};
+                                } else {
+                                    statusElem{{ $quizId }}.innerHTML = runningLink{{ $quizId }};
+                                }
+                            }
+
+                            updateStatus{{ $quizId }}();
+                            setInterval(updateStatus{{ $quizId }}, 1000);
+                        </script>
                     </td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
     @endif
-
+//
 </body>
 </html>
