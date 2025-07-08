@@ -26,7 +26,15 @@
                 @forelse ($quiz->questions as $question)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>{{ $question->text }}</td>
+                        <td>
+                            @if ($question->text)
+                                {{ $question->text }}
+                            @elseif ($question->image)
+                                <img src="{{ asset('storage/' . $question->image) }}" alt="Question Image" style="max-width: 200px;">
+                            @else
+                                <em>No question content</em>
+                            @endif
+                        </td>
                         <td>
                             <ul class="list-unstyled mb-0">
                                 @foreach([$question->option1, $question->option2, $question->option3, $question->option4] as $index => $option)
@@ -57,21 +65,41 @@
 
     <!-- Add New Question Form -->
     <h3 style="color: #155724;">Add New Question</h3>
-    <form action="{{ route('questions.add') }}" method="POST" class="mb-4">
+    <form action="{{ route('questions.add') }}" method="POST" class="mb-4" enctype="multipart/form-data">
         @csrf
         <input type="hidden" name="quiz_id" value="{{ $quiz->id }}">
 
         <div class="row g-3">
+            <!-- Question Type Selector -->
             <div class="col-md-6">
-                <label for="question_text" class="form-label">Question</label>
-                <input type="text" id="question_text" name="question_text" class="form-control" required>
+                <label for="question_type" class="form-label">Question Type</label>
+                <select id="question_type" name="question_type" class="form-control" onchange="toggleQuestionInput()" required>
+                    <option value="text" selected>Text</option>
+                    <option value="image">Image</option>
+                </select>
             </div>
+
+            <!-- Text Input -->
+            <div class="col-md-6" id="text-input">
+                <label for="question_text" class="form-label">Question Text</label>
+                <input type="text" id="question_text" name="question_text" class="form-control">
+            </div>
+
+            <!-- Image Input -->
+            <div class="col-md-6 d-none" id="image-input">
+                <label for="question_image" class="form-label">Question Image</label>
+                <input type="file" id="question_image" name="question_image" class="form-control" accept="image/*">
+            </div>
+
+            <!-- Options -->
             <div class="col-md-6">
                 <label class="form-label">Options</label>
                 @for ($i = 1; $i <= 4; $i++)
                     <input type="text" name="options[{{ $i }}]" class="form-control mb-2" placeholder="Option {{ $i }}" required>
                 @endfor
             </div>
+
+            <!-- Correct Option -->
             <div class="col-md-4">
                 <label for="correct_option" class="form-label">Correct Option</label>
                 <select id="correct_option" name="correct_option" class="form-control" required>
@@ -81,10 +109,13 @@
                     @endfor
                 </select>
             </div>
+
+            <!-- Duration -->
             <div class="col-md-4">
                 <label for="duration" class="form-label">Duration (seconds)</label>
                 <input type="number" id="duration" name="duration" class="form-control" min="1" placeholder="Duration">
             </div>
+
             <div class="col-md-4 d-flex align-items-end">
                 <button type="submit" class="btn btn-success w-100">Add Question</button>
             </div>
@@ -115,5 +146,19 @@
             dateFormat: "Y-m-d H:i",
         });
     });
+
+    function toggleQuestionInput() {
+        const type = document.getElementById('question_type').value;
+        const textInput = document.getElementById('text-input');
+        const imageInput = document.getElementById('image-input');
+
+        if (type === 'text') {
+            textInput.classList.remove('d-none');
+            imageInput.classList.add('d-none');
+        } else {
+            textInput.classList.add('d-none');
+            imageInput.classList.remove('d-none');
+        }
+    }
 </script>
 @endsection

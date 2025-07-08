@@ -1,70 +1,87 @@
+
 let questionsEl = document.querySelector("#questions");
 let timerEl = document.querySelector("#timer");
 let choicesEl = document.querySelector("#options");
 let submitBtn = document.querySelector("#submit-score");
 let startBtn = document.querySelector("#start");
-let nameEl = document.querySelector("#name");
 let feedbackEl = document.querySelector("#feedback");
 let reStartBtn = document.querySelector("#restart");
 
 let currentQuestionIndex = 0;
-let time;
 let score = 0;
 let timerId;
 
 startBtn.onclick = quizStart;
 
+// ✅ Prevent back navigation
+history.pushState(null, null, location.href);
+window.addEventListener('popstate', function () {
+    history.pushState(null, null, location.href);
+    alert("You cannot go back during the quiz.");
+});
+
 function quizStart() {
-    console.log("Quiz started"); // Debugging line
-    shuffle(questions); // Randomize questions if needed
+    shuffle(questions);
 
-    // Hide the start screen
-    let landingScreenEl = document.getElementById("start-screen");
-    landingScreenEl.setAttribute("class", "hide");
+    document.getElementById("start-screen").classList.add("hide");
+    questionsEl.classList.remove("hide");
 
-    // Show the question screen
-    questionsEl.removeAttribute("class");
-
-    // Start the first question
     getQuestion();
 }
 
 function getQuestion() {
-    console.log("Fetching question"); // Debugging message
     let currentQuestion = questions[currentQuestionIndex];
     let questionEl = document.getElementById("question-words");
-    questionEl.textContent = currentQuestion.text;
-
     let optionsEl = document.getElementById("options");
-    optionsEl.innerHTML = ""; // Clear previous options
 
-    // Create option buttons
+    questionEl.innerHTML = "";
+    optionsEl.innerHTML = "";
+
+    // ✅ Image rendering
+    if (currentQuestion.image) {
+        let img = document.createElement("img");
+        img.src = currentQuestion.image;
+        img.alt = "Question Image";
+        img.style.maxWidth = "400px";
+        img.style.marginBottom = "10px";
+        questionEl.appendChild(img);
+    }
+    
+
+    // ✅ Text rendering
+    if (currentQuestion.text) {
+        let textNode = document.createElement("p");
+        textNode.textContent = currentQuestion.text;
+        questionEl.appendChild(textNode);
+    }
+
+    // ✅ Option buttons
     for (let i = 1; i <= 4; i++) {
         let optionText = currentQuestion["option" + i];
         let optionBtn = document.createElement("button");
         optionBtn.textContent = `${i}. ${optionText}`;
-        optionBtn.onclick = () => questionClick(optionText);
+        optionBtn.onclick = () => questionClick(i); // Pass option number
         optionsEl.appendChild(optionBtn);
     }
 
-    // Start the timer for the current question (assuming 30 seconds for each question)
-    startQuestionTimer(currentQuestion.duration); // Set the timer for the current question
+    // ✅ Timer per question
+    startQuestionTimer(parseInt(currentQuestion.duration));
 }
 
-function questionClick(selectedValue) {
-    if (selectedValue !== questions[currentQuestionIndex]["option" + questions[currentQuestionIndex].right_option]) {
-        feedbackEl.textContent = `Wrong!`;
-        feedbackEl.style.color = "red";
-    } else {
+function questionClick(selectedOptionNumber) {
+    const correctOption = parseInt(questions[currentQuestionIndex].right_option);
+
+    if (selectedOptionNumber === correctOption) {
         feedbackEl.textContent = "Correct!";
         feedbackEl.style.color = "green";
         score++;
+    } else {
+        feedbackEl.textContent = "Wrong!";
+        feedbackEl.style.color = "red";
     }
 
-    feedbackEl.setAttribute("class", "feedback");
-    setTimeout(function () {
-        feedbackEl.setAttribute("class", "feedback hide");
-    }, 2000);
+    feedbackEl.classList.remove("hide");
+    setTimeout(() => feedbackEl.classList.add("hide"), 1500);
 
     clearInterval(timerId);
 
@@ -78,40 +95,19 @@ function questionClick(selectedValue) {
 
 function quizEnd() {
     clearInterval(timerId);
+    questionsEl.classList.add("hide");
+
     let endScreenEl = document.getElementById("quiz-end");
-    endScreenEl.removeAttribute("class");
-    let finalScoreEl = document.getElementById("score-final");
-    finalScoreEl.textContent = score;
+    endScreenEl.classList.remove("hide");
 
-    // Populate the hidden input with the final score
-    let finalScoreInput = document.getElementById("final-score");
-    finalScoreInput.value = score;
-
-    questionsEl.setAttribute("class", "hide");
-}
-
-function clockTick() {
-    time--;
-    timerEl.textContent = time;
-    if (time <= 0) {
-        quizEnd();
-    }
-}
-
-// Fisher-Yates Shuffle Algorithm
-function shuffle(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        let j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
+    document.getElementById("score-final").textContent = score;
+    document.getElementById("final-score").value = score;
 }
 
 function startQuestionTimer(duration) {
-    if (timerId) {
-        clearInterval(timerId);
-    }
+    if (timerId) clearInterval(timerId);
+    let timeLeft = isNaN(duration) ? 30 : duration;
 
-    let timeLeft = duration; // Set the timer for the current question
     timerEl.textContent = timeLeft;
 
     timerId = setInterval(() => {
@@ -120,13 +116,10 @@ function startQuestionTimer(duration) {
 
         if (timeLeft <= 0) {
             clearInterval(timerId);
-
             feedbackEl.textContent = "Time's up!";
             feedbackEl.style.color = "red";
-
-            setTimeout(function () {
-                feedbackEl.setAttribute("class", "feedback hide");
-            }, 2000);
+            feedbackEl.classList.remove("hide");
+            setTimeout(() => feedbackEl.classList.add("hide"), 1500);
 
             currentQuestionIndex++;
             if (currentQuestionIndex === questions.length) {
@@ -138,28 +131,25 @@ function startQuestionTimer(duration) {
     }, 1000);
 }
 
-function checkForEnter(event) {
-    if (event.key === "Enter") {
-        alert("Your Score has been Submitted");
+// Fisher-Yates Shuffle Algorithm
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
     }
 }
-nameEl.onkeyup = checkForEnter;
 
-document.addEventListener("DOMContentLoaded", function() {
-    startBtn = document.querySelector("#start");
-    startBtn.onclick = quizStart;
-});
-
-
+// ✅ Violation tracking
 document.addEventListener("visibilitychange", function () {
     if (document.hidden) {
-        // Student switched the tab
         sendViolationReport();
     }
 });
 
 function sendViolationReport() {
-    let studentId = document.getElementById("student_id").value; // Assuming there's an input field for student ID
+    let studentIdEl = document.getElementById("student_id");
+    if (!studentIdEl) return;
+    let studentId = studentIdEl.value;
 
     fetch("/report-violation", {
         method: "POST",
@@ -170,11 +160,7 @@ function sendViolationReport() {
         body: JSON.stringify({ student_id: studentId })
     })
     .then(response => response.json())
-    .then(data => {
-        console.log(data.message); // Success or error message
-    })
-    .catch(error => console.error("Error:", error));
+    .then(data => console.log(data.message))
+    .catch(error => console.error("Violation report failed:", error));
 }
-
-
 

@@ -74,36 +74,43 @@ public function update(Request $request, $id)
      */
 
      public function add(Request $request)
-     {
-         // Validate the incoming request data
-         $request->validate([
-             'quiz_id' => 'required|exists:quizzes,id', // Ensure the quiz exists
-             'question_text' => 'required|string|max:255', // Validate the question text
-             'options' => 'required|array|min:4|max:4', // Options must be an array of 4 items
-             'options.*' => 'required|string|max:255', // Each option must be a string
-             'correct_option' => 'required|integer|in:1,2,3,4', 
-             'duration' => 'required|integer|min:1',
-         ]);
- 
-         // Find the quiz by its ID
-         $quiz = Quiz::findOrFail($request->quiz_id);
- 
-         // Create the new question and associate it with the quiz
-         $quiz->questions()->create([
-             'text' => $request->question_text,
-             'option1' => $request->options[1],
-             'option2' => $request->options[2],
-             'option3' => $request->options[3],
-             'option4' => $request->options[4],
-             'right_option' => $request->correct_option,
-             'duration' => $request->duration,
-         ]);
- 
-         // Redirect back to the quiz show page with a success message
-         return redirect()->route('quiz.details', $quiz->id)->with('success', 'Question added successfully!');
- 
- 
-     }
+{
+    $request->validate([
+        'quiz_id' => 'required|exists:quizzes,id',
+        'question_type' => 'required|in:text,image',
+        'question_text' => 'nullable|required_if:question_type,text|string|max:255',
+        'question_image' => 'nullable|required_if:question_type,image|image|mimes:jpeg,png,jpg|max:2048',
+        'options' => 'required|array|min:4|max:4',
+        'options.*' => 'required|string|max:255',
+        'correct_option' => 'required|integer|in:1,2,3,4',
+        'duration' => 'required|integer|min:1',
+    ]);
+
+    $quiz = Quiz::findOrFail($request->quiz_id);
+
+    $questionData = [
+        'option1' => $request->options[1],
+        'option2' => $request->options[2],
+        'option3' => $request->options[3],
+        'option4' => $request->options[4],
+        'right_option' => $request->correct_option,
+        'duration' => $request->duration,
+    ];
+
+    if ($request->question_type === 'text') {
+        $questionData['text'] = $request->question_text;
+        $questionData['image'] = null;
+    } elseif ($request->question_type === 'image' && $request->hasFile('question_image')) {
+        $path = $request->file('question_image')->store('questions', 'public');
+        $questionData['image'] = $path;
+        $questionData['text'] = null;
+    }
+
+    $quiz->questions()->create($questionData);
+
+    return redirect()->route('quiz.details', $quiz->id)->with('success', 'Question added successfully!');
+}
+
      public function destroyQuestion($id)
 {
     $question = Question::findOrFail($id);

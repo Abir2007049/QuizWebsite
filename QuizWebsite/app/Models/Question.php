@@ -15,7 +15,18 @@ class Question extends Model
     protected $table = 'questions';
 
     
-    protected $fillable = ['text', 'option1', 'option2', 'option3', 'option4', 'right_option', 'quiz_id','duration'];
+    protected $fillable = [
+    'text',
+    'image',
+    'option1',
+    'option2',
+    'option3',
+    'option4',
+    'right_option',
+    'quiz_id',
+    'duration',
+];
+
    
 
    
