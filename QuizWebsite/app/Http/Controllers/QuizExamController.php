@@ -38,23 +38,22 @@ class QuizExamController extends Controller
         }
 
         // ✅ Prepare questions array for frontend
-        $questions = $quiz->questions->map(function ($q) {
-            return [
-                'image' => $q->image
-    ? asset('storage/' . ltrim($q->image, '/'))
-    : null,
+      $questions = $quiz->questions->map(function ($q) {
+    return [
+        'text' => $q->text, // ✅ Add this line to include question text
+        'image' => $q->image
+            ? asset('storage/' . ltrim($q->image, '/'))
+            : null,
 
+        'option1' => $q->option1,
+        'option2' => $q->option2,
+        'option3' => $q->option3,
+        'option4' => $q->option4,
+        'right_option' => $q->right_option,
+        'duration' => (int) $q->duration,
+    ];
+});
 
-
-
-                'option1' => $q->option1,
-                'option2' => $q->option2,
-                'option3' => $q->option3,
-                'option4' => $q->option4,
-                'right_option' => $q->right_option,
-                'duration' => (int) $q->duration, // ✅ force int for JS
-            ];
-        });
 
         return view('student.questions', [
             'quiz' => $quiz,
