@@ -1,8 +1,9 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <title>Quizzes for {{ $teacher->name }}</title>
     <style>
         body {
@@ -53,75 +54,131 @@
         .status.running {
             color: #28a745;
         }
+        #broadcast-data {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #fff;
+            border: 2px solid #28a745;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
     </style>
 
-    <!-- Echo + Reverb -->
-    
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
 
-    <h1>Quizzes for Room: {{ $teacher->room_name }}</h1>
+<h1>Quizzes for Room: {{ $teacher->room_name }}</h1>
 
-    @if ($quizzes->isEmpty())
-        <p>No quizzes available in this room.</p>
-    @else
-        <table>
-            <thead>
-                <tr>
-                    <th>Quiz Title</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($quizzes as $quiz)
+@php
+    $dhakaTime = \Carbon\Carbon::now('Asia/Dhaka');
+@endphp
+
+@if ($quizzes->isEmpty())
+    <p>No quizzes available in this room.</p>
+@else
+    <table>
+        <thead>
+            <tr>
+                <th>Quiz Title</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($quizzes as $quiz)
                 @php
                     $startDatetime = \Carbon\Carbon::parse($quiz->start_datetime)->setTimezone('Asia/Dhaka');
-                    $dhakaTime = \Carbon\Carbon::now('Asia/Dhaka');
                     $endDatetime = $startDatetime->copy()->addMinutes($quiz->duration);
-                    $quizId = $quiz->id;
                 @endphp
                 <tr>
                     <td>{{ $quiz->title }}</td>
                     <td>
-                        <span id="quiz-status-{{ $quizId }}">
+                        <span class="quiz-status status"
+                              id="quiz-status-{{ $quiz->id }}"
+                              data-id="{{ $quiz->id }}"
+                              data-start="{{ $startDatetime->toIso8601String() }}"
+                              data-end="{{ $endDatetime->toIso8601String() }}">
                             @if ($dhakaTime->lt($startDatetime))
-                                <p class="status upcoming">The quiz will be available on {{ $startDatetime->format('F j, Y, g:i A') }}.</p>
+                                <span class="status upcoming">The quiz will be available on {{ $startDatetime->format('F j, Y, g:i A') }}.</span>
                             @elseif ($dhakaTime->gt($endDatetime))
-                                <p class="status finished">Finished</p>
+                                <span class="status finished">Finished</span>
                             @else
-                                <a href="{{ route('quiz.take', ['id' => $quizId, 'student_id' => $student_id]) }}" class="status running">Running</a>
+                                <a href="{{ route('quiz.take', ['id' => $quiz->id, 'student_id' => $student_id]) }}" class="status running">Running</a>
                             @endif
                         </span>
-
-                        <script>
-                            const statusElem{{ $quizId }} = document.getElementById("quiz-status-{{ $quizId }}");
-                            const startTime{{ $quizId }} = new Date("{{ $startDatetime->format('Y-m-d\TH:i:s') }}");
-                            const endTime{{ $quizId }} = new Date("{{ $endDatetime->format('Y-m-d\TH:i:s') }}");
-
-                            const runningLink{{ $quizId }} = `<a href='{{ route('quiz.take', ['id' => $quizId, 'student_id' => $student_id]) }}' class='status running'>Running</a>`;
-                            const upcomingText{{ $quizId }} = `<p class='status upcoming'>The quiz will be available on {{ $startDatetime->format('F j, Y, g:i A') }}.</p>`;
-                            const finishedText{{ $quizId }} = `<p class='status finished'>Finished</p>`;
-
-                            function updateStatus{{ $quizId }}() {
-                                const now = new Date();
-                                if (now < startTime{{ $quizId }}) {
-                                    statusElem{{ $quizId }}.innerHTML = upcomingText{{ $quizId }};
-                                } else if (now > endTime{{ $quizId }}) {
-                                    statusElem{{ $quizId }}.innerHTML = finishedText{{ $quizId }};
-                                } else {
-                                    statusElem{{ $quizId }}.innerHTML = runningLink{{ $quizId }};
-                                }
-                            }
-
-                            updateStatus{{ $quizId }}();
-                            setInterval(updateStatus{{ $quizId }}, 1000);
-                        </script>
                     </td>
                 </tr>
-                @endforeach
-            </tbody>
-        </table>
-    @endif
-//
+            @endforeach
+        </tbody>
+    </table>
+@endif
+
+
+
+<script>
+    function updateQuizStatus(quizId, startTime, endTime) {
+        const now = new Date();
+        const start = new Date(startTime);
+        const end = new Date(endTime);
+        const statusEl = document.getElementById(`quiz-status-${quizId}`);
+
+        if (!statusEl) return;
+
+        const quizLink = `/quiz/${quizId}/take`;  
+
+        if (now < start) {
+            statusEl.innerHTML = `<span class="status upcoming">The quiz will be available on ${start.toLocaleString()}</span>`;
+
+           
+            setTimeout(() => {
+                statusEl.innerHTML = `<a href="${quizLink}" class="status running">Running</a>`;
+            }, start - now);
+
+            
+            setTimeout(() => {
+                statusEl.innerHTML = `<span class="status finished">Finished</span>`;
+            }, end - now);
+
+        } else if (now >= start && now < end) {
+            statusEl.innerHTML = `<a href="${quizLink}" class="status running">Running</a>`;
+
+            setTimeout(() => {
+                statusEl.innerHTML = `<span class="status finished">Finished</span>`;
+            }, end - now);
+
+        } else {
+            statusEl.innerHTML = `<span class="status finished">Finished</span>`;
+        }
+    }
+
+    function initQuizTimers() {
+        document.querySelectorAll('.quiz-status').forEach(el => {
+            const id = el.dataset.id;
+            const start = el.dataset.start;
+            const end = el.dataset.end;
+            updateQuizStatus(id, start, end);
+        });
+    }
+
+   
+    document.addEventListener("DOMContentLoaded", function () {
+        initQuizTimers();
+const room = "{{ session('room_name') }}";
+       
+        window.Echo.channel(`room.${room}`)
+            .listen("QuizStatusUpdated", (e) => {
+                const dataDiv = document.getElementById('broadcast-data');
+                const quizId = e.quizId ?? 'Unknown';
+
+                fetch(`/api/quiz/${quizId}/timing`)
+                    .then(res => res.json())
+                    .then(data => {
+                        updateQuizStatus(quizId, data.start_datetime, data.end_datetime);
+                    });
+
+                
+            });
+    });
+</script>
+
 </body>
 </html>

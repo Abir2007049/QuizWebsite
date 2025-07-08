@@ -9,6 +9,10 @@ use App\Models\Quiz;
 use App\Models\Question;
 use App\Models\Result;
 use Carbon\Carbon;
+use App\Events\QuizStatusUpdated;
+use Illuminate\Support\Facades\Auth;
+
+
 
 class QuizExamController extends Controller
 {
@@ -66,14 +70,19 @@ class QuizExamController extends Controller
     // ✅ Set start time to now and calculate total quiz time from question durations
     public function startNow(Request $request, $id)
     {
-        $quiz = Quiz::with('questions')->findOrFail($id);
-        $totalDuration = $quiz->questions->sum('duration') / 60;
+       $current = (Carbon::now('Asia/Dhaka'));
 
-        $quiz->start_datetime = Carbon::now('Asia/Dhaka');
+        $quiz = Quiz::findOrFail($id);
+        $quiz_id=$id;
+        $totalDuration = $quiz->questions->sum('duration') / 60;
+        
+        $quiz->start_datetime = $current;
         $quiz->duration = $totalDuration;
         $quiz->save();
 
-        return redirect()->back()->with('success', 'Quiz started now.');
+        event(new QuizStatusUpdated($quiz_id, Auth::user()->room_name, $current));
+        
+        return redirect()->back();
     }
 
     // ✅ Store submitted answers and score
