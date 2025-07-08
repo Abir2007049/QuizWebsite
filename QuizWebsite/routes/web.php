@@ -123,8 +123,18 @@ Route::post('/report-tab-switch', function (Request $request) {
 
 ///////////
 
+Route::get('/api/quiz/{id}/timing', function ($id) {
+    $quiz = \App\Models\Quiz::findOrFail($id);
+    $start = \Carbon\Carbon::parse($quiz->start_datetime)->setTimezone('Asia/Dhaka');
+    $end = $start->copy()->addMinutes($quiz->duration);
+
+    return response()->json([
+        'start_datetime' => $start->toIso8601String(),
+        'end_datetime' => $end->toIso8601String(),
+    ]);
+});
 
 
 
 //////////////
-//ok
+

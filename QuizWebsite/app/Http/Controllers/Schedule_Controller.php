@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Quiz;
 use Carbon\Carbon;
+use App\Events\QuizStatusUpdated;
+use Illuminate\Support\Facades\Auth;
+
 
 class Schedule_Controller extends Controller {
     public function schedule(Request $request, $quiz_id)
@@ -26,6 +29,8 @@ class Schedule_Controller extends Controller {
     $quiz->start_datetime = $startDatetime;
     $totalDuration = $quiz->questions->sum('duration') / 60;
     $quiz->duration=$totalDuration;
+
+      event(new QuizStatusUpdated($quiz_id, Auth::user()->room_name, $startDatetime));
 
     // Save the quiz
     $quiz->save();
