@@ -4,8 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $quiz->title }} - Quiz</title>
+<<<<<<< HEAD
     <link rel="stylesheet" href="{{ secure_asset('styles.css') }}" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
+=======
+    <link rel="stylesheet" href="{{ asset('styles.css') }}" />
+    
+>>>>>>> 7dd42033a0c71634132ed144590e362385b5a6fa
 </head>
 <body>
     <header>
@@ -92,5 +97,7 @@
             alert("You cannot go back during the quiz.");
         });
     </script>
+
+     <script src="{{ asset('script.js') }}"></script>
 </body>
 </html>
