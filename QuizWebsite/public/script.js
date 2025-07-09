@@ -13,12 +13,7 @@ let timerId;
 
 startBtn.onclick = quizStart;
 
-// ✅ Prevent back navigation
-history.pushState(null, null, location.href);
-window.addEventListener('popstate', function () {
-    history.pushState(null, null, location.href);
-    alert("You cannot go back during the quiz.");
-});
+
 
 function quizStart() {
     shuffle(questions);
