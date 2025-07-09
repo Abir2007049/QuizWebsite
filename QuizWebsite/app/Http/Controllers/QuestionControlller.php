@@ -106,18 +106,28 @@ public function update(Request $request, $id)
         $questionData['text'] = null;
     }
 
-    $quiz->questions()->create($questionData);
+    $question=$quiz->questions()->create($questionData);
+    return response()->json($question);
 
-    return redirect()->route('quiz.details', $quiz->id)->with('success', 'Question added successfully!');
+
+
+
+    //return redirect()->route('quiz.details', $quiz->id)->with('success', 'Question added successfully!');
 }
 
-     public function destroyQuestion($id)
+   public function destroyQuestion($id)
 {
-    $question = Question::findOrFail($id);
+     $question = Question::find($id);
+
+    if (!$question) {
+        return response()->json(['message' => 'Question not found'], 404);
+    }
+
     $question->delete();
 
-    return redirect()->route('quiz.details', $question->quiz_id)->with('success', 'Question deleted successfully!');
+    return response()->json(['message' => 'Deleted successfully']);
 }
+
 
    
 }

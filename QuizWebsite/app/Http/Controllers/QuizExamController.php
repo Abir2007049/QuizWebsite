@@ -82,7 +82,7 @@ class QuizExamController extends Controller
 
         event(new QuizStatusUpdated($quiz_id, Auth::user()->room_name, $current));
         
-        return redirect()->back();
+        return redirect()->route('quiz.list');
     }
 
     // ✅ Store submitted answers and score
