@@ -101,10 +101,16 @@ public function showQuizListToStudents(Request $request)
 
 public function destroy($id)
 {
-    $quiz = Quiz::findOrFail($id);  
-    $quiz->delete();  
+   $quiz = Quiz::findOrFail($id);
 
-    return redirect()->route('quiz.list')->with('success', 'Quiz deleted successfully!');
+   
+    if (auth()->id() !== $quiz->userid) {
+    return response()->json(['error' => 'Unauthorized'], 403);
+}
+
+    $quiz->delete();
+
+    return response()->json(['message' => 'Quiz deleted successfully']);
 }
 
 
