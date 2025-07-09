@@ -36,9 +36,9 @@ class Schedule_Controller extends Controller {
     $quiz->save();
 
     // Redirect back with success message
-    return redirect()->route('quiz.details', $quiz->id)
-        ->with('success', 'Quiz scheduled successfully!');
-}
+    return redirect()->route('quiz.list');
+       
+  }
 
 }
 

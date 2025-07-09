@@ -3,162 +3,174 @@
 @section('title', 'Quiz Details')
 
 @section('content')
-<div class="container mt-4 p-4 bg-light shadow rounded" style="color: #333; background-color: #f8fff8; border: 1px solid #d4edda;">
-    <!-- Quiz Title and Created At -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="mb-0" style="color: #155724;">{{ $quiz->title }}</h1>
-        <p class="mb-0"><strong>Created At:</strong> {{ $quiz->created_at->format('d M, Y H:i') }}</p>
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
+<div class="container mt-4 p-4 bg-light shadow rounded">
+    <div class="d-flex justify-content-between mb-4">
+        <h1>{{ $quiz->title }}</h1>
+        <p><strong>Created At:</strong> {{ $quiz->created_at->format('d M, Y H:i') }}</p>
     </div>
 
-    <!-- Questions Table -->
-    <h3 style="color: #155724;">Questions</h3>
+    <h3>Questions</h3>
     <div class="table-responsive mb-4">
         <table class="table table-bordered table-striped">
-            <thead style="background-color: #d4edda;">
+            <thead class="bg-light">
                 <tr>
-                    <th>#</th>
-                    <th>Question</th>
-                    <th>Options</th>
-                    <th class="text-center">Actions</th>
+                    <th>#</th><th>Question</th><th>Options</th><th>Actions</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="questions-body">
                 @forelse ($quiz->questions as $question)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>
-                            @if ($question->text)
+                            @if ($question->text) 
                                 {{ $question->text }}
                             @elseif ($question->image)
-                                <img src="{{ asset('storage/' . $question->image) }}" alt="Question Image" style="max-width: 200px;">
+                                <img src="{{ asset('storage/' . $question->image) }}" style="max-width:200px;">
                             @else
                                 <em>No question content</em>
                             @endif
                         </td>
                         <td>
-                            <ul class="list-unstyled mb-0">
-                                @foreach([$question->option1, $question->option2, $question->option3, $question->option4] as $index => $option)
-                                    <li style="@if ($index + 1 == $question->right_option) font-weight: bold; color: green; @endif">{{ $option }}</li>
+                            <ul class="mb-0">
+                                @foreach([$question->option1,$question->option2,$question->option3,$question->option4] as $i=>$opt)
+                                  <li style="@if($i+1==$question->right_option)font-weight:bold;color:green;@endif">{{ $opt }}</li>
                                 @endforeach
                             </ul>
                         </td>
-                        <td class="text-center">
-                            <form action="{{ route('questions.delete', $question->id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Are you sure you want to delete this question?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
-                            </form>
-                            <form action="{{ route('questions.edit', ['id' => $question->id]) }}" method="GET" class="d-inline-block">
+                        <td>
+                            <button class="btn btn-outline-danger btn-sm delete-btn" data-id="{{ $question->id }}">Delete</button>
+                        </td>
+                          <td>
+                        <form action="{{ route('questions.edit', ['id' => $question->id]) }}" method="GET" class="d-inline-block">
                                 @csrf
                                 <button type="submit" class="btn btn-outline-success btn-sm">Update</button>
                             </form>
-                        </td>
+
+</td>
                     </tr>
                 @empty
-                    <tr>
-                        <td colspan="4" class="text-center">No questions found</td>
-                    </tr>
+                    <tr id="no-questions"><td colspan="4" class="text-center">No questions found</td></tr>
                 @endforelse
             </tbody>
         </table>
     </div>
 
-    <!-- Add New Question Form -->
-    <h3 style="color: #155724;">Add New Question</h3>
-    <form action="{{ route('questions.add') }}" method="POST" class="mb-4" enctype="multipart/form-data">
+    <h3>Add New Question</h3>
+    <form id="ajx" action="{{ route('questions.add') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <input type="hidden" name="quiz_id" value="{{ $quiz->id }}">
 
         <div class="row g-3">
-            <!-- Question Type Selector -->
             <div class="col-md-6">
-                <label for="question_type" class="form-label">Question Type</label>
                 <select id="question_type" name="question_type" class="form-control" onchange="toggleQuestionInput()" required>
-                    <option value="text" selected>Text</option>
+                    <option value="text">Text</option>
                     <option value="image">Image</option>
                 </select>
             </div>
 
-            <!-- Text Input -->
             <div class="col-md-6" id="text-input">
-                <label for="question_text" class="form-label">Question Text</label>
-                <input type="text" id="question_text" name="question_text" class="form-control">
+                <input type="text" name="question_text" class="form-control" placeholder="Question text">
             </div>
 
-            <!-- Image Input -->
             <div class="col-md-6 d-none" id="image-input">
-                <label for="question_image" class="form-label">Question Image</label>
-                <input type="file" id="question_image" name="question_image" class="form-control" accept="image/*">
+                <input type="file" name="question_image" class="form-control" accept="image/*">
             </div>
 
-            <!-- Options -->
             <div class="col-md-6">
-                <label class="form-label">Options</label>
                 @for ($i = 1; $i <= 4; $i++)
                     <input type="text" name="options[{{ $i }}]" class="form-control mb-2" placeholder="Option {{ $i }}" required>
                 @endfor
             </div>
 
-            <!-- Correct Option -->
             <div class="col-md-4">
-                <label for="correct_option" class="form-label">Correct Option</label>
-                <select id="correct_option" name="correct_option" class="form-control" required>
-                    <option value="" disabled selected>Select</option>
+                <select name="correct_option" class="form-control" required>
+                    <option disabled selected>Correct option</option>
                     @for ($i = 1; $i <= 4; $i++)
                         <option value="{{ $i }}">Option {{ $i }}</option>
                     @endfor
                 </select>
             </div>
 
-            <!-- Duration -->
             <div class="col-md-4">
-                <label for="duration" class="form-label">Duration (seconds)</label>
-                <input type="number" id="duration" name="duration" class="form-control" min="1" placeholder="Duration">
+                <input type="number" name="duration" class="form-control" min="1" placeholder="Duration (sec)">
             </div>
 
-            <div class="col-md-4 d-flex align-items-end">
+            <div class="col-md-4">
                 <button type="submit" class="btn btn-success w-100">Add Question</button>
             </div>
         </div>
     </form>
-
-    <!-- Schedule Quiz Form -->
-    <h3 style="color: #155724;">Schedule Quiz</h3>
-    <form action="{{ route('quiz.schedule', $quiz->id) }}" method="POST" class="d-flex align-items-end gap-3 mb-3">
-        @csrf
-        <div>
-            <label for="start_datetime" class="form-label">Start Date & Time</label>
-            <input type="text" id="start_datetime" name="start_datetime" class="form-control" required>
-        </div>
-        <button type="submit" class="btn btn-primary">Schedule</button>
-    </form>
-
-    <form action="{{ route('quiz.startnow', $quiz->id) }}" method="POST" class="text-end">
-        @csrf
-        <button type="submit" class="btn btn-success">Start Now</button>
-    </form>
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        flatpickr("#start_datetime", {
-            enableTime: true,
-            dateFormat: "Y-m-d H:i",
+function toggleQuestionInput() {
+    const type = document.getElementById('question_type').value;
+    document.getElementById('text-input').classList.toggle('d-none', type !== 'text');
+    document.getElementById('image-input').classList.toggle('d-none', type !== 'image');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+  
+    document.getElementById('ajx').onsubmit = async function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const res = await fetch(this.action, {
+            method: 'POST',
+            headers: { 'X-CSRF-TOKEN': csrf },
+            body: formData
         });
-    });
+        const q = await res.json();
+        if (!res.ok) return alert('Failed to add question.');
 
-    function toggleQuestionInput() {
-        const type = document.getElementById('question_type').value;
-        const textInput = document.getElementById('text-input');
-        const imageInput = document.getElementById('image-input');
+        const tbody = document.getElementById('questions-body');
+        document.getElementById('no-questions')?.remove();
+        const idx = tbody.querySelectorAll('tr').length + 1;
 
-        if (type === 'text') {
-            textInput.classList.remove('d-none');
-            imageInput.classList.add('d-none');
+        const content = q.text ? q.text
+            : q.image ? `<img src="/storage/${q.image}" style="max-width:200px;">`
+            : '<em>No question content</em>';
+
+        const options = [q.option1, q.option2, q.option3, q.option4]
+            .map((opt, i) => `<li style="${i+1==q.right_option?'font-weight:bold;color:green;':''}">${opt}</li>`)
+            .join('');
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${idx}</td><td>${content}</td>
+            <td><ul class="mb-0">${options}</ul></td>
+            <td><button class="btn btn-outline-danger btn-sm delete-btn" data-id="${q.id}">Delete</button></td>
+        `;
+        tbody.appendChild(row);
+        this.reset();
+        toggleQuestionInput();
+    };
+
+    // AJAX Delete
+    document.addEventListener('click', async (e) => {
+        const csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        if (!e.target.classList.contains('delete-btn')) return;
+        if (!confirm('Are you sure?')) return;
+
+        const id = e.target.dataset.id;
+        const res = await fetch(`/questions/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': csrf,
+                'Accept': 'application/json'
+            }
+        });
+
+        if (res.ok) {
+            e.target.closest('tr').remove();
         } else {
-            textInput.classList.add('d-none');
-            imageInput.classList.remove('d-none');
+            alert('Delete failed.');
         }
-    }
+    });
+});
 </script>
 @endsection
