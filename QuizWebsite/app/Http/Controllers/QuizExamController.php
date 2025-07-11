@@ -42,9 +42,10 @@ class QuizExamController extends Controller
         }
 
         // ✅ Prepare questions array for frontend
-      $questions = $quiz->questions->map(function ($q) {
+     $questions = $quiz->questions->map(function ($q) {
     return [
-        'text' => $q->text, // ✅ Add this line to include question text
+        'id' =>$q->id,
+        'text' => $q->text,
         'image' => $q->image
             ? asset('storage/' . ltrim($q->image, '/'))
             : null,
@@ -53,10 +54,12 @@ class QuizExamController extends Controller
         'option2' => $q->option2,
         'option3' => $q->option3,
         'option4' => $q->option4,
-        'right_option' => $q->right_option,
         'duration' => (int) $q->duration,
+        // 'right_option' removed here — do not send it
     ];
 });
+
+
 
 
         return view('student.questions', [
@@ -85,31 +88,6 @@ class QuizExamController extends Controller
         return redirect()->route('quiz.list');
     }
 
-    // ✅ Store submitted answers and score
-    public function submitQuizAnswered(Request $request, $quiz)
-{
-    $studentId = session('student_id');
-
-    if (!$studentId) {
-        return redirect()->back()->with('error', 'Student session expired or not found.');
-    }
-
-    $request->validate([
-        'score' => 'required|integer',
-    ]);
-
-    $result = new Result();
-    $result->student_id = $studentId;
-    $result->quiz_id = $quiz;
-    $result->score = $request->score;
-
-    if ($result->save()) {
-        \Log::info('Result saved successfully: ', $result->toArray());
-        return view('student.finishmessage');
-    } else {
-        \Log::error('Failed to save result');
-        return redirect()->back()->with('error', 'Failed to save result.');
-    }
-}
+   
 
 }

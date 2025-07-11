@@ -46,15 +46,6 @@
 </head>
 <body>
 
-<!-- Custom Modal -->
-<div id="block-modal" class="modal-overlay hide">
-    <div class="modal-box">
-        <h3>⚠️ Action Blocked</h3>
-        <p>You cannot go back. Submit to end the quiz.</p>
-        <button id="close-modal">OK</button>
-    </div>
-</div>
-
 <header>
     <div class="timer">
         <p>Time: <span id="timer">0</span></p>
@@ -80,13 +71,12 @@
     <!-- End Screen -->
     <div class="hide" id="quiz-end">
         <h2>All Done!</h2>
-        <p>Your final score is: <span id="score-final"></span></p>
-        <form action="{{ route('result.store') }}" method="POST">
+        <form id="quiz-form" action="{{ route('result.store') }}" method="POST">
             @csrf
-            <input type="hidden" name="quiz_id" value="{{ $quiz->id }}" />
-            <input type="hidden" name="student_id" value="{{ session('student_id') }}" />
-            <input type="hidden" id="final-score" name="score" value="" />
-            <button type="submit" id="submit-score">Submit</button>
+            <input type="hidden" name="quiz_id" value="{{ $quiz->id }}">
+            <input type="hidden" name="student_id" value="{{ session('student_id') }}">
+            <div id="answers-container"></div>
+            <button type="submit">Submit</button>
         </form>
     </div>
 
@@ -94,100 +84,53 @@
     <div id="feedback" class="feedback hide"></div>
 </main>
 
-<!-- Laravel-passed Questions -->
 <script>
     const questions = @json($questions);
-    console.log(questions);
 </script>
 
-<!-- Custom JS Logic -->
 <script>
-document.addEventListener('DOMContentLoaded', () => {
     let quizStarted = false;
-    let modalOpen = false;
 
-    const showBlockMessage = () => {
-        modalOpen = true;
-        document.getElementById('block-modal').classList.remove('hide');
-    };
+    document.addEventListener('DOMContentLoaded', () => {
+        const startBtn = document.getElementById('start');
+        const form = document.getElementById('quiz-form');
 
-    const hideBlockMessage = () => {
-        modalOpen = false;
-        document.getElementById('block-modal').classList.add('hide');
-    };
+        // Start button clicked
+        startBtn.addEventListener('click', () => {
+            quizStarted = true;
 
-    document.getElementById('close-modal').addEventListener('click', () => {
-        hideBlockMessage();
-    });
+            // Show leave confirmation on back/refresh
+            window.onbeforeunload = function () {
+                return "Are you sure you want to leave? Your progress will be lost.";
+            };
+        });
 
-    document.getElementById('start').addEventListener('click', function () {
-        quizStarted = true;
-        history.pushState(null, null, location.href);
-        // You can add quiz start logic here as needed
-    });
+        // Disable leave confirmation if quiz is submitted
+        form.addEventListener('submit', () => {
+            window.onbeforeunload = null;
+        });
 
-    document.getElementById('submit-score').addEventListener('click', function () {
-        quizStarted = false;
-        // You can add submit logic here as needed
-    });
+        // Optional: Report tab switch
+        document.addEventListener("visibilitychange", function () {
+            if (!quizStarted) return;
 
-    window.addEventListener('popstate', function () {
-        if (quizStarted) {
-            // Always show modal and re-push state to prevent back navigation escape
-            showBlockMessage();
-            history.pushState(null, null, location.href);
-        }
-    });
-
-    // Block certain key shortcuts when quiz is running
-    document.addEventListener('keydown', function (e) {
-        if (!quizStarted) return;
-
-        if (e.key === 'Backspace' && !['INPUT', 'TEXTAREA'].includes(e.target.tagName)) {
-            e.preventDefault();
-            showBlockMessage();
-        }
-
-        if (
-            e.key === 'F5' || e.key === 'F12' ||
-            (e.ctrlKey && ['r', 'R', 'u', 'U', 's', 'S', 'i', 'I'].includes(e.key)) ||
-            (e.key === 'ArrowLeft' && e.altKey)
-        ) {
-            e.preventDefault();
-            showBlockMessage();
-        }
-    });
-
-    // Block right-click when quiz is running
-    document.addEventListener('contextmenu', function (e) {
-        if (quizStarted) {
-            e.preventDefault();
-            showBlockMessage();
-        }
-    });
-
-    // Tab visibility change tracking
-    document.addEventListener("visibilitychange", function () {
-        if (!quizStarted) return;
-
-        fetch('/report-tab-switch', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            },
-            body: JSON.stringify({
-                student_id: {{ session('student_id') }},
-                quiz_id: {{ $quiz->id }},
-                state: document.hidden ? 'hidden' : 'visible',
-                time: new Date().toISOString()
-            })
+            fetch('/report-tab-switch', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    student_id: {{ session('student_id') }},
+                    quiz_id: {{ $quiz->id }},
+                    state: document.hidden ? 'hidden' : 'visible',
+                    time: new Date().toISOString()
+                })
+            });
         });
     });
-});
 </script>
 
-<!-- Your Quiz Logic -->
 <script src="{{ asset('script.js') }}"></script>
 
 </body>
