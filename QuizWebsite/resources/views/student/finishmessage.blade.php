@@ -5,7 +5,7 @@
 @section('content')
 <div class="congrats-container text-center mt-5">
     <marquee behavior="alternate" scrollamount="10">
-        <h2 class="congrats-text">🎉 Well Done! All the Best For The Next Quiz! 🎉</h2>
+        <h2 class="congrats-text">🎉 Well Done! You scored {{ $score }} points! 🎉</h2>
     </marquee>
     <p class="congrats-message">Keep up the great work and ace your goals! 🚀</p>
 </div>
@@ -42,3 +42,4 @@
     }
 </style>
 @endsection
+
