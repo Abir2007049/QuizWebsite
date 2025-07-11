@@ -8,12 +8,9 @@ let feedbackEl = document.querySelector("#feedback");
 let reStartBtn = document.querySelector("#restart");
 
 let currentQuestionIndex = 0;
-let score = 0;
 let timerId;
 
 startBtn.onclick = quizStart;
-
-
 
 function quizStart() {
     shuffle(questions);
@@ -63,24 +60,21 @@ function getQuestion() {
     startQuestionTimer(parseInt(currentQuestion.duration));
 }
 
+let selectedAnswers = [];
+
 function questionClick(selectedOptionNumber) {
-    const correctOption = parseInt(questions[currentQuestionIndex].right_option);
+    // Disable buttons immediately to prevent multiple clicks
+    Array.from(choicesEl.children).forEach(btn => btn.disabled = true);
 
-    if (selectedOptionNumber === correctOption) {
-        feedbackEl.textContent = "Correct!";
-        feedbackEl.style.color = "green";
-        score++;
-    } else {
-        feedbackEl.textContent = "Wrong!";
-        feedbackEl.style.color = "red";
-    }
+    const currentQuestion = questions[currentQuestionIndex];
 
-    feedbackEl.classList.remove("hide");
-    setTimeout(() => feedbackEl.classList.add("hide"), 1500);
-
-    clearInterval(timerId);
+    selectedAnswers.push({
+        question_id: currentQuestion.id,
+        selected_option: selectedOptionNumber
+    });
 
     currentQuestionIndex++;
+
     if (currentQuestionIndex === questions.length) {
         quizEnd();
     } else {
@@ -88,16 +82,21 @@ function questionClick(selectedOptionNumber) {
     }
 }
 
+
 function quizEnd() {
     clearInterval(timerId);
     questionsEl.classList.add("hide");
+    document.getElementById("quiz-end").classList.remove("hide");
 
-    let endScreenEl = document.getElementById("quiz-end");
-    endScreenEl.classList.remove("hide");
-
-    document.getElementById("score-final").textContent = score;
-    document.getElementById("final-score").value = score;
+    const answersContainer = document.getElementById("answers-container");
+    selectedAnswers.forEach((ans, index) => {
+        answersContainer.innerHTML += `
+            <input type="hidden" name="answers[${index}][question_id]" value="${ans.question_id}" />
+            <input type="hidden" name="answers[${index}][selected_option]" value="${ans.selected_option}" />
+        `;
+    });
 }
+
 
 function startQuestionTimer(duration) {
     if (timerId) clearInterval(timerId);
@@ -132,7 +131,7 @@ function shuffle(array) {
         let j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
     }
-}
+}  
 
 // ✅ Violation tracking
 document.addEventListener("visibilitychange", function () {
