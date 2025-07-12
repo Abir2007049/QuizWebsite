@@ -29,8 +29,14 @@ function getQuestion() {
     questionEl.innerHTML = "";
     optionsEl.innerHTML = "";
 
+    if (!currentQuestion) {
+        questionEl.innerHTML = "No more questions.";
+        return;
+    }
+
     // ✅ Image rendering
     if (currentQuestion.image) {
+        console.log("Image URL:", currentQuestion.image);
         let img = document.createElement("img");
         img.src = currentQuestion.image;
         img.alt = "Question Image";
@@ -38,7 +44,6 @@ function getQuestion() {
         img.style.marginBottom = "10px";
         questionEl.appendChild(img);
     }
-    
 
     // ✅ Text rendering
     if (currentQuestion.text) {
@@ -52,7 +57,8 @@ function getQuestion() {
         let optionText = currentQuestion["option" + i];
         let optionBtn = document.createElement("button");
         optionBtn.textContent = `${i}. ${optionText}`;
-        optionBtn.onclick = () => questionClick(i); // Pass option number
+        optionBtn.className = "btn btn-outline-primary m-2 d-block";
+        optionBtn.onclick = () => questionClick(i);
         optionsEl.appendChild(optionBtn);
     }
 
