@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{{ $quiz->title }} - Quiz</title>
-    <link rel="stylesheet" href="{{ asset('styles.css') }}" />
+    <link rel="stylesheet" href="{{ secure_asset('styles.css') }}" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <style>
         .modal-overlay {
@@ -131,7 +131,7 @@
     });
 </script>
 
-<script src="{{ asset('script.js') }}"></script>
+<script src="{{ secure_asset('script.js') }}"></script>
 
 </body>
 </html>
