@@ -6,6 +6,18 @@
       0 => 'Laravel\\Pail\\PailServiceProvider',
     ),
   ),
+  'laravel/reverb' => 
+  array (
+    'aliases' => 
+    array (
+      'Output' => 'Laravel\\Reverb\\Output',
+    ),
+    'providers' => 
+    array (
+      0 => 'Laravel\\Reverb\\ApplicationManagerServiceProvider',
+      1 => 'Laravel\\Reverb\\ReverbServiceProvider',
+    ),
+  ),
   'laravel/sail' => 
   array (
     'providers' => 
@@ -18,6 +30,17 @@
     'providers' => 
     array (
       0 => 'Laravel\\Tinker\\TinkerServiceProvider',
+    ),
+  ),
+  'livewire/livewire' => 
+  array (
+    'aliases' => 
+    array (
+      'Livewire' => 'Livewire\\Livewire',
+    ),
+    'providers' => 
+    array (
+      0 => 'Livewire\\LivewireServiceProvider',
     ),
   ),
   'nesbot/carbon' => 
@@ -39,13 +62,6 @@
     'providers' => 
     array (
       0 => 'Termwind\\Laravel\\TermwindServiceProvider',
-    ),
-  ),
-  'pestphp/pest-plugin-laravel' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'Pest\\Laravel\\PestServiceProvider',
     ),
   ),
 );
