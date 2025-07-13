@@ -46,3 +46,62 @@
 #11 C:\\Users\\dhruba\\Desktop\\Projects\\QuizWebsite\\artisan(13): Illuminate\\Foundation\\Application->handleCommand(Object(Symfony\\Component\\Console\\Input\\ArgvInput))
 #12 {main}
 "} 
+[2025-07-13 06:06:21] local.ERROR: Class "Livewire\Livewire" not found {"exception":"[object] (Error(code: 0): Class \"Livewire\\Livewire\" not found at C:\\Users\\dhruba\\fresh\\QuizWebsite\\app\\Providers\\AppServiceProvider.php:24)
+[stacktrace]
+#0 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(36): App\\Providers\\AppServiceProvider->boot()
+#1 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Util.php(43): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#2 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(95): Illuminate\\Container\\Util::unwrapIfClosure(Object(Closure))
+#3 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod(Object(Illuminate\\Foundation\\Application), Array, Object(Closure))
+#4 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(690): Illuminate\\Container\\BoundMethod::call(Object(Illuminate\\Foundation\\Application), Array, Array, NULL)
+#5 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1121): Illuminate\\Container\\Container->call(Array)
+#6 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1102): Illuminate\\Foundation\\Application->bootProvider(Object(App\\Providers\\AppServiceProvider))
+#7 [internal function]: Illuminate\\Foundation\\Application->Illuminate\\Foundation\\{closure}(Object(App\\Providers\\AppServiceProvider), 'App\\\\Providers\\\\A...')
+#8 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1101): array_walk(Array, Object(Closure))
+#9 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Bootstrap\\BootProviders.php(17): Illuminate\\Foundation\\Application->boot()
+#10 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(316): Illuminate\\Foundation\\Bootstrap\\BootProviders->bootstrap(Object(Illuminate\\Foundation\\Application))
+#11 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(473): Illuminate\\Foundation\\Application->bootstrapWith(Array)
+#12 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(195): Illuminate\\Foundation\\Console\\Kernel->bootstrap()
+#13 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1205): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#14 C:\\Users\\dhruba\\fresh\\QuizWebsite\\artisan(13): Illuminate\\Foundation\\Application->handleCommand(Object(Symfony\\Component\\Console\\Input\\ArgvInput))
+#15 {main}
+"} 
+[2025-07-13 06:07:19] local.ERROR: Class "Livewire\Livewire" not found {"exception":"[object] (Error(code: 0): Class \"Livewire\\Livewire\" not found at C:\\Users\\dhruba\\fresh\\QuizWebsite\\app\\Providers\\AppServiceProvider.php:24)
+[stacktrace]
+#0 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(36): App\\Providers\\AppServiceProvider->boot()
+#1 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Util.php(43): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#2 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(95): Illuminate\\Container\\Util::unwrapIfClosure(Object(Closure))
+#3 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod(Object(Illuminate\\Foundation\\Application), Array, Object(Closure))
+#4 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(690): Illuminate\\Container\\BoundMethod::call(Object(Illuminate\\Foundation\\Application), Array, Array, NULL)
+#5 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1121): Illuminate\\Container\\Container->call(Array)
+#6 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1102): Illuminate\\Foundation\\Application->bootProvider(Object(App\\Providers\\AppServiceProvider))
+#7 [internal function]: Illuminate\\Foundation\\Application->Illuminate\\Foundation\\{closure}(Object(App\\Providers\\AppServiceProvider), 'App\\\\Providers\\\\A...')
+#8 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1101): array_walk(Array, Object(Closure))
+#9 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Bootstrap\\BootProviders.php(17): Illuminate\\Foundation\\Application->boot()
+#10 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(316): Illuminate\\Foundation\\Bootstrap\\BootProviders->bootstrap(Object(Illuminate\\Foundation\\Application))
+#11 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(473): Illuminate\\Foundation\\Application->bootstrapWith(Array)
+#12 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(195): Illuminate\\Foundation\\Console\\Kernel->bootstrap()
+#13 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1205): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#14 C:\\Users\\dhruba\\fresh\\QuizWebsite\\artisan(13): Illuminate\\Foundation\\Application->handleCommand(Object(Symfony\\Component\\Console\\Input\\ArgvInput))
+#15 {main}
+"} 
+[2025-07-13 06:07:48] local.ERROR: Class "Livewire\Livewire" not found {"exception":"[object] (Error(code: 0): Class \"Livewire\\Livewire\" not found at C:\\Users\\dhruba\\fresh\\QuizWebsite\\app\\Providers\\AppServiceProvider.php:24)
+[stacktrace]
+#0 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(36): App\\Providers\\AppServiceProvider->boot()
+#1 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Util.php(43): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#2 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(95): Illuminate\\Container\\Util::unwrapIfClosure(Object(Closure))
+#3 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod(Object(Illuminate\\Foundation\\Application), Array, Object(Closure))
+#4 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(690): Illuminate\\Container\\BoundMethod::call(Object(Illuminate\\Foundation\\Application), Array, Array, NULL)
+#5 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1121): Illuminate\\Container\\Container->call(Array)
+#6 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1102): Illuminate\\Foundation\\Application->bootProvider(Object(App\\Providers\\AppServiceProvider))
+#7 [internal function]: Illuminate\\Foundation\\Application->Illuminate\\Foundation\\{closure}(Object(App\\Providers\\AppServiceProvider), 'App\\\\Providers\\\\A...')
+#8 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1101): array_walk(Array, Object(Closure))
+#9 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Bootstrap\\BootProviders.php(17): Illuminate\\Foundation\\Application->boot()
+#10 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(316): Illuminate\\Foundation\\Bootstrap\\BootProviders->bootstrap(Object(Illuminate\\Foundation\\Application))
+#11 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(473): Illuminate\\Foundation\\Application->bootstrapWith(Array)
+#12 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(195): Illuminate\\Foundation\\Console\\Kernel->bootstrap()
+#13 C:\\Users\\dhruba\\fresh\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1205): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#14 C:\\Users\\dhruba\\fresh\\QuizWebsite\\artisan(13): Illuminate\\Foundation\\Application->handleCommand(Object(Symfony\\Component\\Console\\Input\\ArgvInput))
+#15 {main}
+"} 
+[2025-07-13 06:12:54] local.INFO: Broadcasting QuizStatusUpdated {"quizId":"1","start":"2025-07-13 06:12:54"} 
+[2025-07-13 06:12:57] local.INFO: Student ID from session: 2007051  
