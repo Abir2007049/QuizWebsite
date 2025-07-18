@@ -4,76 +4,104 @@
     <meta charset="UTF-8" />
     <title>Quiz Violation Alert</title>
     <style>
-        /* Basic email styles for better compatibility */
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f6f9fc;
-            margin: 0; padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 0;
             color: #333;
         }
+
         .container {
             max-width: 600px;
             background-color: #ffffff;
-            margin: 0 auto;
-            padding: 20px;
-            border-radius: 6px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 40px auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
+
         .header {
             text-align: center;
             padding-bottom: 20px;
-            border-bottom: 1px solid #eee;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e1e4e8;
         }
-        .header img {
-            max-width: 150px;
+
+        .header h2 {
+            margin: 0;
+            color: #0056b3;
+            font-size: 26px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
+
         h1 {
-            color: #004085;
+            font-size: 22px;
+            color: #dc3545;
         }
+
         .content {
-            margin-top: 20px;
             font-size: 16px;
-            line-height: 1.5;
+            line-height: 1.6;
         }
+
+        .highlight {
+            background-color: #fff3cd;
+            padding: 12px 18px;
+            border-left: 5px solid #ffc107;
+            margin: 20px 0;
+            border-radius: 5px;
+            font-weight: 600;
+        }
+
         .footer {
-            margin-top: 30px;
-            font-size: 12px;
-            color: #777;
+            margin-top: 40px;
+            font-size: 13px;
+            color: #888;
             text-align: center;
-            border-top: 1px solid #eee;
-            padding-top: 10px;
+            border-top: 1px solid #ddd;
+            padding-top: 15px;
         }
+
         .button {
             display: inline-block;
             background-color: #007bff;
             color: white !important;
             padding: 10px 20px;
             margin-top: 20px;
-            border-radius: 4px;
+            border-radius: 5px;
             text-decoration: none;
-            font-weight: bold;
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <img src="{{ asset('images/your-logo.png') }}" alt="Quiz App Logo" />
+            <h2>QUIZ APP</h2>
         </div>
 
-        <h1>Quiz Violation Alert</h1>
+        <h1>⚠️ Violation Alert</h1>
 
         <div class="content">
-            <p>Dear Student,</p>
-            <p>We have detected a quiz violation associated with ID: <strong>{{ $studentId }}</strong>.</p>
-          
+            <p>Dear Administrator,</p>
+
+            <p>We have detected a potential violation during an online quiz session. The following student has been flagged:</p>
+
+            <div class="highlight">
+                Student ID: {{ $studentId }}
+            </div>
+
+            <p>Please investigate this issue through the admin panel and take appropriate action based on the guidelines.</p>
+
+            <a href="#" class="button">View Violation Report</a>
         </div>
 
         <div class="footer">
-            &copy; {{ date('Y') }} Quiz App. All rights reserved.<br/>
+            &copy; {{ date('Y') }} Quiz App | All rights reserved<br/>
             1234 Quiz St, Knowledge City, Country
         </div>
     </div>
 </body>
 </html>
-

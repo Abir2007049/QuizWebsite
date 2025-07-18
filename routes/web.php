@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Quiz;
 use Illuminate\Support\Facades\Auth;
+use App\Mail\QuizViolationMail;
 
 
 
@@ -94,9 +95,6 @@ Route::get('/questions/edit/{id}', [QuestionControlller::class, 'edittoupdate'])
 Route::put('/questions/update/{id}', [QuestionControlller::class, 'update'])->name('questions.update');
 
 Route::post('/report-tab-switch', function (Request $request) {
-    // Get the currently authenticated user (assumed to be a student)
-  //  $student = Auth::user(); // or Auth::id() for just the ID
-
     if ($request->state === 'hidden') {
         $quiz = Quiz::with('teacher')->find($request->quiz_id);
 
@@ -104,12 +102,9 @@ Route::post('/report-tab-switch', function (Request $request) {
             $teacherEmail = $quiz->teacher->email;
             $studentId = session('student_id');
 
-            // Send email using Brevo SMTP
-            Mail::raw("Student with ID {$studentId} switched tabs on quiz '{$quiz->title}'", function ($message) use ($teacherEmail) {
-                $message->to($teacherEmail)
-                        ->subject('Tab Switch Alert')
-                        ->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME')); // Ensure from address is set
-            });
+            // Send email using the Blade template via Mailable
+            Mail::to($teacherEmail)
+                ->send(new QuizViolationMail($studentId));
 
             return response()->json(['status' => 'Email sent.']);
         } else {
