@@ -1,64 +1,86 @@
 @extends('layout')
 
 @section('content')
-<div class="container mt-5">
-    <h2 class="text-center text-success mb-4">Edit Question</h2>
-    <form action="{{ route('questions.update', $question->id) }}" method="POST" class="p-4 border border-success rounded shadow-sm">
-        @csrf
-        @method('PUT')
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-tr from-[#0f0f1a] via-[#1a1a2e] to-[#191825] px-4 py-10">
+    <div class="w-full max-w-xl bg-[#1e1e2f] bg-opacity-90 backdrop-blur-xl border border-[#2d2d44] rounded-2xl shadow-2xl p-10 text-white">
+        
+        <h2 class="text-4xl md:text-5xl font-extrabold text-white leading-tight mb-6">
+            Edit Question
+        </h2>
 
-        <!-- Question Text -->
-        <div class="mb-3">
-            <label for="text" class="form-label text-success">Question Text</label>
-            <textarea id="text" name="text" class="form-control border-success" rows="4" required>{{ $question->text }}</textarea>
-        </div>
+        <form action="{{ route('questions.update', $question->id) }}" method="POST" class="space-y-6">
+            @csrf
+            @method('PUT')
 
-        <!-- Option 1 -->
-        <div class="mb-3">
-            <label for="option1" class="form-label text-success">Option 1</label>
-            <input type="text" id="option1" name="option1" class="form-control border-success" value="{{ $question->option1 }}" required>
-        </div>
+            <!-- Question Text -->
+            <div>
+                <label for="text" class="block text-sm font-semibold text-gray-300 mb-2">Question Text</label>
+                <textarea
+                    id="text"
+                    name="text"
+                    rows="4"
+                    required
+                    class="w-full px-5 py-3 bg-[#2c2c42] border border-[#4c4c6d] rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+                >{{ old('text', $question->text) }}</textarea>
+            </div>
 
-        <!-- Option 2 -->
-        <div class="mb-3">
-            <label for="option2" class="form-label text-success">Option 2</label>
-            <input type="text" id="option2" name="option2" class="form-control border-success" value="{{ $question->option2 }}" required>
-        </div>
+            <!-- Options -->
+            @for ($i = 1; $i <= 4; $i++)
+                <div>
+                    <label for="option{{ $i }}" class="block text-sm font-semibold text-gray-300 mb-2">Option {{ $i }}</label>
+                    <input
+                        type="text"
+                        id="option{{ $i }}"
+                        name="option{{ $i }}"
+                        required
+                        value="{{ old('option'.$i, $question->{'option'.$i}) }}"
+                        placeholder="Enter option {{ $i }}"
+                        class="w-full px-5 py-3 bg-[#2c2c42] border border-[#4c4c6d] rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+                    >
+                </div>
+            @endfor
 
-        <!-- Option 3 -->
-        <div class="mb-3">
-            <label for="option3" class="form-label text-success">Option 3</label>
-            <input type="text" id="option3" name="option3" class="form-control border-success" value="{{ $question->option3 }}" required>
-        </div>
+            <!-- Correct Option -->
+            <div>
+                <label for="right_option" class="text-4xl md:text-3xl font-extrabold text-white leading-tight mb-6">Correct Option</label>
+                <select
+                    id="right_option"
+                    name="right_option"
+                    required
+                    class="w-full px-5 py-3 bg-[#2c2c42] border border-[#4c4c6d] rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+                >
+                    <option disabled>Select correct option</option>
+                    @for ($i = 1; $i <= 4; $i++)
+                        <option value="{{ $i }}" {{ (old('right_option', $question->right_option) == $i) ? 'selected' : '' }}>
+                            Option {{ $i }}
+                        </option>
+                    @endfor
+                </select>
+            </div>
 
-        <!-- Option 4 -->
-        <div class="mb-3">
-            <label for="option4" class="form-label text-success">Option 4</label>
-            <input type="text" id="option4" name="option4" class="form-control border-success" value="{{ $question->option4 }}" required>
-        </div>
+            <!-- Duration -->
+            <div>
+                <label for="duration" class="block text-sm font-semibold text-gray-300 mb-2">Duration (in seconds)</label>
+                <input
+                    type="number"
+                    id="duration"
+                    name="duration"
+                    min="1"
+                    required
+                    value="{{ old('duration', $question->duration) }}"
+                    placeholder="Duration"
+                    class="w-full px-5 py-3 bg-[#2c2c42] border border-[#4c4c6d] rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+                >
+            </div>
 
-        <!-- Correct Option -->
-        <div class="mb-3">
-            <label for="right_option" class="form-label text-success">Correct Option</label>
-            <select id="right_option" name="right_option" class="form-control border-success" required>
-                <option value="1" {{ $question->right_option == 1 ? 'selected' : '' }}>Option 1</option>
-                <option value="2" {{ $question->right_option == 2 ? 'selected' : '' }}>Option 2</option>
-                <option value="3" {{ $question->right_option == 3 ? 'selected' : '' }}>Option 3</option>
-                <option value="4" {{ $question->right_option == 4 ? 'selected' : '' }}>Option 4</option>
-            </select>
-        </div>
-
-        <!-- Duration -->
-        <div class="mb-3">
-            <label for="duration" class="form-label text-success">Duration (in seconds)</label>
-            <input type="number" id="duration" name="duration" class="form-control border-success" value="{{ $question->duration }}" required>
-        </div>
-
-        <!-- Save Button -->
-        <div class="text-center mt-4">
-            <button type="submit" class="btn btn-success px-4 py-2">Update Question</button>
-          
-        </div>
-    </form>
+            <!-- Submit Button -->
+            <button
+                type="submit"
+                class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-3 rounded-xl shadow-md transform hover:scale-105 transition duration-300 ease-in-out"
+            >
+                Update Question
+            </button>
+        </form>
+    </div>
 </div>
 @endsection
