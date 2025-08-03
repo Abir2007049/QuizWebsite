@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Auth;
 Route::get('/', function () {
     return view('welcome');
 });
+
 Route::get('/TorS', [RoleController::class, 'TorS'])->name('TorS');
 //////////////////
 

@@ -1,118 +1,69 @@
+@extends('layout')
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <title>Quizzes for {{ $teacher->name }}</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
-            margin: 0;
-            padding: 20px;
-        }
-        h1 {
-            text-align: center;
-            color: #28a745;
-        }
-        table {
-            width: 100%;
-            margin-top: 20px;
-            border-collapse: collapse;
-            background-color: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border: 1px solid #ddd;
-        }
-        th {
-            background-color: #28a745;
-            color: white;
-        }
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-        a {
-            color: #28a745;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-        .status {
-            font-weight: bold;
-        }
-        .status.upcoming {
-            color: #ffc107;
-        }
-        .status.finished {
-            color: #dc3545;
-        }
-        .status.running {
-            color: #28a745;
-        }
-        #broadcast-data {
-            margin-top: 30px;
-            padding: 20px;
-            background-color: #fff;
-            border: 2px solid #28a745;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-    </style>
+@section('custom_header')
+<header class="bg-gray-900 shadow z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-indigo-400 tracking-tight">📘 EduHub</h1>
+        <nav class="space-x-6 text-gray-300 font-medium">
+            <a href="/" class="hover:text-indigo-400 transition">Home</a>
+            <a href="{{ route('quiz.listStud') }}" class="hover:text-indigo-400 transition">Quizzes</a>
+        </nav>
+    </div>
+</header>
+@endsection
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body>
+@section('content')
+<div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center relative px-4 py-16 overflow-hidden text-white">
+    <!-- Blurry glowing background shapes -->
+    <div class="absolute -top-32 -left-32 w-[500px] h-[500px] bg-indigo-700 opacity-20 rounded-full blur-[120px]"></div>
+    <div class="absolute -bottom-32 -right-32 w-[400px] h-[400px] bg-purple-600 opacity-20 rounded-full blur-[100px]"></div>
 
-<h1>Quizzes for Room: {{ $teacher->room_name }}</h1>
+    <!-- Main content -->
+    <div class="relative z-10 max-w-6xl w-full">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-white text-center mb-12">
+            Quizzes for Room: {{ $teacher->room_name }}
+        </h1>
 
-@php
-    $dhakaTime = \Carbon\Carbon::now('Asia/Dhaka');
-@endphp
+        @php
+            $dhakaTime = \Carbon\Carbon::now('Asia/Dhaka');
+        @endphp
 
-@if ($quizzes->isEmpty())
-    <p>No quizzes available in this room.</p>
-@else
-    <table>
-        <thead>
-            <tr>
-                <th>Quiz Title</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($quizzes as $quiz)
-                @php
-                    $startDatetime = \Carbon\Carbon::parse($quiz->start_datetime)->setTimezone('Asia/Dhaka');
-                    $endDatetime = $startDatetime->copy()->addMinutes($quiz->duration);
-                @endphp
-                <tr>
-                    <td>{{ $quiz->title }}</td>
-                    <td>
-                        <span class="quiz-status status"
-                              id="quiz-status-{{ $quiz->id }}"
-                              data-id="{{ $quiz->id }}"
-                              data-start="{{ $startDatetime->toIso8601String() }}"
-                              data-end="{{ $endDatetime->toIso8601String() }}">
+        @if ($quizzes->isEmpty())
+            <p class="text-center text-indigo-300 text-lg italic mt-12">No quizzes available in this room.</p>
+        @else
+            <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4">
+                @foreach ($quizzes as $quiz)
+                    @php
+                        $startDatetime = \Carbon\Carbon::parse($quiz->start_datetime)->setTimezone('Asia/Dhaka');
+                        $endDatetime = $startDatetime->copy()->addMinutes($quiz->duration);
+                    @endphp
+
+                    <div class="bg-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-indigo-500/30 transition-all duration-300">
+                        <h2 class="text-2xl font-semibold text-indigo-300 mb-2">{{ $quiz->title }}</h2>
+                        <p class="text-sm text-gray-300 mb-3">
+                            Duration: {{ $quiz->duration }} mins
+                        </p>
+
+                        <div id="quiz-status-{{ $quiz->id }}"
+                             class="quiz-status font-medium"
+                             data-id="{{ $quiz->id }}"
+                             data-start="{{ $startDatetime->toIso8601String() }}"
+                             data-end="{{ $endDatetime->toIso8601String() }}">
                             @if ($dhakaTime->lt($startDatetime))
-                                <span class="status upcoming">The quiz will be available on {{ $startDatetime->format('F j, Y, g:i A') }}.</span>
+                                <span class="text-yellow-300">Available on {{ $startDatetime->format('F j, Y, g:i A') }}</span>
                             @elseif ($dhakaTime->gt($endDatetime))
-                                <span class="status finished">Finished</span>
+                                <span class="text-red-400">Finished</span>
                             @else
-                                <a href="{{ route('quiz.take', ['id' => $quiz->id, 'student_id' => $student_id]) }}" class="status running">Running</a>
+                                <a href="{{ route('quiz.take', ['id' => $quiz->id, 'student_id' => $student_id]) }}"
+                                   class="text-green-400 hover:underline">Running</a>
                             @endif
-                        </span>
-                    </td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
-@endif
-
-
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @endif
+    </div>
+</div>
 
 <script>
     function updateQuizStatus(quizId, startTime, endTime) {
@@ -120,33 +71,25 @@
         const start = new Date(startTime);
         const end = new Date(endTime);
         const statusEl = document.getElementById(`quiz-status-${quizId}`);
+        const quizLink = `/quiz/${quizId}/take`;
 
         if (!statusEl) return;
 
-        const quizLink = `/quiz/${quizId}/take`;  
-
         if (now < start) {
-            statusEl.innerHTML = `<span class="status upcoming">The quiz will be available on ${start.toLocaleString()}</span>`;
-
-           
+            statusEl.innerHTML = `<span class="text-yellow-300">Available on ${start.toLocaleString()}</span>`;
             setTimeout(() => {
-                statusEl.innerHTML = `<a href="${quizLink}" class="status running">Running</a>`;
+                statusEl.innerHTML = `<a href="${quizLink}" class="text-green-400 hover:underline">Running</a>`;
             }, start - now);
-
-            
             setTimeout(() => {
-                statusEl.innerHTML = `<span class="status finished">Finished</span>`;
+                statusEl.innerHTML = `<span class="text-red-400">Finished</span>`;
             }, end - now);
-
         } else if (now >= start && now < end) {
-            statusEl.innerHTML = `<a href="${quizLink}" class="status running">Running</a>`;
-
+            statusEl.innerHTML = `<a href="${quizLink}" class="text-green-400 hover:underline">Running</a>`;
             setTimeout(() => {
-                statusEl.innerHTML = `<span class="status finished">Finished</span>`;
+                statusEl.innerHTML = `<span class="text-red-400">Finished</span>`;
             }, end - now);
-
         } else {
-            statusEl.innerHTML = `<span class="status finished">Finished</span>`;
+            statusEl.innerHTML = `<span class="text-red-400">Finished</span>`;
         }
     }
 
@@ -159,26 +102,20 @@
         });
     }
 
-   
     document.addEventListener("DOMContentLoaded", function () {
         initQuizTimers();
-const room = "{{ session('room_name') }}";
-       
-        window.Echo.channel(`room.${room}`)
-            .listen("QuizStatusUpdated", (e) => {
-                const dataDiv = document.getElementById('broadcast-data');
-                const quizId = e.quizId ?? 'Unknown';
-
-                fetch(`/api/quiz/${quizId}/timing`)
-                    .then(res => res.json())
-                    .then(data => {
-                        updateQuizStatus(quizId, data.start_datetime, data.end_datetime);
-                    });
-
-                
-            });
+        const room = "{{ session('room_name') }}";
+        if (room) {
+            window.Echo.channel(`room.${room}`)
+                .listen("QuizStatusUpdated", (e) => {
+                    const quizId = e.quizId ?? 'Unknown';
+                    fetch(`/api/quiz/${quizId}/timing`)
+                        .then(res => res.json())
+                        .then(data => {
+                            updateQuizStatus(quizId, data.start_datetime, data.end_datetime);
+                        });
+                });
+        }
     });
 </script>
-
-</body>
-</html>
+@endsection

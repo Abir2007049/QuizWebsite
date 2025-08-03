@@ -13,34 +13,45 @@ class ResultController extends Controller
     {
         // ✅ Validate input
         $validated = $request->validate([
-           
             'answers' => 'required|array',
             'answers.*.question_id' => 'required|integer|exists:questions,id',
-            'answers.*.selected_option' => 'required|string',
+            'answers.*.selected_option' => 'nullable|string', // nullable for skipped
         ]);
 
         $studentId = Session::get('student_id');
-
-        
 
         if (!$studentId) {
             return back()->with('error', 'Student session expired or not found.');
         }
 
         $score = 0;
-
-        $quiz_id;
+        $quiz_id = null;
 
         // ✅ Calculate the score
         foreach ($validated['answers'] as $answer) {
             $question = Question::find($answer['question_id']);
-            $quiz_id=$question->quiz_id;
 
-            if ($question && $question->right_option === $answer['selected_option']) {
-                $score++;
+            if (!$question) {
+                continue;
+            }
+
+            $quiz_id = $question->quiz_id;
+            $selected = $answer['selected_option'];
+
+            if ($selected === null || $selected === '') {
+                // Skipped question – no penalty
+                continue;
+            }
+
+            if ($question->right_option === $selected) {
+                $score += 1;
+            } else {
+                $score -= 0.25;
             }
         }
-         
+
+        // ✅ Prevent negative score
+        $score = max(0, $score);
 
         // ✅ Save result
         $result = Result::create([
@@ -49,9 +60,8 @@ class ResultController extends Controller
             'score' => $score,
         ]);
 
-       
-
+        // ✅ Show finish message
         return view('student.finishmessage', compact('score'));
     }
 }
-
+ 
