@@ -71,6 +71,9 @@ Route::delete('/quiz/{id}', [App\Http\Controllers\QuizListController::class, 'de
 
 //////////////////////
 Route::get('/quiz/{id}/leaderboard', [App\Http\Controllers\BoardController::class, 'showboard'])->name('quiz.leaderboard');
+Route::get('/quiz/{id}/performance', [App\Http\Controllers\BoardController::class, 'performanceGraph'])->name('quiz.performance');
+
+
 /////////////////////
 
 

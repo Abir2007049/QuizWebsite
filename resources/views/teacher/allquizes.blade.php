@@ -37,17 +37,21 @@
                         <h2 class="text-2xl font-semibold text-indigo-300 mb-2">{{ $quiz->title }}</h2>
                         <p class="text-sm text-gray-400 mb-6">🕒 {{ $quiz->created_at->format('d M Y, H:i') }}</p>
 
-                        <div class="flex justify-between items-center space-x-3">
+                        <div class="flex flex-wrap gap-3">
                             <a href="{{ route('quiz.details', $quiz->id) }}"
-                               class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition duration-200 shadow-lg">
+                               class="min-w-[100px] bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition duration-200 shadow-lg text-center">
                                 View
                             </a>
                             <a href="{{ route('quiz.leaderboard', $quiz->id) }}"
-                               class="bg-gray-700 hover:bg-gray-800 text-white text-sm font-semibold px-4 py-2 rounded-lg transition duration-200 shadow-lg">
+                               class="min-w-[100px] bg-gray-700 hover:bg-gray-800 text-white text-sm font-semibold px-4 py-2 rounded-lg transition duration-200 shadow-lg text-center">
                                 Leaderboard
                             </a>
+                            <a href="{{ route('quiz.performance', $quiz->id) }}"
+                               class="min-w-[120px] bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition duration-200 shadow-lg text-center">
+                                📊 Performance
+                            </a>
                             <button
-                                class="bg-red-600 hover:bg-red-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition duration-200 shadow-lg delete-btn"
+                                class="min-w-[90px] bg-red-600 hover:bg-red-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition duration-200 shadow-lg delete-btn text-center"
                                 data-id="{{ $quiz->id }}">
                                 Delete
                             </button>
