@@ -33,6 +33,11 @@ class AuthManager extends Controller
         return view('teacher\addquiz');
     }
 
+    public function login()
+    {
+        return view('teacher\teacherauth');
+    }
+
     public function registrationPost(Request $request)
     {
         $data['name'] = $request->name;
@@ -55,7 +60,7 @@ class AuthManager extends Controller
 
         Auth::login($user);
         return view('teacher\addquiz');
-
+          
          }
 
   }

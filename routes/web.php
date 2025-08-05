@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\Quiz;
 use Illuminate\Support\Facades\Auth;
 use App\Mail\QuizViolationMail;
+use App\Http\Controllers\ForgotPasswordController;
 
 
 
@@ -33,6 +34,7 @@ Route::post('/login', [AuthManager::class, 'loginPost'])->name('login.post');
 Route::get('/registration.post', function () {
     return redirect()->route('registration');
 });
+Route::get('/login', [AuthManager::class, 'login'])->name('login');
 
 Route::get('/logout', function () {
     Auth::logout();
@@ -132,4 +134,19 @@ Route::get('/api/quiz/{id}/timing', function ($id) {
 
 
 //////////////
+
+
+Route::get('/password-reset', function () {
+    return view('teacher.passwordreset');
+})->name('password.request');
+
+Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+
+// routes/web.php
+Route::get('/reset-password/{token}', function ($token) {
+    return view('teacher.resetform', ['token' => $token]);
+})->name('password.reset');
+
+
+Route::post('/reset-password', [ForgotPasswordController::class, 'reset'])->name('password.update');
 
