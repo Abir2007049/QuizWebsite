@@ -1,140 +1,63 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Quiz</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
-            margin: 0;
-            padding: 0;
-        }
-        nav {
-            background-color: #28a745;
-            color: white;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        nav .nav-links {
-            display: flex;
-            align-items: center;
-        }
-        nav a, nav .logout-link {
-            color: white;
-            text-decoration: none;
-            margin: 0 10px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        nav a:hover, nav .logout-link:hover {
-            text-decoration: underline;
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-            margin: 20px 0;
-        }
-        form {
-            max-width: 600px;
-            margin: 20px auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-        label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 5px;
-            color: #333;
-        }
-        input, button {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-        button {
-            background-color: #28a745;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button:hover {
-            background-color: #218838;
-        }
-        .alert {
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 15px;
-            border-radius: 5px;
-            text-align: center;
-        }
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        hr {
-            margin: 30px 0;
-            border: 0;
-            border-top: 1px solid #ddd;
-        }
-        .section-header {
-            background-color: #e9ecef;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            color: #333;
-            font-weight: bold;
-        }
-    </style>
-</head>
-<body>
-    <!-- Navigation Bar -->
-    <nav>
-        <div>
-            <a href="#">Home</a>
-        </div>
-        <div class="nav-links">
-            <a href="{{ route('quiz.list') }}">View Quizzes</a>
-            <!-- Logout link as an anchor tag -->
-            <a href="{{ route('logout') }}" class="logout-link">Logout</a>
-        </div>
-    </nav>
+@extends('layout')
 
-    <!-- Page Title -->
-    <h1>Create a New Quiz</h1>
+@section('custom_header')
+<header class="bg-gray-900 shadow z-50">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-indigo-400">📘 Quiz System</h1>
+        <nav class="space-x-6 text-gray-300 font-medium flex items-center">
+            <a href="{{ route('quiz.list') }}" class="hover:text-indigo-400 transition">View Quizzes</a>
 
-    <!-- Form: Create Quiz -->
-    <form action="{{ route('storeQuiz') }}" method="POST">
-        @csrf
-
-        <div class="section-header">
-            Create Quiz
-        </div>
-
-        <!-- Quiz Title -->
-        <label for="quiz_title">Quiz Title:</label>
-        <input type="text" id="quiz_title" name="quiz_title" placeholder="Enter quiz title" required>
-
-        <!-- Submit Button -->
-        <button type="submit">Submit Quiz</button>
-    </form>
-
-    <!-- Success Message -->
-    @if (session('success'))
-    <div class="alert alert-success">
-        {{ session('success') }}
+            <form method="GET" action="{{ route('logout') }}" class="inline">
+                @csrf
+                <button type="submit" 
+                    class="ml-4 text-indigo-300 hover:text-red-400 font-semibold transition">
+                    Logout
+                </button>
+            </form>
+        </nav>
     </div>
-    @endif
+</header>
+@endsection
 
-</body>
-</html>
+@section('content')
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 px-4 relative text-white overflow-hidden">
+    <!-- Background glowing blobs -->
+    <div class="absolute -top-32 -left-32 w-[400px] h-[400px] bg-indigo-700 opacity-20 rounded-full blur-[120px] pointer-events-none"></div>
+    <div class="absolute -bottom-32 -right-32 w-[350px] h-[350px] bg-purple-600 opacity-20 rounded-full blur-[100px] pointer-events-none"></div>
+
+    <div class="relative z-10 bg-gray-900 bg-opacity-90 backdrop-blur-xl shadow-2xl rounded-3xl p-10 max-w-md w-full">
+        <h2 class="text-4xl font-extrabold mb-6">
+            Create a New Quiz
+        </h2>
+
+        @if (session('success'))
+            <div class="mt-4 p-3 bg-green-500 bg-opacity-20 text-green-400 border border-green-500 rounded-lg text-center font-semibold">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        <form action="{{ route('storeQuiz') }}" method="POST" class="space-y-8">
+            @csrf
+
+            <div>
+                <label for="quiz_title" class="block text-sm font-semibold mb-2 text-white">Quiz Title</label>
+                <input 
+                    type="text" 
+                    id="quiz_title" 
+                    name="quiz_title" 
+                    placeholder="Enter quiz title" 
+                    required
+                    class="w-full px-5 py-3 bg-gray-900 text-white border border-indigo-600 rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                >
+            </div>
+
+            <button 
+                type="submit" 
+                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-lg transition duration-300 shadow-lg transform hover:scale-105"
+            >
+                Submit Quiz
+            </button>
+        </form>
+    </div>
+</div>
+@endsection

@@ -1,45 +1,31 @@
 @extends('layout')
 
-@section('title', 'Quiz List')
+@section('title', 'Quiz Result')
 
 @section('content')
-<div class="congrats-container text-center mt-5">
-    <marquee behavior="alternate" scrollamount="10">
-        <h2 class="congrats-text">🎉 Well Done! You scored {{ $score }} points! 🎉</h2>
-    </marquee>
-    <p class="congrats-message">Keep up the great work and ace your goals! 🚀</p>
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-tr from-gray-900 via-gray-800 to-black px-6 py-12">
+    <div class="bg-white bg-opacity-10 backdrop-blur-lg shadow-2xl rounded-3xl p-10 max-w-2xl w-full text-white text-center border border-gray-700">
+        <h2 class="text-4xl md:text-5xl font-extrabold mb-6 tracking-wide drop-shadow-lg">🎉 Awesome Work!</h2>
+        <p class="text-xl md:text-2xl mb-10">You scored <span class="text-green-400 font-bold">{{ $score }}</span> points!</p>
+
+        <div class="mb-10">
+            <p class="text-lg text-gray-300 mb-4">Ready to level up? Try our dynamic quiz system — built for teachers and students who want more.</p>
+            <div class="flex justify-center gap-4 flex-wrap">
+                <span class="bg-gradient-to-r from-purple-500 to-indigo-500 px-4 py-2 rounded-full text-sm font-semibold tracking-wide shadow hover:scale-105 transition">
+                    Real-Time Results
+                </span>
+                <span class="bg-gradient-to-r from-pink-500 to-red-500 px-4 py-2 rounded-full text-sm font-semibold tracking-wide shadow hover:scale-105 transition">
+                    Room-based Quiz Access
+                </span>
+                <span class="bg-gradient-to-r from-cyan-500 to-blue-500 px-4 py-2 rounded-full text-sm font-semibold tracking-wide shadow hover:scale-105 transition">
+                    Timer & Violation Detection
+                </span>
+            </div>
+        </div>
+
+        <div class="text-gray-400 italic text-sm">
+            Designed for seamless online evaluations. Trusted by educators. Built for the future.
+        </div>
+    </div>
 </div>
-
-<style>
-    .congrats-container {
-        background: linear-gradient(135deg,rgb(24, 129, 57),rgb(41, 152, 22));
-        padding: 20px;
-        border-radius: 15px;
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        animation: glow 2s infinite alternate;
-        color: white;
-    }
-
-    .congrats-text {
-        font-size: 2.5rem;
-        font-weight: bold;
-        text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.8);
-    }
-
-    .congrats-message {
-        font-size: 1.2rem;
-        margin-top: 15px;
-        font-style: italic;
-    }
-
-    @keyframes glow {
-        0% {
-            box-shadow: 0 5px 15px rgba(106, 17, 203, 0.5);
-        }
-        100% {
-            box-shadow: 0 5px 15px rgba(37, 117, 252, 0.5);
-        }
-    }
-</style>
 @endsection
-

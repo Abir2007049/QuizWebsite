@@ -1,170 +1,47 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome</title>
-    <style>
-        /* General Styles */
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background: url('{{ asset('images/quiz.jpg') }}') no-repeat center center fixed;
-            background-size: cover;
-            color: #333;
-        }
+@extends('layout')
 
-        /* Overlay to make text readable */
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.7); /* Adjust opacity as needed */
-            z-index: -1;
-        }
-
-        /* Header Styles */
-        header {
-            background-color: #4caf50;
-            color: white;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        header h2 {
-            font-size: 24px;
-            margin: 0;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-        }
-
-        .navbar {
-            display: flex;
-            gap: 20px;
-        }
-
-        .navbar a {
-            color: white;
-            text-decoration: none;
-            font-size: 16px;
-            font-weight: bold;
-            transition: color 0.3s, transform 0.2s;
-        }
-
-        .navbar a:hover {
-            color: #d4f1d4;
-            transform: translateY(-2px);
-        }
-
-        /* Main Styles */
-        main {
-            text-align: center;
-            padding: 50px 20px;
-        }
-
-        h1 {
-            font-size: 48px;
-            color: #4caf50;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        marquee {
-            font-size: 18px;
-            color: #333;
-            margin-bottom: 30px;
-            display: block;
-            background-color: #e8f5e9;
-            padding: 10px;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        form {
-            display: inline-flex;
-            gap: 20px;
-        }
-
-        button {
-            background-color: #4caf50;
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 8px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s, transform 0.2s;
-        }
-
-        button:hover {
-            background-color: #3a9c40;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Footer Styles */
-        footer {
-            background-color: #4caf50;
-            color: white;
-            text-align: center;
-            padding: 15px 0;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            font-size: 14px;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-        }
-
-        footer:hover {
-            background-color: #3a9c40;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 600px) {
-            header, main, footer {
-                padding: 10px;
-            }
-
-            h1 {
-                font-size: 36px;
-            }
-
-            button {
-                padding: 10px 20px;
-                font-size: 16px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <div><h2>Welcome to EduHub</h2></div>
-        <nav class="navbar">
-            <a href="#apps">Apps</a>
-            <a href="#blog">Blog</a>
-            <a href="#support">Support</a>
+@section('custom_header')
+<header class="bg-gray-900 shadow z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-indigo-400 tracking-tight">📘 EduHub</h1>
+        <nav class="space-x-6 text-gray-300 font-medium">
+            <a href="/" class="hover:text-indigo-400 transition">Home</a>
+            <a href="{{ route('quiz.listStud') }}" class="hover:text-indigo-400 transition">Quizzes</a>
         </nav>
-    </header>
-    <main>
-        <h1>Welcome to EduHub</h1>
-        <marquee behavior="scroll" direction="left">
-            Empowering education through technology. Choose your role to get started:
-        </marquee>
-        <form action="{{ route('TorS') }}" method="GET">
-            <button type="submit" name="role" value="student">I'm a Student</button>
-            <button type="submit" name="role" value="teacher">I'm a Teacher</button>
-        </form>
-    </main>
-    <footer>
-        &copy; 2024 EduHub. All rights reserved.
-    </footer>
-</body>
-</html>
+    </div>
+</header>
+@endsection
+
+@section('content')
+<div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center relative overflow-hidden px-4">
+    <!-- Background blurry shapes -->
+    <div class="absolute -top-32 -left-32 w-[500px] h-[500px] bg-indigo-700 opacity-20 rounded-full blur-[120px]"></div>
+    <div class="absolute -bottom-32 -right-32 w-[400px] h-[400px] bg-purple-600 opacity-20 rounded-full blur-[100px]"></div>
+
+    <!-- Content -->
+    <div class="relative z-10 max-w-3xl w-full text-center">
+        <h1 class="text-4xl md:text-6xl font-extrabold text-white leading-tight mb-6">
+            Unlock Your Learning Potential
+        </h1>
+        <p class="text-lg text-gray-300 mb-8 max-w-2xl mx-auto">
+            Join EduHub and take quizzes, track progress, and empower your learning. Whether you're a student or a teacher, we’ve got the tools you need.
+        </p>
+
+        <div class="flex flex-col md:flex-row justify-center gap-4">
+            <form action="{{ route('TorS') }}" method="GET">
+                <button name="role" value="student"
+                    class="w-full md:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-lg transition duration-300 shadow-lg">
+                    I'm a Student
+                </button>
+            </form>
+
+            <form action="{{ route('TorS') }}" method="GET">
+                <button name="role" value="teacher"
+                    class="w-full md:w-auto bg-gray-800 hover:bg-gray-700 text-indigo-300 border border-indigo-600 font-semibold px-6 py-3 rounded-lg transition duration-300 shadow-lg">
+                    I'm a Teacher
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+@endsection
