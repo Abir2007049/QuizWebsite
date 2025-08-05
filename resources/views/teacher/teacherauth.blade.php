@@ -12,10 +12,17 @@
                 <label for="email" class="form-label" style="font-weight: 600;">Email Address</label>
                 <input type="email" id="email" class="form-control" name="email" placeholder="Enter your email" required>
             </div>
-            <div class="mb-3">
+            <div class="mb-1">
                 <label for="password" class="form-label" style="font-weight: 600;">Password</label>
                 <input type="password" id="password" class="form-control" name="password" placeholder="Enter your password" required>
             </div>
+
+            <div class="mb-3 text-end">
+                <a href="{{ route('password.request') }}" class="text-decoration-none" style="color: #28a745; font-weight: 600;">
+                    Forgot Your Password?
+                </a>
+            </div>
+
             <div class="d-grid">
                 <button type="submit" class="btn" style="background-color: #28a745; color: white; border-radius: 5px;">Login</button>
             </div>
