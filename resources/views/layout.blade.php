@@ -1,22 +1,47 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="h-full bg-slate-100">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('title', 'Quiz Details')</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Flatpickr CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <title>@yield('title', 'Quiz System')</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body>
-    @yield('content')
+<body class="min-h-screen flex flex-col font-sans text-slate-800">
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Flatpickr JS -->
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <!-- Header -->
+    @hasSection('custom_header')
+        @yield('custom_header')
+    @endif
+    <!-- If you want a default header for other pages without custom_header, add it here: -->
+    {{-- 
+    @unless (View::hasSection('custom_header'))
+        <header class="bg-violet-600 text-white shadow z-50">
+            <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+                <h1 class="text-2xl font-bold">📘 Quiz System</h1>
+                <nav class="space-x-4">
+                    <a href="/" class="hover:underline">Home</a>
+                    <a href="{{ route('quiz.listStud') }}" class="hover:underline">Quizzes</a>
+                    <!-- Add logout or other links here if needed -->
+                </nav>
+            </div>
+        </header>
+    @endunless
+    --}}
+
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 py-6">
+        @yield('content')
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-800 text-white text-center py-4 mt-auto">
+        &copy; {{ date('Y') }} Quiz System. All rights reserved.
+    </footer>
+
     @stack('scripts')
 </body>
 </html>
