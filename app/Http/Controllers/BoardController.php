@@ -74,41 +74,25 @@ class BoardController extends Controller
 
 
 
-    public function export($id)
-    {   
-        $quiz= Quiz::findOrFail($id);
-        if (auth()->user()->id == $quiz->userid){
+   public function export($id)
+{   
+    $quiz = Quiz::findOrFail($id);
 
-         $results = Result::where('quiz_id', $id)
-    ->orderBy('score', 'desc')
-    ->get();
+    if (auth()->user()->id == $quiz->userid) {
 
-$results = Result::where('quiz_id', $id)
-    ->orderBy('score', 'desc')
-    ->get();
+        $results = Result::where('quiz_id', $id)
+            ->orderBy('score', 'desc')
+            ->get();
 
-$rank = 0;
-$prevScore = null;
+        // Add rank (sequential, no tie handling)
+        $rank = 1;
+        foreach ($results as $result) {
+            $result->rank = $rank++;
+        }
 
-foreach ($results as $index => $result) {
-    if ($prevScore !== $result->score) {
-        $rank = $index + 1;
+        $pdf = Pdf::loadView('teacher/resultpdf', compact('quiz', 'results'));
+        return $pdf->download("quiz-{$quiz->id}-leaderboard.pdf");
     }
-    $result->rank = $rank;  
-    $prevScore = $result->score;
 }
 
-
-
-                 $pdf = Pdf::loadView('teacher/resultpdf', compact('quiz', 'results'));
-                 return $pdf->download("quiz-{$quiz->id}-leaderboard.pdf");
-
-
-            
-        }
-        
-
-
-
-    }
 }
