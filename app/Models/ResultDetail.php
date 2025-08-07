@@ -10,7 +10,7 @@ class ResultDetail extends Model
         'result_id',
         'question_id',
         'selected_option',
-        'is_correct',
+        
     ];
 
     public function result()

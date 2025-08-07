@@ -68,7 +68,7 @@ function getQuestion() {
 
 let selectedAnswers = [];
 
-function questionClick(selectedOptionNumber) {
+function questionClick(selectedOptionNumber ) {
     // Disable buttons immediately to prevent multiple clicks
     Array.from(choicesEl.children).forEach(btn => btn.disabled = true);
 
@@ -120,8 +120,8 @@ function startQuestionTimer(duration) {
             feedbackEl.style.color = "red";
             feedbackEl.classList.remove("hide");
             setTimeout(() => feedbackEl.classList.add("hide"), 1500);
-
-            currentQuestionIndex++;
+            questionClick(0); 
+            //currentQuestionIndex++;
             if (currentQuestionIndex === questions.length) {
                 quizEnd();
             } else {
