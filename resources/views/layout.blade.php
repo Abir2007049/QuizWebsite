@@ -24,7 +24,7 @@
                 <h1 class="text-2xl font-bold">📘 Quiz System</h1>
                 <nav class="space-x-4">
                     <a href="/" class="hover:underline">Home</a>
-                    <a href="{{ route('quiz.listStud') }}" class="hover:underline">Quizzes</a>
+                    <a href="#" class="hover:underline">Blogs</a>
                     <!-- Add logout or other links here if needed -->
                 </nav>
             </div>
