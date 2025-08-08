@@ -12,19 +12,23 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('questions', function (Blueprint $table) {
-            $table->id(); // Primary key for questions table
-            $table->string('text'); 
-            $table->string('option1'); // Option 1
-            $table->string('option2'); // Option 2
-            $table->string('option3'); // Option 3
-            $table->string('option4'); // Option 4
-            $table->string('right_option'); // Correct answer
-            $table->unsignedBigInteger('quiz_id'); // Foreign key referencing the quizzes table
-            $table->integer('duration')->nullable(); // Make duration nullable
-            $table->timestamps(); // Created at and updated at columns
+            $table->id();
+            $table->string('text')->nullable(); // nullable for image-only questions
+            $table->string('option1');
+            $table->string('option2');
+            $table->string('option3');
+            $table->string('option4');
+            $table->string('right_option');
+            $table->unsignedBigInteger('quiz_id');
+            $table->integer('duration')->nullable();
+            $table->string('image')->nullable(); // nullable for text-only questions
+            $table->timestamps();
 
-            // Define foreign key constraint for quiz_id
-            $table->foreign('quiz_id')->references('id')->on('quizzes')->onDelete('cascade');
+            // Foreign key
+            $table->foreign('quiz_id')
+                  ->references('id')
+                  ->on('quizzes')
+                  ->onDelete('cascade');
         });
     }
 
