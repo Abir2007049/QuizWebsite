@@ -35,13 +35,26 @@
                 @foreach ($quizzes as $quiz)
                     @php
                         $startDatetime = \Carbon\Carbon::parse($quiz->start_datetime)->setTimezone('Asia/Dhaka');
-                        $endDatetime = $startDatetime->copy()->addMinutes($quiz->duration);
+                        $endDatetime = $startDatetime->copy()->addSeconds($quiz->duration);
+
+                        // Format duration in H M S
+                        $seconds = $quiz->duration;
+                        $hours = floor($seconds / 3600);
+                        $minutes = floor(($seconds % 3600) / 60);
+                        $remainingSeconds = $seconds % 60;
                     @endphp
 
                     <div class="bg-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-indigo-500/30 transition-all duration-300">
                         <h2 class="text-2xl font-semibold text-indigo-300 mb-2">{{ $quiz->title }}</h2>
                         <p class="text-sm text-gray-300 mb-3">
-                            Duration: {{ $quiz->duration }} mins
+                            Duration: 
+                            @if ($hours > 0)
+                                {{ $hours }}h 
+                            @endif
+                            @if ($minutes > 0 || $hours > 0)
+                                {{ $minutes }}m 
+                            @endif
+                            {{ $remainingSeconds }}s
                         </p>
 
                         <div id="quiz-status-{{ $quiz->id }}"
@@ -64,6 +77,8 @@
         @endif
     </div>
 </div>
+
+
 
 <script>
     function updateQuizStatus(quizId, startTime, endTime) {

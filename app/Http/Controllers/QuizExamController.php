@@ -77,7 +77,7 @@ class QuizExamController extends Controller
 
         $quiz = Quiz::findOrFail($id);
         $quiz_id=$id;
-        $totalDuration = $quiz->questions->sum('duration') / 60;
+        $totalDuration = $quiz->questions->sum('duration') ;
         
         $quiz->start_datetime = $current;
         $quiz->duration = $totalDuration;
