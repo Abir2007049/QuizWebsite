@@ -19,7 +19,7 @@
         </div>
         <div>
             <h2 class="text-lg font-semibold">Skipped</h2>
-            <p class="text-gray-400 text-xl">{{ $skipped }}</p>
+            <p class="text-blue-300 text-xl">{{ $skipped }}</p>
         </div>
         <div>
             <h2 class="text-lg font-semibold">Final Score</h2>
@@ -32,17 +32,27 @@
     <div class="space-y-4">
         @foreach ($details as $index => $detail)
             @php
-                if ($detail->selected_option == 0) {
-                    $bgColor = 'bg-gray-700'; // skipped
-                } elseif ($detail->is_correct) {
-                    $bgColor = 'bg-green-800'; // correct
+                $selectedOption = (int) $detail->selected_option;
+                $correctOption = (int) $detail->question->right_option;
+
+                // Determine background color for the whole box
+                if ($selectedOption === 0) {
+                    $bgColor = 'bg-blue-900'; // Skipped
+                } elseif ($selectedOption === $correctOption) {
+                    $bgColor = 'bg-green-900'; // Correct
                 } else {
-                    $bgColor = 'bg-amber-700'; // wrong (soft amber)
+                    $bgColor = 'bg-red-900'; // Wrong
                 }
+
+                // Extract text versions of selected and correct options
+                $selectedText = $selectedOption !== 0
+                    ? ($detail->question->{'option' . $selectedOption} ?? 'N/A')
+                    : null;
+
+                $correctText = $detail->question->{'option' . $correctOption} ?? 'N/A';
             @endphp
 
-            <div class="p-4 rounded-lg {{ $bgColor }} shadow-md">
-                {{-- Question Number --}}
+            <div class="p-4 rounded-lg shadow-md {{ $bgColor }}">
                 <p class="text-sm text-gray-300 mb-1">Question {{ $index + 1 }}</p>
 
                 {{-- Question Text / Image --}}
@@ -59,26 +69,18 @@
                 {{-- User's Answer --}}
                 <p>
                     <strong>Your Answer:</strong>
-                    @if ($detail->selected_option != 0)
-                        @php
-                            $selectedOptionText = $detail->question->{'option' . $detail->selected_option} ?? 'N/A';
-                        @endphp
-                        <span class="{{ $detail->is_correct ? 'text-green-300' : 'text-yellow-200' }} font-semibold">
-                            {{ $selectedOptionText }}
-                        </span>
+                    @if ($selectedText)
+                        <span class="font-semibold text-white">{{ $selectedText }}</span>
                     @else
                         <span class="text-gray-300 italic">Skipped</span>
                     @endif
                 </p>
 
                 {{-- Correct Answer (if wrong or skipped) --}}
-                @if (!$detail->is_correct)
+                @if ($selectedOption !== $correctOption)
                     <p>
                         <strong>Correct Answer:</strong>
-                        @php
-                            $correctOptionText = $detail->question->{'option' . $detail->question->right_option} ?? 'N/A';
-                        @endphp
-                        <span class="text-lime-300">{{ $correctOptionText }}</span>
+                        <span class="text-lime-300">{{ $correctText }}</span>
                     </p>
                 @endif
             </div>
