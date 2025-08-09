@@ -81,7 +81,8 @@
             <h5 class="text-xl font-semibold text-white">➕ Add Question</h5>
         </div>
         <div class="p-6">
-            <form id="ajx" action="{{ secure_url('questions/add') }}" method="POST" enctype="multipart/form-data">
+            <form id="ajx" action="{{ route('questions.add') }}" method="POST" enctype="multipart/form-data">
+
 
                 @csrf
                 <input type="hidden" name="quiz_id" value="{{ $quiz->id }}">
