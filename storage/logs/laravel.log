@@ -11830,3 +11830,20 @@
     "socket": null
 }  
 [2025-08-09 00:16:24] local.INFO: Student ID from session: 04  
+[2025-08-09 09:34:05] local.INFO: Broadcasting QuizStatusUpdated {"quizId":"12","start":"2025-08-09 09:34:04"} 
+[2025-08-09 09:34:05] local.INFO: Broadcasting [App\Events\QuizStatusUpdated] on channels [room.Ab] with payload:
+{
+    "quizId": "12",
+    "start": "2025-08-09T03:34:04.412232Z",
+    "socket": null
+}  
+[2025-08-09 09:34:12] local.INFO: Student ID from session: 05  
+[2025-08-09 10:37:51] local.INFO: Broadcasting QuizStatusUpdated {"quizId":"12","start":"2025-08-09 10:37:51"} 
+[2025-08-09 10:37:51] local.INFO: Broadcasting [App\Events\QuizStatusUpdated] on channels [room.Ab] with payload:
+{
+    "quizId": "12",
+    "start": "2025-08-09T04:37:51.043370Z",
+    "socket": null
+}  
+[2025-08-09 10:38:02] local.INFO: Student ID from session: 06  
+[2025-08-09 10:38:12] local.INFO: Student ID from session: 06  
