@@ -15,10 +15,6 @@ Edu Hab is a powerful and interactive online quiz platform built with  Laravel, 
 - **Responsive Design** — Works smoothly on both desktop and mobile devices  
 
 
-## Demo
-
-[Add your live demo URL here if available]
-
 
 
 ## Technologies Used
