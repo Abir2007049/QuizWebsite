@@ -4,7 +4,9 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
-use App\Http\Livewire\QuizTimer; // Import the QuizTimer class
+use App\Http\Livewire\QuizTimer; 
+use Illuminate\Support\Facades\URL;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,7 +22,10 @@ class AppServiceProvider extends ServiceProvider
      * Bootstrap any application services.
      */
     public function boot(): void
-    {
+    {  
+        
+        URL::forceScheme('https');
+    
         Livewire::component('quiz-timer', QuizTimer::class);
     }
 }

@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Auth;
 
 class QuizExamController extends Controller
 {
-    // ✅ Show the quiz to the student
+    //  Show the quiz to the student
     public function takeQuiz(Request $request, $quiz_id)
     {
         $studentId = session('student_id');
@@ -41,7 +41,7 @@ class QuizExamController extends Controller
             return back()->with('error', 'The quiz has already ended.');
         }
 
-        // ✅ Prepare questions array for frontend
+        //  Prepare questions array for frontend
      $questions = $quiz->questions->map(function ($q) {
     return [
         'id' =>$q->id,
@@ -70,7 +70,7 @@ class QuizExamController extends Controller
         ]);
     }
 
-    // ✅ Set start time to now and calculate total quiz time from question durations
+    // Set start time to now and calculate total quiz time from question durations
     public function startNow(Request $request, $id)
     {
        $current = (Carbon::now('Asia/Dhaka'));

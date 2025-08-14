@@ -92,6 +92,7 @@ class BoardController extends Controller
 
         $pdf = Pdf::loadView('teacher/resultpdf', compact('quiz', 'results'));
         return $pdf->download("quiz-{$quiz->id}-leaderboard.pdf");
+
     }
 }
 
