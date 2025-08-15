@@ -8632,7 +8632,8 @@
 #50 C:\\Users\\dhruba\\Laravel\\QuizWebsite\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php(23): require_once('C:\\\\Users\\\\dhruba...')
 #51 {main}
 "} 
-[2025-08-08 01:48:22] local.ERROR: syntax error, unexpected single-quoted string "): ?>", expecting ")" (View: C:\Users\dhruba\Laravel\QuizWebsite\resources\views\student\detailedanalysis.blade.php) {"userId":2,"exception":"[object] (Illuminate\\View\\ViewException(code: 0): syntax error, unexpected single-quoted string \"): ?>
+[2025-08-08 01:48:22] local.ERROR: syntax error, unexpected single-quoted string "): ?>
+", expecting ")" (View: C:\Users\dhruba\Laravel\QuizWebsite\resources\views\student\detailedanalysis.blade.php) {"userId":2,"exception":"[object] (Illuminate\\View\\ViewException(code: 0): syntax error, unexpected single-quoted string \"): ?>
 \", expecting \")\" (View: C:\\Users\\dhruba\\Laravel\\QuizWebsite\\resources\\views\\student\\detailedanalysis.blade.php) at C:\\Users\\dhruba\\Laravel\\QuizWebsite\\storage\\framework\\views\\fa56df2698bdf64e05a99a5f896f18e6.php:48)
 [stacktrace]
 #0 C:\\Users\\dhruba\\Laravel\\QuizWebsite\\vendor\\livewire\\livewire\\src\\Mechanisms\\ExtendBlade\\ExtendedCompilerEngine.php(58): Illuminate\\View\\Engines\\CompilerEngine->handleViewException(Object(ParseError), 1)

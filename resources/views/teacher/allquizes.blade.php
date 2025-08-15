@@ -6,7 +6,7 @@
         <h1 class="text-2xl font-bold text-indigo-400 tracking-tight">📘 EduHub</h1>
         <nav class="space-x-6 text-gray-300 font-medium">
             <a href="/" class="hover:text-indigo-400 transition">Home</a>
-            <a href="{{ route('quiz.listStud') }}" class="hover:text-indigo-400 transition">Quizzes</a>
+            <a href="#" class="hover:text-indigo-400 transition">Blogs</a>
         </nav>
     </div>
 </header>
