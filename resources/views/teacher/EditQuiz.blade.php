@@ -82,6 +82,8 @@
         </div>
         <div class="p-6">
             <form id="ajx" action="{{ route('questions.add') }}" method="POST" enctype="multipart/form-data">
+
+
                 @csrf
                 <input type="hidden" name="quiz_id" value="{{ $quiz->id }}">
 
