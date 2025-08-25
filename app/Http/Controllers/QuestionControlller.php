@@ -73,26 +73,28 @@ public function update(Request $request, $id)
      * Add a new question to the quiz.
      */
 
-     public function add(Request $request)
+    public function add(Request $request)
 {
     $request->validate([
         'quiz_id' => 'required|exists:quizzes,id',
         'question_type' => 'required|in:text,image',
         'question_text' => 'nullable|required_if:question_type,text|string|max:255',
         'question_image' => 'nullable|required_if:question_type,image|image|mimes:jpeg,png,jpg|max:2048',
-        'options' => 'required|array|min:4|max:4',
+        'options' => 'required|array|min:2|max:4',
         'options.*' => 'required|string|max:255',
-        'correct_option' => 'required|integer|in:1,2,3,4',
+        'correct_option' => 'required|integer',
         'duration' => 'required|integer|min:1',
     ]);
 
     $quiz = Quiz::findOrFail($request->quiz_id);
 
+    $options = array_pad($request->options, 4, null); // fill missing options with null
+
     $questionData = [
-        'option1' => $request->options[1],
-        'option2' => $request->options[2],
-        'option3' => $request->options[3],
-        'option4' => $request->options[4],
+        'option1' => $options[0],
+        'option2' => $options[1],
+        'option3' => $options[2],
+        'option4' => $options[3],
         'right_option' => $request->correct_option,
         'duration' => $request->duration,
     ];
@@ -106,13 +108,9 @@ public function update(Request $request, $id)
         $questionData['text'] = null;
     }
 
-    $question=$quiz->questions()->create($questionData);
+    $question = $quiz->questions()->create($questionData);
+
     return response()->json($question);
-
-
-
-
-    //return redirect()->route('quiz.details', $quiz->id)->with('success', 'Question added successfully!');
 }
 
    public function destroyQuestion($id)

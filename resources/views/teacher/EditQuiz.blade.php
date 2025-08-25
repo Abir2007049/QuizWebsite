@@ -48,10 +48,12 @@
                             </td>
                             <td class="px-6 py-4">
                                 <ul class="list-disc pl-5 space-y-1">
-                                    @foreach([$question->option1,$question->option2,$question->option3,$question->option4] as $i=>$opt)
-                                        <li class="@if($i+1==$question->right_option) text-blue-400 font-semibold @endif">
-                                            {{ $opt }}
-                                        </li>
+                                    @foreach($question->options as $index => $opt)
+                                        @if($opt)
+                                            <li class="@if(($index+1)==$question->right_option) text-blue-400 font-semibold @endif">
+                                                {{ $opt }}
+                                            </li>
+                                        @endif
                                     @endforeach
                                 </ul>
                             </td>
@@ -81,9 +83,7 @@
             <h5 class="text-xl font-semibold text-white">➕ Add Question</h5>
         </div>
         <div class="p-6">
-            <form id="ajx" action="{{ route('questions.add') }}" method="POST" enctype="multipart/form-data">
-
-
+            <form id="ajx" action="{{ secure_url('questions/add') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="quiz_id" value="{{ $quiz->id }}">
 
@@ -106,20 +106,20 @@
                         <input type="file" name="question_image" class="w-full rounded-md bg-blue-900 text-white border border-blue-600" accept="image/*">
                     </div>
 
+                    {{-- Options container --}}
                     <div class="md:col-span-2">
-                        <label class="block text-gray-300 font-medium mb-1">Options</label>
-                        @for ($i = 1; $i <= 4; $i++)
-                            <input type="text" name="options[{{ $i }}]" class="w-full rounded-md bg-blue-900 text-white border border-blue-600 mb-2" placeholder="Option {{ $i }}" required>
-                        @endfor
+                        <label class="block text-gray-300 font-medium mb-1">Options (minimum 2, maximum 4)</label>
+                        <div id="options-container">
+                            <input type="text" name="options[]" class="w-full rounded-md bg-blue-900 text-white border border-blue-600 mb-2 placeholder-gray-400" placeholder="Option 1" required>
+                            <input type="text" name="options[]" class="w-full rounded-md bg-blue-900 text-white border border-blue-600 mb-2 placeholder-gray-400" placeholder="Option 2" required>
+                        </div>
+                        <button type="button" id="add-option" class="bg-blue-500 hover:bg-blue-400 text-white px-4 py-1 rounded-md mt-2">Add Option</button>
                     </div>
 
                     <div>
                         <label class="block text-gray-300 font-medium mb-1">Correct Option</label>
-                        <select name="correct_option" class="w-full rounded-md bg-blue-900 text-white border border-blue-600" required>
+                        <select id="correct_option" name="correct_option" class="w-full rounded-md bg-blue-900 text-white border border-blue-600" required>
                             <option disabled selected>Select</option>
-                            @for ($i = 1; $i <= 4; $i++)
-                                <option value="{{ $i }}">Option {{ $i }}</option>
-                            @endfor
                         </select>
                     </div>
 
@@ -164,79 +164,74 @@
 {{-- Flatpickr JS --}}
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-{{-- Scripts --}}
 <script>
-    function toggleQuestionInput() {
-        const type = document.getElementById('question_type').value;
-        document.getElementById('text-input').classList.toggle('hidden', type !== 'text');
-        document.getElementById('image-input').classList.toggle('hidden', type !== 'image');
+function toggleQuestionInput() {
+    const type = document.getElementById('question_type').value;
+    document.getElementById('text-input').classList.toggle('hidden', type === 'image');
+    document.getElementById('image-input').classList.toggle('hidden', type === 'text');
+}
+
+// Flatpickr init
+flatpickr("#start_datetime", { enableTime: true, dateFormat: "Y-m-d H:i" });
+
+// Options logic
+const optionsContainer = document.getElementById('options-container');
+const correctSelect = document.getElementById('correct_option');
+
+function updateCorrectOptions() {
+    correctSelect.innerHTML = '<option disabled selected>Select</option>';
+    const optionInputs = optionsContainer.querySelectorAll('input[name="options[]"]');
+    optionInputs.forEach((input, index) => {
+        if (input.value.trim() !== "") {
+            correctSelect.innerHTML += `<option value="${index+1}">Option ${index+1}</option>`;
+        }
+    });
+}
+
+// Update dropdown dynamically
+optionsContainer.addEventListener('input', updateCorrectOptions);
+
+// Add option dynamically
+document.getElementById('add-option').addEventListener('click', () => {
+    const currentOptions = optionsContainer.querySelectorAll('input[name="options[]"]').length;
+    if (currentOptions < 4) {
+        const newOption = document.createElement('input');
+        newOption.type = 'text';
+        newOption.name = 'options[]';
+        newOption.placeholder = `Option ${currentOptions+1}`;
+        newOption.className = 'w-full rounded-md bg-blue-900 text-white border border-blue-600 mb-2 placeholder-gray-400';
+        optionsContainer.appendChild(newOption);
+        updateCorrectOptions();
+    } else {
+        alert('Maximum 4 options allowed.');
     }
+});
 
-    document.addEventListener('DOMContentLoaded', () => {
-        const csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+document.addEventListener('DOMContentLoaded', () => updateCorrectOptions());
 
-        document.getElementById('ajx').onsubmit = async function (e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            const res = await fetch(this.action, {
-                method: 'POST',
-                headers: { 'X-CSRF-TOKEN': csrf },
-                body: formData
-            });
+// AJAX Delete Question
+document.querySelectorAll('.delete-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        if (!confirm("Are you sure you want to delete this question?")) return;
 
-            const q = await res.json();
-            if (!res.ok) return alert('Failed to add question.');
-
-            const tbody = document.getElementById('questions-body');
-            document.getElementById('no-questions')?.remove();
-
-            const idx = tbody.querySelectorAll('tr').length + 1;
-            const content = q.text ? q.text : q.image ? `<img src="/storage/${q.image}" class="w-48 h-auto rounded shadow">` : '<em class="text-gray-400">No content</em>';
-            const options = [q.option1, q.option2, q.option3, q.option4]
-                .map((opt, i) => `<li class="${i+1==q.right_option?'text-blue-400 font-semibold':''}">${opt}</li>`).join('');
-
-            const row = document.createElement('tr');
-            row.className = "hover:bg-[#334155] transition";
-            row.innerHTML = `
-                <td class="px-6 py-4">${idx}</td>
-                <td class="px-6 py-4">${content}</td>
-                <td class="px-6 py-4"><ul class="list-disc pl-5 space-y-1">${options}</ul></td>
-                <td class="px-6 py-4 text-center"><button class="text-red-400 hover:text-red-300 transition delete-btn" data-id="${q.id}">Delete</button></td>
-                <td class="px-6 py-4 text-center">
-                    <form action="/questions/${q.id}/edit" method="GET">
-                        @csrf
-                        <button type="submit" class="text-blue-400 hover:underline">Update</button>
-                    </form>
-                </td>
-            `;
-            tbody.appendChild(row);
-            this.reset();
-            toggleQuestionInput();
-        };
-
-        document.addEventListener('click', async (e) => {
-            if (!e.target.classList.contains('delete-btn')) return;
-            if (!confirm('Are you sure?')) return;
-            const id = e.target.dataset.id;
-            const res = await fetch(`/questions/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': csrf,
-                    'Accept': 'application/json'
+        const id = this.dataset.id;
+        fetch(`/questions/delete/${id}`, {
+            method: 'POST',
+            headers: { 
+                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                "Content-Type": "application/json"
+            },
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.success){
+                this.closest('tr').remove();
+                if(document.querySelectorAll('#questions-body tr').length === 0){
+                    document.getElementById('questions-body').innerHTML = '<tr id="no-questions"><td colspan="5" class="px-6 py-4 text-center text-gray-400">No questions found</td></tr>';
                 }
-            });
-            if (res.ok) {
-                e.target.closest('tr').remove();
-            } else {
-                alert('Delete failed.');
             }
         });
-
-        flatpickr("#start_datetime", {
-            enableTime: true,
-            dateFormat: "Y-m-d H:i",
-            theme: "material_blue"
-        });
     });
+});
 </script>
 @endsection
