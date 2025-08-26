@@ -95,5 +95,12 @@ class BoardController extends Controller
 
     }
 }
+ public function clear(Quiz $quiz)
+    {
+        // delete all results of this quiz
+        Result::where('quiz_id', $quiz->id)->delete();
+
+        return redirect()->back()->with('success', '✅ All leaderboard records have been deleted.');
+    }
 
 }

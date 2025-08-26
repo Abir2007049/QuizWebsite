@@ -1,24 +1,39 @@
-
+// script.js
 let questionsEl = document.querySelector("#questions");
 let timerEl = document.querySelector("#timer");
 let choicesEl = document.querySelector("#options");
-let submitBtn = document.querySelector("#submit-score");
 let startBtn = document.querySelector("#start");
 let feedbackEl = document.querySelector("#feedback");
-let reStartBtn = document.querySelector("#restart");
 
 let currentQuestionIndex = 0;
 let timerId;
+let quizStarted = false;
+let quizEnded = false;
+let selectedAnswers = [];
 
+// Pull data from Blade
+const questions = window.questions || [];
+const quizId = window.quizId;
+const studentId = window.studentId;
+
+// Start button
 startBtn.onclick = quizStart;
 
 function quizStart() {
+    if (!questions.length) return alert("No questions available!");
     shuffle(questions);
+    quizStarted = true;
 
     document.getElementById("start-screen").classList.add("hide");
     questionsEl.classList.remove("hide");
 
     getQuestion();
+
+    // Warn before leaving page
+    window.onbeforeunload = () =>
+        "Are you sure you want to leave? Your progress will be lost.";
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 }
 
 function getQuestion() {
@@ -34,49 +49,55 @@ function getQuestion() {
         return;
     }
 
-    // ✅ Image rendering
+    // Render question image if exists
     if (currentQuestion.image) {
-        console.log("Image URL:", currentQuestion.image);
+        console.log("Loading image:", currentQuestion.image);
         let img = document.createElement("img");
-        img.src = currentQuestion.image;
+
+        // Laravel storage path handling
+        img.src = currentQuestion.image.startsWith("http")
+            ? currentQuestion.image
+            : "/storage/" + currentQuestion.image;
+
         img.alt = "Question Image";
         img.style.maxWidth = "400px";
         img.style.marginBottom = "10px";
+        img.className = "rounded shadow mb-2";
         questionEl.appendChild(img);
     }
 
-    // ✅ Text rendering
+    // Render question text if exists
     if (currentQuestion.text) {
         let textNode = document.createElement("p");
         textNode.textContent = currentQuestion.text;
+        textNode.className = "mb-4";
         questionEl.appendChild(textNode);
     }
 
-    // ✅ Option buttons
+    // Render only non-null & non-empty options
     for (let i = 1; i <= 4; i++) {
         let optionText = currentQuestion["option" + i];
+        if (!optionText || optionText.trim() === "") continue;
+
         let optionBtn = document.createElement("button");
-        optionBtn.textContent = `${i}. ${optionText}`;
-        optionBtn.className = "btn btn-outline-primary m-2 d-block";
+        optionBtn.textContent = optionText;
+        optionBtn.className =
+            "block w-full my-2 py-3 px-4 rounded bg-[#27293d] hover:bg-[#3b3f5c] text-gray-200 transition";
         optionBtn.onclick = () => questionClick(i);
         optionsEl.appendChild(optionBtn);
     }
 
-    // ✅ Timer per question
     startQuestionTimer(parseInt(currentQuestion.duration));
 }
 
-let selectedAnswers = [];
-
-function questionClick(selectedOptionNumber ) {
-    // Disable buttons immediately to prevent multiple clicks
+function questionClick(selectedOptionNumber) {
     Array.from(choicesEl.children).forEach(btn => btn.disabled = true);
 
     const currentQuestion = questions[currentQuestionIndex];
 
     selectedAnswers.push({
         question_id: currentQuestion.id,
-        selected_option: selectedOptionNumber
+        selected_option: selectedOptionNumber === 0 ? null : selectedOptionNumber,
     });
 
     currentQuestionIndex++;
@@ -88,26 +109,30 @@ function questionClick(selectedOptionNumber ) {
     }
 }
 
-
 function quizEnd() {
     clearInterval(timerId);
+    quizEnded = true;
+    quizStarted = false;
+
     questionsEl.classList.add("hide");
     document.getElementById("quiz-end").classList.remove("hide");
+    window.onbeforeunload = null;
 
     const answersContainer = document.getElementById("answers-container");
+    answersContainer.innerHTML = "";
     selectedAnswers.forEach((ans, index) => {
         answersContainer.innerHTML += `
             <input type="hidden" name="answers[${index}][question_id]" value="${ans.question_id}" />
-            <input type="hidden" name="answers[${index}][selected_option]" value="${ans.selected_option}" />
+            <input type="hidden" name="answers[${index}][selected_option]" value="${ans.selected_option !== null ? ans.selected_option : ''}" />
         `;
     });
-}
 
+    document.removeEventListener("visibilitychange", handleVisibilityChange);
+}
 
 function startQuestionTimer(duration) {
     if (timerId) clearInterval(timerId);
     let timeLeft = isNaN(duration) ? 30 : duration;
-
     timerEl.textContent = timeLeft;
 
     timerId = setInterval(() => {
@@ -120,47 +145,38 @@ function startQuestionTimer(duration) {
             feedbackEl.style.color = "red";
             feedbackEl.classList.remove("hide");
             setTimeout(() => feedbackEl.classList.add("hide"), 1500);
-            questionClick(0); 
-            //currentQuestionIndex++;
-            if (currentQuestionIndex === questions.length) {
-                quizEnd();
-            } else {
-                getQuestion();
-            }
+
+            questionClick(0);
+            if (currentQuestionIndex === questions.length) quizEnd();
         }
     }, 1000);
 }
 
-// Fisher-Yates Shuffle Algorithm
+// Fisher-Yates Shuffle
 function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
         let j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
     }
-}  
+}
 
-// ✅ Violation tracking
-document.addEventListener("visibilitychange", function () {
-    if (document.hidden) {
-        sendViolationReport();
-    }
-});
+// Tab-switch violation tracking
+// Tab-switch violation tracking
+function handleVisibilityChange() {
+    if (!quizStarted || quizEnded) return;
 
-function sendViolationReport() {
-    let studentIdEl = document.getElementById("student_id");
-    if (!studentIdEl) return;
-    let studentId = studentIdEl.value;
-
-    fetch("/report-violation", {
+    fetch("/report-tab-switch", {   // <-- updated URL
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
+            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
         },
-        body: JSON.stringify({ student_id: studentId })
-    })
-    .then(response => response.json())
-    .then(data => console.log(data.message))
-    .catch(error => console.error("Violation report failed:", error));
+        body: JSON.stringify({
+            student_id: studentId,
+            quiz_id: quizId,
+            state: document.hidden ? "hidden" : "visible",
+            time: new Date().toISOString()
+        })
+    }).catch(console.error);
 }
 
