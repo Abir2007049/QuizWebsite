@@ -115,16 +115,17 @@ public function update(Request $request, $id)
 
    public function destroyQuestion($id)
 {
-     $question = Question::find($id);
+    $question = Question::find($id);
 
     if (!$question) {
-        return response()->json(['message' => 'Question not found'], 404);
+        return response()->json(['success' => false, 'message' => 'Question not found'], 404);
     }
 
     $question->delete();
 
-    return response()->json(['message' => 'Deleted successfully']);
+    return response()->json(['success' => true, 'message' => 'Deleted successfully']);
 }
+
 
 
    

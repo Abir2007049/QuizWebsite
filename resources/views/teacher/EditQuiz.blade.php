@@ -90,7 +90,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-gray-300 font-medium mb-1">Question Type</label>
-                        <select id="question_type" name="question_type" class="w-full rounded-md bg-blue-900 text-white border border-blue-600" onchange="toggleQuestionInput()" required>
+                        <select id="question_type" name="question_type" class="w-full rounded-md bg-blue-900 text-white border border-blue-600" required>
                             <option value="text">Text</option>
                             <option value="image">Image</option>
                         </select>
@@ -165,73 +165,94 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <script>
-function toggleQuestionInput() {
-    const type = document.getElementById('question_type').value;
-    document.getElementById('text-input').classList.toggle('hidden', type === 'image');
-    document.getElementById('image-input').classList.toggle('hidden', type === 'text');
-}
+document.addEventListener('DOMContentLoaded', () => {
 
-// Flatpickr init
-flatpickr("#start_datetime", { enableTime: true, dateFormat: "Y-m-d H:i" });
+    // Toggle question input type
+    const questionType = document.getElementById('question_type');
+    const textInput = document.getElementById('text-input');
+    const imageInput = document.getElementById('image-input');
 
-// Options logic
-const optionsContainer = document.getElementById('options-container');
-const correctSelect = document.getElementById('correct_option');
+    function toggleQuestionInput() {
+        const type = questionType.value;
+        textInput.classList.toggle('hidden', type === 'image');
+        imageInput.classList.toggle('hidden', type === 'text');
+    }
 
-function updateCorrectOptions() {
-    correctSelect.innerHTML = '<option disabled selected>Select</option>';
-    const optionInputs = optionsContainer.querySelectorAll('input[name="options[]"]');
-    optionInputs.forEach((input, index) => {
-        if (input.value.trim() !== "") {
-            correctSelect.innerHTML += `<option value="${index+1}">Option ${index+1}</option>`;
+    questionType.addEventListener('change', toggleQuestionInput);
+    toggleQuestionInput();
+
+    // Flatpickr init
+    flatpickr("#start_datetime", { enableTime: true, dateFormat: "Y-m-d H:i" });
+
+    // Options logic
+    const optionsContainer = document.getElementById('options-container');
+    const correctSelect = document.getElementById('correct_option');
+
+    function updateCorrectOptions() {
+        correctSelect.innerHTML = '<option disabled selected>Select</option>';
+        const optionInputs = optionsContainer.querySelectorAll('input[name="options[]"]');
+        optionInputs.forEach((input, index) => {
+            if (input.value.trim() !== "") {
+                correctSelect.innerHTML += `<option value="${index+1}">Option ${index+1}</option>`;
+            }
+        });
+    }
+
+    optionsContainer.addEventListener('input', updateCorrectOptions);
+    updateCorrectOptions();
+
+    // Add option dynamically
+    const addOptionBtn = document.getElementById('add-option');
+    addOptionBtn.addEventListener('click', () => {
+        const currentOptions = optionsContainer.querySelectorAll('input[name="options[]"]').length;
+        if (currentOptions < 4) {
+            const newOption = document.createElement('input');
+            newOption.type = 'text';
+            newOption.name = 'options[]';
+            newOption.placeholder = `Option ${currentOptions + 1}`;
+            newOption.className = 'w-full rounded-md bg-blue-900 text-white border border-blue-600 mb-2 placeholder-gray-400';
+            optionsContainer.appendChild(newOption);
+            updateCorrectOptions();
+        } else {
+            alert('Maximum 4 options allowed.');
         }
     });
-}
 
-// Update dropdown dynamically
-optionsContainer.addEventListener('input', updateCorrectOptions);
+    // AJAX Delete Question
+    const questionsBody = document.getElementById('questions-body');
 
-// Add option dynamically
-document.getElementById('add-option').addEventListener('click', () => {
-    const currentOptions = optionsContainer.querySelectorAll('input[name="options[]"]').length;
-    if (currentOptions < 4) {
-        const newOption = document.createElement('input');
-        newOption.type = 'text';
-        newOption.name = 'options[]';
-        newOption.placeholder = `Option ${currentOptions+1}`;
-        newOption.className = 'w-full rounded-md bg-blue-900 text-white border border-blue-600 mb-2 placeholder-gray-400';
-        optionsContainer.appendChild(newOption);
-        updateCorrectOptions();
-    } else {
-        alert('Maximum 4 options allowed.');
-    }
-});
+    questionsBody.addEventListener('click', function(e) {
+        const btn = e.target.closest('.delete-btn');
+        if (!btn) return;
 
-document.addEventListener('DOMContentLoaded', () => updateCorrectOptions());
-
-// AJAX Delete Question
-document.querySelectorAll('.delete-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
         if (!confirm("Are you sure you want to delete this question?")) return;
 
-        const id = this.dataset.id;
-        fetch(`/questions/delete/${id}`, {
-            method: 'POST',
-            headers: { 
+        const id = btn.dataset.id;
+
+        fetch(`/questions/${id}`, {
+            method: 'DELETE',
+            headers: {
                 "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                 "Content-Type": "application/json"
             },
         })
         .then(res => res.json())
         .then(data => {
-            if(data.success){
-                this.closest('tr').remove();
-                if(document.querySelectorAll('#questions-body tr').length === 0){
-                    document.getElementById('questions-body').innerHTML = '<tr id="no-questions"><td colspan="5" class="px-6 py-4 text-center text-gray-400">No questions found</td></tr>';
+            if (data.success) {
+                btn.closest('tr').remove();
+                if (questionsBody.querySelectorAll('tr').length === 0) {
+                    questionsBody.innerHTML = '<tr id="no-questions"><td colspan="5" class="px-6 py-4 text-center text-gray-400">No questions found</td></tr>';
                 }
+            } else {
+                alert(data.message || 'Failed to delete the question.');
             }
+        })
+        .catch(err => {
+            console.error(err);
+            alert('An error occurred while deleting the question.');
         });
     });
+
 });
 </script>
 @endsection
