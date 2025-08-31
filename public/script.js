@@ -3,7 +3,6 @@ let questionsEl = document.querySelector("#questions");
 let timerEl = document.querySelector("#timer");
 let choicesEl = document.querySelector("#options");
 let startBtn = document.querySelector("#start");
-let feedbackEl = document.querySelector("#feedback");
 
 let currentQuestionIndex = 0;
 let timerId;
@@ -51,14 +50,10 @@ function getQuestion() {
 
     // Render question image if exists
     if (currentQuestion.image) {
-        console.log("Loading image:", currentQuestion.image);
         let img = document.createElement("img");
-
-        // Laravel storage path handling
         img.src = currentQuestion.image.startsWith("http")
             ? currentQuestion.image
             : "/storage/" + currentQuestion.image;
-
         img.alt = "Question Image";
         img.style.maxWidth = "400px";
         img.style.marginBottom = "10px";
@@ -141,13 +136,12 @@ function startQuestionTimer(duration) {
 
         if (timeLeft <= 0) {
             clearInterval(timerId);
-            feedbackEl.textContent = "Time's up!";
-            feedbackEl.style.color = "red";
-            feedbackEl.classList.remove("hide");
-            setTimeout(() => feedbackEl.classList.add("hide"), 1500);
 
+            // disable options instantly
+            Array.from(choicesEl.children).forEach(btn => btn.disabled = true);
+
+            // move on immediately
             questionClick(0);
-            if (currentQuestionIndex === questions.length) quizEnd();
         }
     }, 1000);
 }
@@ -161,11 +155,10 @@ function shuffle(array) {
 }
 
 // Tab-switch violation tracking
-// Tab-switch violation tracking
 function handleVisibilityChange() {
     if (!quizStarted || quizEnded) return;
 
-    fetch("/report-tab-switch", {   // <-- updated URL
+    fetch("/report-tab-switch", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -179,4 +172,3 @@ function handleVisibilityChange() {
         })
     }).catch(console.error);
 }
-

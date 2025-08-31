@@ -27,7 +27,7 @@ class Schedule_Controller extends Controller {
 
     // Save start time and duration
     $quiz->start_datetime = $startDatetime;
-    $totalDuration = $quiz->questions->sum('duration') / 60;
+    $totalDuration = $quiz->questions->sum('duration');
     $quiz->duration=$totalDuration;
 
       event(new QuizStatusUpdated($quiz_id, Auth::user()->room_name, $startDatetime));
