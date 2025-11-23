@@ -10,6 +10,7 @@
 .env
 .env.backup
 .env.production
+config/ai_keys.php
 .phpactor.json
 .phpunit.result.cache
 Homestead.json

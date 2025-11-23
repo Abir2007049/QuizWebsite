@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Mail\QuizViolationMail;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\BoardController;
+use App\Http\Controllers\AIController;
 
 
 
@@ -161,4 +162,7 @@ Route::get('/reset-password/{token}', function ($token) {
 
 
 Route::post('/reset-password', [ForgotPasswordController::class, 'reset'])->name('password.update');
+
+// AI assistant endpoint (chat)
+Route::middleware(['auth', 'throttle:20,1'])->post('/ai/chat', [AIController::class, 'chat'])->name('ai.chat');
 

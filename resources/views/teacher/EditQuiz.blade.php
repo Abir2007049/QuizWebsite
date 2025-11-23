@@ -159,6 +159,21 @@
             </form>
         </div>
     </div>
+
+    {{-- AI Assistant --}}
+    <div class="bg-[#0F172A] shadow-xl rounded-xl mt-10">
+        <div class="border-b border-blue-700 px-6 py-4">
+            <h5 class="text-xl font-semibold text-white">🤖 AI Assistant</h5>
+        </div>
+        <div class="p-6">
+            @auth
+                <x-ai-chat />
+            @endauth
+            @guest
+                <p class="text-gray-400">Log in to use the AI assistant.</p>
+            @endguest
+        </div>
+    </div>
 </div>
 
 {{-- Flatpickr JS --}}

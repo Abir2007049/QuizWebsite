@@ -43,5 +43,16 @@
     </footer>
 
     @stack('scripts')
+    <!-- Alpine.js for small components (used by AI chat) -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Axios fallback: if axios isn't available from the bundled assets, load from CDN -->
+    <script>
+        if (typeof window.axios === 'undefined') {
+            const s = document.createElement('script');
+            s.src = 'https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js';
+            s.onload = () => { window.axios = window.axios || axios; };
+            document.head.appendChild(s);
+        }
+    </script>
 </body>
 </html>
