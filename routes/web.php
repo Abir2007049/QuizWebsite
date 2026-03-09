@@ -110,6 +110,12 @@ Route::get('/questions/edit/{id}', [QuestionControlller::class, 'edittoupdate'])
 Route::put('/questions/update/{id}', [QuestionControlller::class, 'update'])->name('questions.update');
 
 Route::post('/report-tab-switch', function (Request $request) {
+    Log::info('Tab switch detected', [
+        'state' => $request->state,
+        'quiz_id' => $request->quiz_id,
+        'student_id' => session('student_id')
+    ]);
+
     if ($request->state === 'hidden') {
         $quiz = Quiz::with('teacher')->find($request->quiz_id);
 
@@ -117,13 +123,30 @@ Route::post('/report-tab-switch', function (Request $request) {
             $teacherEmail = $quiz->teacher->email;
             $studentId = session('student_id');
 
-            // Send email using the Blade template via Mailable
-            Mail::to($teacherEmail)
-                ->send(new QuizViolationMail($studentId));
+            Log::info('Sending violation email', [
+                'teacher_email' => $teacherEmail,
+                'student_id' => $studentId
+            ]);
 
-            return response()->json(['status' => 'Email sent.']);
+            try {
+                // Send email using the Blade template via Mailable
+                Mail::to($teacherEmail)
+                    ->send(new QuizViolationMail($studentId));
+
+                Log::info('Violation email sent successfully');
+                return response()->json(['status' => 'Email sent.']);
+            } catch (\Exception $e) {
+                Log::error('Failed to send violation email', [
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
+                return response()->json(['status' => 'Email failed.', 'error' => $e->getMessage()], 500);
+            }
         } else {
-            Log::warning('Quiz or teacher not found.');
+            Log::warning('Quiz or teacher not found.', [
+                'quiz' => $quiz ? $quiz->id : null,
+                'has_teacher' => $quiz ? ($quiz->teacher ? 'yes' : 'no') : 'no quiz'
+            ]);
         }
     }
 
