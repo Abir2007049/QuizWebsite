@@ -16,4 +16,4 @@ cmds = [
 ]
 
 [start]
-cmd = 'sleep 15 && php artisan migrate --force && php artisan storage:link && php artisan serve --host=0.0.0.0 --port=$PORT'
+cmd = 'sleep 20 && php artisan migrate --force && php artisan storage:link && php artisan serve --host=0.0.0.0 --port=$PORT'
