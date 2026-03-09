@@ -126,6 +126,21 @@ public function update(Request $request, $id)
     return response()->json(['success' => true, 'message' => 'Deleted successfully']);
 }
 
+public function submitStudent(Request $request)
+{
+    $validated = $request->validate([
+        'student_id' => 'required|string',
+        'room_name' => 'required|string',
+    ]);
+
+    session([
+        'student_id' => $validated['student_id'],
+        'room_name' => $validated['room_name'],
+    ]);
+
+    return redirect()->route('quiz.listStud');
+}
+
 
 
    

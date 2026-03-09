@@ -11,6 +11,8 @@ use App\Models\Result;
 use Carbon\Carbon;
 use App\Events\QuizStatusUpdated;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\QuizViolationMail;
 
 
 
@@ -86,6 +88,41 @@ class QuizExamController extends Controller
         event(new QuizStatusUpdated($quiz_id, Auth::user()->room_name, $current));
         
         return redirect()->route('quiz.list');
+    }
+
+    public function submitQuizAnswered(Request $request, $quiz, $student)
+    {
+        // Keep compatibility with existing route and reuse result submission endpoint.
+        session(['student_id' => $student]);
+
+        $payload = [
+            'answers' => $request->input('answers', []),
+        ];
+
+        $resultRequest = Request::create('/store-result', 'POST', $payload);
+        $resultRequest->setLaravelSession($request->session());
+
+        return app(ResultController::class)->storeResult($resultRequest);
+    }
+
+    public function sendViolationEmail(Request $request)
+    {
+        if ($request->input('state') === 'hidden') {
+            $quiz = Quiz::with('teacher')->find($request->input('quiz_id'));
+
+            if ($quiz && $quiz->teacher) {
+                $studentId = session('student_id');
+                Mail::to($quiz->teacher->email)->send(new QuizViolationMail($studentId));
+
+                return response()->json(['status' => 'Email sent.']);
+            }
+
+            Log::warning('Quiz or teacher not found for violation email.', [
+                'quiz_id' => $request->input('quiz_id'),
+            ]);
+        }
+
+        return response()->json(['status' => 'Logged but no email sent.']);
     }
 
    

@@ -81,6 +81,21 @@ if ($selected === 0) {
     ]);
 }
 
+public function showResult($student_id)
+{
+    $result = Result::where('student_id', $student_id)
+        ->latest('id')
+        ->first();
+
+    if (!$result) {
+        return redirect()->back()->with('error', 'No result found for this student.');
+    }
+
+    return view('student.finishmessage', [
+        'score' => $result->score,
+    ]);
+}
+
 
 
 }

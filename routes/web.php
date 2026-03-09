@@ -61,7 +61,7 @@ Route::get('/store-quiz', function () {
 ///////////////////////
 
 Route::get('/teacher', function () {
-    return view('teacher\addquiz');
+    return view('teacher.addquiz');
 })->name('teacher.view');
 
 //////////////
