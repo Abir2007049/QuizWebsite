@@ -103,7 +103,7 @@
 
                     <div id="image-input" class="hidden">
                         <label class="block text-gray-300 font-medium mb-1">Question Image</label>
-                        <input type="file" name="question_image" class="w-full rounded-md bg-blue-900 text-white border border-blue-600" accept="image/*">
+                        <input type="file" name="question_image" class="w-full rounded-md bg-blue-900 text-white border border-blue-600" accept="image/*,.heic,.heif">
                     </div>
 
                     {{-- Options container --}}
@@ -249,14 +249,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            const data = await response.json();
+            const contentType = response.headers.get('content-type') || '';
+            const data = contentType.includes('application/json')
+                ? await response.json()
+                : { message: await response.text() };
 
             if (response.ok) {
                 alert('Question added successfully!');
                 questionForm.reset();
                 window.location.reload(); // Reload to show new question in list
             } else {
-                alert('Error: ' + (data.message || 'Failed to add question'));
+                const firstValidationError = data.errors
+                    ? Object.values(data.errors).flat()[0]
+                    : null;
+                alert('Error: ' + (firstValidationError || data.message || 'Failed to add question'));
                 console.error(data);
             }
         } catch (error) {

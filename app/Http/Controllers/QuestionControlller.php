@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Question;
 use App\Models\Quiz;
 use Carbon\Carbon;
+use Illuminate\Validation\ValidationException;
 
 class QuestionControlller extends Controller
 {
@@ -75,42 +76,54 @@ public function update(Request $request, $id)
 
     public function add(Request $request)
 {
-    $request->validate([
-        'quiz_id' => 'required|exists:quizzes,id',
-        'question_type' => 'required|in:text,image',
-        'question_text' => 'nullable|required_if:question_type,text|string|max:255',
-        'question_image' => 'nullable|required_if:question_type,image|image|mimes:jpeg,png,jpg|max:2048',
-        'options' => 'required|array|min:2|max:4',
-        'options.*' => 'required|string|max:255',
-        'correct_option' => 'required|integer',
-        'duration' => 'required|integer|min:1',
-    ]);
+    try {
+        $validated = $request->validate([
+            'quiz_id' => 'required|exists:quizzes,id',
+            'question_type' => 'required|in:text,image',
+            'question_text' => 'nullable|required_if:question_type,text|string|max:255',
+            // Phone cameras often upload HEIC/HEIF; allow those too.
+            'question_image' => 'nullable|required_if:question_type,image|file|mimetypes:image/jpeg,image/png,image/jpg,image/webp,image/heic,image/heif|max:8192',
+            'options' => 'required|array|min:2|max:4',
+            'options.*' => 'required|string|max:255',
+            'correct_option' => 'required|integer',
+            'duration' => 'required|integer|min:1',
+        ]);
 
-    $quiz = Quiz::findOrFail($request->quiz_id);
+        $quiz = Quiz::findOrFail($validated['quiz_id']);
 
-    $options = array_pad($request->options, 4, null); // fill missing options with null
+        $options = array_pad($validated['options'], 4, null); // fill missing options with null
 
-    $questionData = [
-        'option1' => $options[0],
-        'option2' => $options[1],
-        'option3' => $options[2],
-        'option4' => $options[3],
-        'right_option' => $request->correct_option,
-        'duration' => $request->duration,
-    ];
+        $questionData = [
+            'option1' => $options[0],
+            'option2' => $options[1],
+            'option3' => $options[2],
+            'option4' => $options[3],
+            'right_option' => $validated['correct_option'],
+            'duration' => $validated['duration'],
+        ];
 
-    if ($request->question_type === 'text') {
-        $questionData['text'] = $request->question_text;
-        $questionData['image'] = null;
-    } elseif ($request->question_type === 'image' && $request->hasFile('question_image')) {
-        $path = $request->file('question_image')->store('questions', 'public');
-        $questionData['image'] = $path;
-        $questionData['text'] = null;
+        if ($validated['question_type'] === 'text') {
+            $questionData['text'] = $validated['question_text'];
+            $questionData['image'] = null;
+        } elseif ($validated['question_type'] === 'image') {
+            if (!$request->hasFile('question_image')) {
+                return response()->json(['message' => 'Please select an image file.'], 422);
+            }
+
+            $path = $request->file('question_image')->store('questions', 'public');
+            $questionData['image'] = $path;
+            $questionData['text'] = null;
+        }
+
+        $question = $quiz->questions()->create($questionData);
+
+        return response()->json($question);
+    } catch (ValidationException $e) {
+        return response()->json([
+            'message' => 'Validation failed.',
+            'errors' => $e->errors(),
+        ], 422);
     }
-
-    $question = $quiz->questions()->create($questionData);
-
-    return response()->json($question);
 }
 
    public function destroyQuestion($id)
