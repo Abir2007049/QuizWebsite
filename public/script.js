@@ -51,13 +51,16 @@ function getQuestion() {
     // Render question image if exists
     if (currentQuestion.image) {
         let img = document.createElement("img");
-        img.src = currentQuestion.image.startsWith("http")
-            ? currentQuestion.image
-            : "/storage/" + currentQuestion.image;
+        // Image is already a complete URL from asset(), use it directly
+        img.src = currentQuestion.image;
         img.alt = "Question Image";
         img.style.maxWidth = "400px";
         img.style.marginBottom = "10px";
         img.className = "rounded shadow mb-2";
+        img.onerror = function() {
+            console.error("Failed to load image:", this.src);
+            this.style.display = "none";
+        };
         questionEl.appendChild(img);
     }
 
