@@ -233,6 +233,38 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // AJAX Question Form Submission (handles both text and image questions)
+    const questionForm = document.getElementById('ajx');
+    questionForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        
+        try {
+            const response = await fetch("{{ secure_url('questions/add') }}", {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                }
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert('Question added successfully!');
+                questionForm.reset();
+                window.location.reload(); // Reload to show new question in list
+            } else {
+                alert('Error: ' + (data.message || 'Failed to add question'));
+                console.error(data);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred. Check console for details.');
+        }
+    });
+
     // AJAX Delete Question
     const questionsBody = document.getElementById('questions-body');
 
