@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\QuizViolationMail;
+use App\Services\MailtrapApiMailer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Log;
@@ -12,13 +14,17 @@ use Carbon\Carbon;
 use App\Events\QuizStatusUpdated;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\QuizViolationMail;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Throwable;
 
 
 
 class QuizExamController extends Controller
 {
+    public function __construct(private MailtrapApiMailer $mailtrapApiMailer)
+    {
+    }
+
     //  Show the quiz to the student
     public function takeQuiz(Request $request, $quiz_id)
     {
@@ -113,6 +119,36 @@ class QuizExamController extends Controller
 
             if ($quiz && $quiz->teacher) {
                 $studentId = session('student_id');
+
+                if ($this->mailtrapApiMailer->isConfigured()) {
+                    try {
+                        $html = view('emails.quiz_violation', [
+                            'studentId' => $studentId,
+                        ])->render();
+
+                        $this->mailtrapApiMailer->send(
+                            $quiz->teacher->email,
+                            'Quiz Violation Alert',
+                            $html,
+                            null,
+                            $quiz->teacher->name ?? $quiz->teacher->email
+                        );
+
+                        return response()->json(['status' => 'Email sent.']);
+                    } catch (Throwable $e) {
+                        Log::error('Quiz violation email API send failed.', [
+                            'quiz_id' => $request->input('quiz_id'),
+                            'teacher_email' => $quiz->teacher->email,
+                            'student_id' => $studentId,
+                            'message' => $e->getMessage(),
+                        ]);
+
+                        return response()->json([
+                            'status' => 'Email failed.',
+                            'message' => 'Email service is currently unavailable.',
+                        ], 503);
+                    }
+                }
 
                 try {
                     Mail::to($quiz->teacher->email)->send(new QuizViolationMail($studentId));

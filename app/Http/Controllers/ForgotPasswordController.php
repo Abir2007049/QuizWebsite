@@ -2,21 +2,74 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use App\Services\MailtrapApiMailer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Throwable;
 
 
 
 class ForgotPasswordController extends Controller
 {
+    public function __construct(private MailtrapApiMailer $mailtrapApiMailer)
+    {
+    }
+
     public function sendResetLinkEmail(Request $request)
     {
         // Validate the email input
         $request->validate(['email' => 'required|email']);
+
+        $email = $request->input('email');
+
+        if ($this->mailtrapApiMailer->isConfigured()) {
+            $user = User::where('email', $email)->first();
+
+            if (!$user) {
+                return back()->withErrors(['email' => __(
+                    Password::INVALID_USER
+                )]);
+            }
+
+            try {
+                $token = Password::broker()->createToken($user);
+                $resetUrl = route('password.reset', [
+                    'token' => $token,
+                    'email' => $user->email,
+                ]);
+
+                $html = view('emails.password_reset', [
+                    'email' => $user->email,
+                    'resetUrl' => $resetUrl,
+                ])->render();
+
+                $this->mailtrapApiMailer->send(
+                    $user->email,
+                    'Reset Your Password',
+                    $html,
+                    null,
+                    $user->name
+                );
+
+                return back()->with('status', __(
+                    Password::RESET_LINK_SENT
+                ));
+            } catch (Throwable $e) {
+                Log::error('Password reset email API send failed.', [
+                    'email' => $email,
+                    'message' => $e->getMessage(),
+                ]);
+
+                return back()->withErrors([
+                    'email' => 'Email service is currently unavailable. Please try again shortly.',
+                ]);
+            }
+        }
 
         try {
             // Attempt to send the password reset link to the given email
@@ -25,7 +78,7 @@ class ForgotPasswordController extends Controller
             );
         } catch (TransportExceptionInterface $e) {
             Log::error('Password reset email transport failed.', [
-                'email' => $request->input('email'),
+                'email' => $email,
                 'message' => $e->getMessage(),
             ]);
 
