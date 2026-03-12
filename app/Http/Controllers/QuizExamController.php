@@ -13,6 +13,7 @@ use App\Events\QuizStatusUpdated;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\QuizViolationMail;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 
 
@@ -112,7 +113,22 @@ class QuizExamController extends Controller
 
             if ($quiz && $quiz->teacher) {
                 $studentId = session('student_id');
-                Mail::to($quiz->teacher->email)->send(new QuizViolationMail($studentId));
+
+                try {
+                    Mail::to($quiz->teacher->email)->send(new QuizViolationMail($studentId));
+                } catch (TransportExceptionInterface $e) {
+                    Log::error('Quiz violation email transport failed.', [
+                        'quiz_id' => $request->input('quiz_id'),
+                        'teacher_email' => $quiz->teacher->email,
+                        'student_id' => $studentId,
+                        'message' => $e->getMessage(),
+                    ]);
+
+                    return response()->json([
+                        'status' => 'Email failed.',
+                        'message' => 'Email service is currently unavailable.',
+                    ], 503);
+                }
 
                 return response()->json(['status' => 'Email sent.']);
             }

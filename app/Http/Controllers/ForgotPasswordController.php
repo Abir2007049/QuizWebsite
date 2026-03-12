@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 
 
@@ -16,10 +18,21 @@ class ForgotPasswordController extends Controller
         // Validate the email input
         $request->validate(['email' => 'required|email']);
 
-        // Attempt to send the password reset link to the given email
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
+        try {
+            // Attempt to send the password reset link to the given email
+            $status = Password::sendResetLink(
+                $request->only('email')
+            );
+        } catch (TransportExceptionInterface $e) {
+            Log::error('Password reset email transport failed.', [
+                'email' => $request->input('email'),
+                'message' => $e->getMessage(),
+            ]);
+
+            return back()->withErrors([
+                'email' => 'Email service is currently unavailable. Please try again shortly.',
+            ]);
+        }
 
         // Check the status and return response accordingly
         if ($status === Password::RESET_LINK_SENT) {
