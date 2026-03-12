@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Http\Client\RequestException;
 use RuntimeException;
 
 class MailtrapApiMailer
@@ -37,10 +38,21 @@ class MailtrapApiMailer
             'text' => $text ?: strip_tags($html),
         ];
 
-        Http::withToken($token)
-            ->acceptJson()
-            ->timeout(15)
-            ->post($endpoint, $payload)
-            ->throw();
+        try {
+            Http::withToken($token)
+                ->acceptJson()
+                ->timeout(15)
+                ->post($endpoint, $payload)
+                ->throw();
+        } catch (RequestException $e) {
+            $body = $e->response?->body();
+            $message = 'Mailtrap API request failed.';
+
+            if ($body) {
+                $message .= ' Response: ' . $body;
+            }
+
+            throw new RuntimeException($message, previous: $e);
+        }
     }
 }
